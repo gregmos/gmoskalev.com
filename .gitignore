@@ -1,0 +1,9 @@
+# Local backups (created during iterative editing)
+*.bak
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/

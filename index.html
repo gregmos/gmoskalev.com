@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en" data-header-style="§ / slash" data-density="comfortable">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grigorii Moskalev — Lawyer who builds tools for other lawyers.</title>
+  <meta name="description" content="Greg Moskalev — Legal Counsel at FaceApp, author of PII Shield, teacher to 100+ lawyers. 11 years of law, 3 years of Python. Building legal-AI tools from Limassol, Cyprus." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Grigorii Moskalev" />
+  <meta property="og:description" content="Lawyer who builds tools for other lawyers. 11 years of law · 3 years of Python · Legal Counsel at FaceApp." />
+  <meta property="og:url" content="https://gmoskalev.com" />
+  <meta property="og:site_name" content="gmoskalev.com" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Grigorii Moskalev" />
+  <meta name="twitter:description" content="Lawyer who builds tools for other lawyers." />
+
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230A0A0A'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='ui-monospace,monospace' font-weight='600' font-size='38' fill='%2300E27A'>G</text></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --bg-elev: #101114;
+      --bg-elev-2: #15171B;
+      --fg: #EDEDED;
+      --fg-dim: #A0A0A6;
+      --fg-dimmer: #6E6E76;
+      --fg-faint: #3F3F46;
+      --hair: rgba(255, 255, 255, 0.07);
+      --hair-2: rgba(255, 255, 255, 0.12);
+      --hair-strong: rgba(255, 255, 255, 0.22);
+      --accent: #00E27A;
+      --danger: #FF4D4D;
+      --font-sans: "Inter", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+      --max: 1200px;
+      --gutter: clamp(20px, 4vw, 56px);
+      --glow-opacity: 1;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: "ss01", "cv11";
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; background: none; border: 0; color: inherit; cursor: pointer; padding: 0; }
+    h1, h2, h3, h4, p, ul { margin: 0; padding: 0; }
+    ul { list-style: none; }
+    em { font-style: italic; color: var(--fg); }
+
+    ::selection { background: var(--accent); color: #000; }
+
+    :focus-visible {
+      outline: 1.5px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    /* REDUCED MOTION GATE
+       Neutralizes animations/transitions and snaps hover/focus translates
+       to zero for users who prefer reduced motion. Reveal observer is
+       gated separately in JS via matchMedia('no-preference'). */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .btn:hover, .btn:focus-visible,
+      .project:hover, .project:focus-visible,
+      .project--soon:hover, .project--soon:focus-visible,
+      .contact__link:hover, .contact__link:focus-visible {
+        transform: none !important;
+      }
+      .caret { animation: none !important; }
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 80%);
+      z-index: 0;
+    }
+
+    main { position: relative; z-index: 1; }
+
+    /* NAV */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 14px var(--gutter);
+      transition: background 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease;
+      border-bottom: 1px solid transparent;
+    }
+    .nav--scrolled {
+      background: rgba(10, 10, 10, 0.72);
+      backdrop-filter: saturate(140%) blur(14px);
+      -webkit-backdrop-filter: saturate(140%) blur(14px);
+      border-bottom-color: var(--hair);
+    }
+    .nav__inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav__brand {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 2px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: -0.01em;
+    }
+    .nav__brand-name { color: var(--fg); font-weight: 500; }
+    .nav__links {
+      display: flex;
+      gap: 2px;
+      justify-content: center;
+    }
+    .nav__link {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      padding: 8px 12px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--fg-dim);
+      border-radius: 6px;
+      transition: color 120ms ease, background 120ms ease;
+      white-space: nowrap;
+    }
+    .nav__link:hover,
+    .nav__link:focus-visible { color: var(--fg); background: rgba(255,255,255,0.04); }
+    .nav__link.is-active { color: var(--fg); }
+    .nav__link.is-active .nav__link-num { color: var(--accent); }
+    .nav__link-num { color: var(--fg-dimmer); font-size: 10.5px; }
+
+    .nav__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid var(--hair-2);
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+      white-space: nowrap;
+    }
+    .nav__cta:hover,
+    .nav__cta:focus-visible {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    @media (max-width: 480px) {
+      .nav { padding: 12px var(--gutter); }
+      .nav__cta { padding: 8px 12px; font-size: 12px; }
+    }
+
+    @media (max-width: 860px) {
+      .nav__links { display: none; }
+      .nav__inner { grid-template-columns: auto 1fr; }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: clamp(120px, 18vh, 200px) var(--gutter) clamp(80px, 12vh, 140px);
+      isolation: isolate;
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .hero__glow {
+      position: absolute;
+      inset: -20% -10% auto -10%;
+      height: 120%;
+      background:
+        radial-gradient(ellipse 60% 45% at 22% 30%, color-mix(in oklab, var(--accent) 18%, transparent) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 20%, rgba(120, 120, 255, 0.08) 0%, transparent 60%);
+      filter: blur(20px);
+      opacity: var(--glow-opacity);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .hero__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 28px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--fg-dimmer);
+      margin: 0 0 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--hair);
+      max-width: 720px;
+      letter-spacing: 0.01em;
+    }
+    .hero__meta-row { display: inline-flex; gap: 8px; align-items: baseline; }
+    .hero__meta-row dt,
+    .hero__meta-row dd { margin: 0; }
+    .hero__meta-k { color: var(--fg-faint); text-transform: lowercase; }
+    .hero__meta-k::after { content: " ::"; color: var(--fg-faint); }
+    .hero__meta-v { color: var(--fg-dim); }
+    @media (max-width: 560px) {
+      .hero__meta { gap: 8px 20px; font-size: 11px; }
+    }
+
+    .hero__name {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: clamp(48px, 9vw, 128px);
+      line-height: 0.95;
+      letter-spacing: -0.045em;
+      color: var(--fg);
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+    }
+    .hero__name-first { color: var(--fg-dim); font-weight: 400; }
+    .hero__name-last { color: var(--fg); }
+
+    .caret {
+      display: inline-block;
+      width: 0.44em;
+      height: 0.9em;
+      background: var(--accent);
+      margin-left: 0.08em;
+      transform: translateY(0.08em);
+      animation: blink 1.05s steps(2, end) infinite;
+      box-shadow: 0 0 24px color-mix(in oklab, var(--accent) 50%, transparent);
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .hero__tagline {
+      font-size: clamp(20px, 2.4vw, 28px);
+      line-height: 1.35;
+      color: var(--fg);
+      max-width: 640px;
+      letter-spacing: -0.01em;
+      margin-bottom: 40px;
+      text-wrap: balance;
+    }
+    .hero__sub {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--fg-dim);
+      margin-bottom: 40px;
+      max-width: 56ch;
+      letter-spacing: -0.005em;
+      text-wrap: pretty;
+    }
+
+    .hero__cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 56px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: -0.005em;
+      transition: transform 140ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
+      border: 1px solid transparent;
+      will-change: transform;
+    }
+    .btn:hover,
+    .btn:focus-visible { transform: translateY(-1px); }
+    .btn:focus-visible { outline-offset: 4px; }
+    .btn--primary {
+      background: var(--accent);
+      color: #00110A;
+      font-weight: 600;
+      box-shadow:
+        0 0 0 1px color-mix(in oklab, var(--accent) 30%, transparent),
+        0 12px 40px -12px color-mix(in oklab, var(--accent) 80%, transparent);
+    }
+    .btn--primary:hover,
+    .btn--primary:focus-visible { background: color-mix(in oklab, var(--accent) 85%, white); }
+    .btn--ghost {
+      border-color: var(--hair-2);
+      color: var(--fg);
+    }
+    .btn--ghost:hover,
+    .btn--ghost:focus-visible { border-color: var(--fg-dim); background: rgba(255,255,255,0.03); }
+
+    @media (max-width: 560px) {
+      .hero { min-height: auto; padding-top: 120px; }
+      .hero__name { letter-spacing: -0.04em; margin-bottom: 20px; }
+      .hero__tagline { font-size: 22px; margin-bottom: 12px; }
+      .hero__sub { font-size: 14px; margin-bottom: 32px; }
+      .hero__cta-row { margin-bottom: 40px; gap: 8px; }
+    }
+    @media (max-width: 360px) {
+      .hero__meta { gap: 6px 16px; padding-bottom: 12px; margin-bottom: 24px; }
+      .hero__name { letter-spacing: -0.035em; }
+    }
+
+    /* SECTIONS */
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: clamp(80px, 12vh, 140px) var(--gutter);
+      position: relative;
+    }
+    .section + .section { border-top: 1px solid var(--hair); }
+
+    .section-label {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--fg-dim);
+      margin-bottom: 36px;
+      padding: 8px 12px;
+      border: 1px solid var(--hair);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.02);
+    }
+    .section-label__sigil { color: var(--accent); }
+    .section-label__num { color: var(--fg); }
+    .section-label__slash { color: var(--fg-faint); }
+    .section-label__title { color: var(--fg-dim); }
+
+    [data-density="compact"] .section { padding-block: clamp(64px, 9vh, 96px); }
+
+    .section__lede {
+      font-size: 19px;
+      line-height: 1.5;
+      color: var(--fg-dim);
+      max-width: 60ch;
+      margin-bottom: 48px;
+      text-wrap: pretty;
+    }
+    .section__lede em { color: var(--fg); font-style: italic; }
+
+    .accent { color: var(--accent); }
+
+    /* ABOUT */
+    .about__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: clamp(40px, 6vw, 80px);
+      align-items: start;
+    }
+    .about__paragraph {
+      font-size: 19px;
+      line-height: 1.6;
+      color: var(--fg);
+      margin-bottom: 20px;
+      text-wrap: pretty;
+      max-width: 62ch;
+    }
+    .about__paragraph + .about__paragraph { color: var(--fg-dim); }
+    .about__paragraph:first-of-type { color: var(--fg); }
+    .about__facts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .fact {
+      padding: 20px 24px;
+      border-right: 1px solid var(--hair);
+      border-bottom: 1px solid var(--hair);
+    }
+    .fact:nth-child(2n) { border-right: 0; }
+    .fact:nth-last-child(-n+2) { border-bottom: 0; }
+    .fact__v {
+      font-family: var(--font-mono);
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .fact__k {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dimmer);
+      text-transform: lowercase;
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 860px) {
+      .about__grid { grid-template-columns: 1fr; }
+    }
+
+    /* PROJECTS */
+    .project {
+      position: relative;
+      padding: 28px;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0) 60%);
+      transition: border-color 180ms ease, transform 240ms ease, background 180ms ease;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .project:hover,
+    .project:focus-visible {
+      border-color: var(--hair-2);
+      transform: translateY(-2px);
+    }
+    .project:focus-visible { outline-offset: 4px; }
+
+    .project--pinned {
+      padding: 36px 40px;
+      border-color: var(--hair-2);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0) 60%),
+        radial-gradient(ellipse 80% 60% at 0% 0%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 60%);
+    }
+    .project--pinned::before {
+      content: "";
+      position: absolute;
+      left: -1px; top: -1px; bottom: -1px;
+      width: 3px;
+      background: linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 40%, transparent));
+      border-radius: 10px 0 0 10px;
+    }
+    .project--pinned .project__name { font-size: 28px; }
+
+    .project__head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .project__head-left { display: flex; flex-direction: column; gap: 6px; }
+    .project__pin {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--accent);
+      text-transform: lowercase;
+      letter-spacing: 0.04em;
+    }
+    .project__name {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      text-wrap: balance;
+    }
+    .project__status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border: 1px solid var(--hair-2);
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dim);
+      white-space: nowrap;
+    }
+    .project__status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: currentColor;
+    }
+    .project__status--live { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
+    .project__status--live .project__status-dot { box-shadow: 0 0 8px var(--accent); }
+
+    .project__tagline {
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--fg);
+      text-wrap: pretty;
+    }
+    .project--pinned .project__tagline { font-size: 18px; }
+    .project__desc {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--fg-dim);
+      text-wrap: pretty;
+    }
+
+    .project__stack { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border: 1px solid var(--hair);
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dim);
+      background: rgba(255,255,255,0.02);
+    }
+    .tag--mono { letter-spacing: -0.01em; }
+
+    .project--link { text-decoration: none; }
+    .project__open {
+      margin-top: auto;
+      padding-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--fg-dimmer);
+      transition: color 160ms ease;
+    }
+    .project--link:hover .project__open { color: var(--accent); }
+
+    /* CONTACT */
+    .section--contact { padding-bottom: clamp(120px, 16vh, 180px); }
+
+    .contact__headline {
+      font-size: clamp(28px, 4.5vw, 48px);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      color: var(--fg);
+      max-width: 20ch;
+      margin-bottom: 18px;
+      text-wrap: balance;
+      font-weight: 500;
+    }
+    .contact__primary,
+    .contact__email {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 20px;
+      border: 1px solid var(--hair-2);
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      font-size: clamp(15px, 2vw, 20px);
+      background: rgba(255,255,255,0.02);
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+      margin-bottom: 14px;
+      max-width: 100%;
+      flex-wrap: wrap;
+      color: var(--fg-dim);
+    }
+    .contact__email { margin-bottom: 28px; }
+    .contact__primary:hover,
+    .contact__primary:focus-visible,
+    .contact__email:hover,
+    .contact__email:focus-visible { border-color: var(--accent); background: color-mix(in oklab, var(--accent) 5%, transparent); color: var(--fg); }
+    .contact__primary:focus-visible,
+    .contact__email:focus-visible { outline-offset: 4px; }
+    .contact__primary-k,
+    .contact__email-k { color: var(--fg-faint); }
+    .contact__primary-sep,
+    .contact__email-sep { color: var(--fg-faint); }
+    .contact__primary-v,
+    .contact__email-v { color: var(--fg); }
+    .contact__primary-arrow { color: var(--fg-dim); margin-left: auto; padding-left: 12px; transition: color 160ms ease; }
+    .contact__primary:hover .contact__primary-arrow,
+    .contact__primary:focus-visible .contact__primary-arrow { color: var(--accent); }
+    .contact__email-copy {
+      margin-left: 12px;
+      padding: 4px 8px;
+      border: 1px solid var(--hair);
+      border-radius: 6px;
+      font-size: 11.5px;
+      color: var(--fg-dim);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: lowercase;
+      transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+    .contact__email-copy.is-copied { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); background: color-mix(in oklab, var(--accent) 10%, transparent); }
+    .contact__email:hover .contact__email-copy { color: var(--fg); border-color: var(--hair-2); }
+
+    @media (max-width: 480px) {
+      .contact__primary,
+      .contact__email { font-size: 14px; gap: 8px; padding: 12px 16px; }
+      .contact__primary-v,
+      .contact__email-v { word-break: break-all; min-width: 0; }
+    }
+
+    .contact__links { display: flex; flex-wrap: wrap; gap: 10px; }
+    .contact__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--fg-dim);
+      transition: color 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+    .contact__link:hover,
+    .contact__link:focus-visible { color: var(--fg); border-color: var(--hair-2); transform: translateY(-1px); }
+    .contact__link-k { color: var(--fg-faint); text-transform: lowercase; }
+    .contact__link-v { color: var(--fg); }
+
+    /* FOOTER */
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 32px var(--gutter) 48px;
+      border-top: 1px solid var(--hair);
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--fg-dimmer);
+    }
+    .footer__col { display: flex; flex-direction: column; gap: 6px; }
+    .footer__col--right { text-align: right; align-items: flex-end; }
+    .footer__copy { color: var(--fg-dim); }
+    .footer__built a { color: var(--fg-dim); border-bottom: 1px dashed var(--fg-faint); }
+    .footer__built a:hover { color: var(--accent); border-color: var(--accent); }
+    .footer__ts { display: inline-flex; gap: 8px; }
+    .footer__ts-k { color: var(--fg-faint); }
+    .footer__ts-v { font-variant-numeric: tabular-nums; }
+
+    @media (max-width: 560px) {
+      .footer { flex-direction: column; }
+      .footer__col--right { text-align: left; align-items: flex-start; }
+    }
+
+    /* REVEAL */
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition: opacity 520ms ease, transform 520ms ease;
+      }
+      .reveal--in { opacity: 1; transform: translateY(0); }
+    }
+
+    .fact__v--small { font-size: 17px; line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 16px; }
+
+    .project--soon {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 20px;
+      padding: 24px 28px;
+      border: 1px dashed var(--hair-2);
+      border-radius: 10px;
+      text-decoration: none;
+      background: rgba(255,255,255,0.01);
+      transition: border-color 180ms ease, transform 240ms ease, background 180ms ease;
+    }
+    .project--soon:hover,
+    .project--soon:focus-visible {
+      border-color: color-mix(in oklab, var(--accent) 50%, transparent);
+      transform: translateY(-2px);
+      background: color-mix(in oklab, var(--accent) 4%, transparent);
+    }
+    .project--soon:focus-visible { outline-offset: 4px; }
+    .project--soon__plus {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      color: var(--accent);
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+      border-radius: 8px;
+      background: color-mix(in oklab, var(--accent) 6%, transparent);
+      flex: none;
+    }
+    .project--soon__body { flex: 1; min-width: 0; }
+    .project--soon__title {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: var(--fg);
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+    .project--soon__sub {
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--fg-dim);
+    }
+    .project--soon__arrow {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: var(--fg-dimmer);
+      transition: color 160ms ease, transform 160ms ease;
+      flex: none;
+    }
+    .project--soon:hover .project--soon__arrow,
+    .project--soon:focus-visible .project--soon__arrow {
+      color: var(--accent);
+      transform: translate(2px, -2px);
+    }
+    .project--link:focus-visible .project__open { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#hero" class="nav__brand">
+        <span class="nav__brand-name">gmoskalev</span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="#about" class="nav__link" data-nav="about"><span class="nav__link-num">01</span><span>About</span></a></li>
+        <li><a href="#projects" class="nav__link" data-nav="projects"><span class="nav__link-num">02</span><span>Projects</span></a></li>
+        <li><a href="#contact" class="nav__link" data-nav="contact"><span class="nav__link-num">03</span><span>Contact</span></a></li>
+      </ul>
+      <a href="#contact" class="nav__cta">
+        <span>Get in touch</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <header id="hero" class="hero">
+      <div class="hero__glow" aria-hidden="true"></div>
+
+      <dl class="hero__meta" aria-label="Profile summary">
+        <div class="hero__meta-row"><dt class="hero__meta-k">role</dt><dd class="hero__meta-v">Legal Counsel @ FaceApp</dd></div>
+        <div class="hero__meta-row"><dt class="hero__meta-k">based</dt><dd class="hero__meta-v">Limassol, Cyprus</dd></div>
+        <div class="hero__meta-row"><dt class="hero__meta-k">stack</dt><dd class="hero__meta-v">Law · Python · LLMs</dd></div>
+      </dl>
+
+      <h1 class="hero__name">
+        <span class="hero__name-first">Grigorii</span>
+        <span class="hero__name-last">&nbsp;Moskalev<span class="caret" aria-hidden="true"></span></span>
+      </h1>
+
+      <p class="hero__tagline">Lawyer who builds tools for other lawyers.</p>
+
+      <div class="hero__cta-row">
+        <a href="#contact" class="btn btn--primary">
+          <span>Get in touch</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#projects" class="btn btn--ghost">
+          <span>View projects</span>
+        </a>
+      </div>
+    </header>
+
+    <section id="about" class="section">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">01</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">About</span>
+      </div>
+      <div class="about__grid">
+        <div class="about__prose">
+          <p class="about__paragraph">11 years practicing law, 3 years writing Python, and a growing overlap between the two. I run the legal function at FaceApp — a consumer AI product used by hundreds of millions — across IP, privacy, corporate, and app-store disputes.</p>
+          <p class="about__paragraph">I build the legal tools I wished existed — RAG over our corpus, contract analytics, MCP servers that keep client data off the API. When the off-the-shelf model isn't enough, I fine-tune and deploy a local one.</p>
+          <p class="about__paragraph">I've also shipped legal-tech as a product owner — from zero to launch, owning the spec, the flows, and the API. Not just the legal sign-off.</p>
+          <p class="about__paragraph">I teach a course and run a Telegram channel for lawyers learning to work with LLMs — 100+ students so far.</p>
+        </div>
+        <div class="about__facts">
+          <div class="fact"><div class="fact__v">11</div><div class="fact__k">Years practicing</div></div>
+          <div class="fact"><div class="fact__v" id="ghStars">73</div><div class="fact__k">★ PII Shield on GitHub</div></div>
+          <div class="fact"><div class="fact__v fact__v--small">IP · Privacy · Corporate</div><div class="fact__k">Practice areas</div></div>
+          <div class="fact"><div class="fact__v">100+</div><div class="fact__k">Students taught</div></div>
+          <div class="fact"><div class="fact__v">FaceApp</div><div class="fact__k">Legal function at</div></div>
+          <div class="fact"><div class="fact__v">EN · RU · GR</div><div class="fact__k">Languages</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="section">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">02</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">Projects</span>
+      </div>
+      <p class="section__lede">Tools and workflows I build for legal teams — in-house and law firms.</p>
+
+      <a class="project project--pinned project--link" href="pii-shield.html">
+        <header class="project__head">
+          <div class="project__head-left">
+            <span class="project__pin" aria-label="Pinned">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 3h6l-1 7 4 3H6l4-3-1-7z"/></svg>
+              <span>pinned</span>
+            </span>
+            <h3 class="project__name">PII Shield</h3>
+          </div>
+          <span class="project__status project__status--live">
+            <span class="project__status-dot" aria-hidden="true"></span>
+            v2.0.2 · Live
+          </span>
+        </header>
+        <p class="project__tagline">Anonymize documents before Claude sees them. Restore real data after analysis.</p>
+        <p class="project__desc">MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (<code>&lt;PERSON_1&gt;</code>, <code>&lt;ORG_1&gt;</code>, etc.), and sends only the anonymized text to Claude. After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.</p>
+        <ul class="project__stack">
+          <li class="tag tag--mono">Node.js</li>
+          <li class="tag tag--mono">MCP</li>
+          <li class="tag tag--mono">GLiNER</li>
+          <li class="tag tag--mono">ONNX</li>
+          <li class="tag tag--mono">DOCX</li>
+        </ul>
+        <span class="project__open" aria-hidden="true">See details →</span>
+      </a>
+
+      <a class="project project--link" href="https://github.com/gregmos/Brand-monitor" target="_blank" rel="noopener">
+        <header class="project__head">
+          <div class="project__head-left">
+            <h3 class="project__name">Brand monitor</h3>
+          </div>
+          <span class="project__status project__status--live">
+            <span class="project__status-dot" aria-hidden="true"></span>
+            Live
+          </span>
+        </header>
+        <p class="project__tagline">Find the apps stealing your name and the sites cracking your build — every week, on autopilot.</p>
+        <p class="project__desc">Skill that scans the App Store and the open web for knockoffs and cracked APKs of your app. iTunes Search across countries plus fuzzy-matching narrows ~1,000 listings to ~50 real candidates; icon vision and WHOIS-backed evidence packages confirm the rest. An LLM layer scores risk, recommends action, and ships a prioritized Excel report. The whole thing is a single <code>SKILL.md</code> — drop it into Claude or OpenClaw, tell it your trademark and target countries, and it runs itself. Hours of manual work → ~20 minutes of review.</p>
+        <ul class="project__stack">
+          <li class="tag tag--mono">SKILL.md</li>
+          <li class="tag tag--mono">iTunes API</li>
+          <li class="tag tag--mono">Vision</li>
+          <li class="tag tag--mono">WHOIS</li>
+          <li class="tag tag--mono">Excel</li>
+        </ul>
+        <span class="project__open" aria-hidden="true">View on GitHub →</span>
+      </a>
+
+      <div class="project project--soon">
+        <span class="project--soon__plus" aria-hidden="true">+</span>
+        <div class="project--soon__body">
+          <div class="project--soon__title">More on the way</div>
+          <div class="project--soon__sub">New tools in progress.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section section--contact">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">03</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">Contact</span>
+      </div>
+      <h2 class="contact__headline">Working on something at the edge of <span class="accent">law and AI</span>? Let's talk.</h2>
+
+      <a href="https://linkedin.com/in/gmoskalev" class="contact__primary" target="_blank" rel="noopener">
+        <span class="contact__primary-k" aria-hidden="true">linkedin</span>
+        <span class="contact__primary-sep" aria-hidden="true">::</span>
+        <span class="contact__primary-v">/in/gmoskalev</span>
+        <span class="contact__primary-arrow" aria-hidden="true">↗</span>
+      </a>
+
+      <button class="contact__email" id="emailCopy" aria-label="Copy email address grigory.moskalyov@gmail.com">
+        <span class="contact__email-k" aria-hidden="true">email</span>
+        <span class="contact__email-sep" aria-hidden="true">::</span>
+        <span class="contact__email-v">grigory.moskalyov@gmail.com</span>
+        <span class="contact__email-copy" id="emailCopyState" aria-live="polite">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          <span id="emailCopyLabel">copy</span>
+        </span>
+      </button>
+
+      <div class="contact__links">
+        <a href="https://t.me/gregms" class="contact__link" target="_blank" rel="noopener">
+          <span class="contact__link-k">telegram</span>
+          <span class="contact__link-v">@gregms</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a href="https://github.com/gregmos" class="contact__link" target="_blank" rel="noopener">
+          <span class="contact__link-k">github</span>
+          <span class="contact__link-v">gregmos</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__copy">© <span id="year">2026</span> Grigorii Moskalev</div>
+  </footer>
+
+  <script>
+    (function () {
+      // Live GitHub stars on PII Shield (falls back to hardcoded count on failure)
+      fetch('https://api.github.com/repos/gregmos/PII-Shield')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (d && typeof d.stargazers_count === 'number') {
+            var el = document.getElementById('ghStars');
+            if (el) el.textContent = d.stargazers_count;
+          }
+        })
+        .catch(function () {});
+
+      var nav = document.getElementById('nav');
+      var navTicking = false;
+      function applyNavScroll() {
+        nav.classList.toggle('nav--scrolled', window.scrollY > 10);
+        navTicking = false;
+      }
+      function onScroll() {
+        if (navTicking) return;
+        navTicking = true;
+        window.requestAnimationFrame(applyNavScroll);
+      }
+      applyNavScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      var navLinks = document.querySelectorAll('.nav__link');
+      var sectionIds = ['hero', 'about', 'projects', 'contact'];
+      var sectionEls = sectionIds.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+      var navObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            navLinks.forEach(function (l) {
+              var isActive = l.getAttribute('data-nav') === e.target.id;
+              l.classList.toggle('is-active', isActive);
+              if (isActive) l.setAttribute('aria-current', 'location');
+              else l.removeAttribute('aria-current');
+            });
+          });
+        },
+        { rootMargin: '-40% 0px -55% 0px' }
+      );
+      sectionEls.forEach(function (el) { navObserver.observe(el); });
+
+      var emailBtn = document.getElementById('emailCopy');
+      if (emailBtn) {
+        var emailState = document.getElementById('emailCopyState');
+        var emailLabel = document.getElementById('emailCopyLabel');
+        var emailSvg = emailState && emailState.querySelector('svg');
+        var iconCopy = '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>';
+        var iconCheck = '<path d="M20 6L9 17l-5-5"/>';
+        var copyTimer;
+        var setIcon = function (markup, strokeWidth) {
+          if (!emailSvg) return;
+          emailSvg.innerHTML = markup;
+          emailSvg.setAttribute('stroke-width', strokeWidth);
+        };
+        var done = function () {
+          emailState.classList.add('is-copied');
+          emailLabel.textContent = 'copied';
+          setIcon(iconCheck, '2.2');
+          clearTimeout(copyTimer);
+          copyTimer = setTimeout(function () {
+            emailState.classList.remove('is-copied');
+            emailLabel.textContent = 'copy';
+            setIcon(iconCopy, '2');
+          }, 1800);
+        };
+        var fallback = function (email) {
+          var ta = document.createElement('textarea');
+          ta.value = email;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) { /* clipboard unavailable */ }
+          document.body.removeChild(ta);
+        };
+        emailBtn.addEventListener('click', function () {
+          var email = 'grigory.moskalyov@gmail.com';
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(email).then(done).catch(function () { fallback(email); });
+          } else {
+            fallback(email);
+          }
+        });
+      }
+
+      if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        var reveals = document.querySelectorAll('.section, .project, .fact');
+        reveals.forEach(function (el) { el.classList.add('reveal'); });
+        var revealObserver = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) {
+                e.target.classList.add('reveal--in');
+                revealObserver.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.08 }
+        );
+        reveals.forEach(function (el) { revealObserver.observe(el); });
+      }
+
+      var yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
