@@ -1554,6 +1554,7 @@
       line-height: 1.6;
     }
     .logs-footer .accent { color: var(--accent); }
+    .logs-footer code { color: var(--fg); }
 
     /* ════════════════════════════════════════════════════════════════
        STACK
@@ -1562,6 +1563,15 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+    }
+    .stack-row__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dimmer);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 24px;
+      margin-bottom: 12px;
     }
     .tag {
       display: inline-flex;
@@ -2100,6 +2110,27 @@
             <li class="cov cov--generic">date</li>
           </ul>
         </div>
+
+        <div class="coverage__row coverage__row--generic" data-show-when="developer">
+          <span class="coverage__label">Detection · NER</span>
+          <ul class="coverage__list coverage__list--generic" role="list">
+            <li class="cov cov--generic">GLiNER zero-shot</li>
+            <li class="cov cov--generic">person</li>
+            <li class="cov cov--generic">org</li>
+            <li class="cov cov--generic">location</li>
+          </ul>
+        </div>
+
+        <div class="coverage__row coverage__row--generic" data-show-when="developer">
+          <span class="coverage__label">Detection · pattern</span>
+          <ul class="coverage__list coverage__list--generic" role="list">
+            <li class="cov cov--generic">all 17 jurisdiction patterns</li>
+            <li class="cov cov--generic">email · phone</li>
+            <li class="cov cov--generic">IBAN · credit card · crypto</li>
+            <li class="cov cov--generic">SSN · EIN · licences</li>
+            <li class="cov cov--generic">money · date</li>
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -2265,7 +2296,7 @@ npm test                   <span class="comment"># 8 suites, incl. multi-doc HIT
       </div>
       <!-- Developer technical footer -->
       <div class="logs-footer" data-show-when="developer">
-        Encrypted handoff via <span class="accent">AES-GCM + scrypt</span>. Session TTL configurable (default 7 days). Everything appendable, everything off-network.
+        Encrypted handoff: <code>export_session(passphrase)</code> → <code>.pii-session</code> archive (<span class="accent">AES-GCM + scrypt</span>-derived key). Mappings live at <code>~/.pii_shield/mappings/</code>, models at <code>~/.pii_shield/models/</code>, audit trail appendable at <code>~/.pii_shield/audit/mcp_audit.log</code>. Session TTL 7 days, configurable. All inputs validated with Zod (TypeScript strict). <span class="accent">Off-network by design</span> — no telemetry endpoint to disable.
       </div>
     </section>
 
@@ -2426,6 +2457,18 @@ npm test                   <span class="comment"># 8 suites, incl. multi-doc HIT
         <span class="tag">pdf-parse</span>
         <span class="tag">AES-GCM / scrypt</span>
         <span class="tag">MIT license</span>
+      </div>
+
+      <div class="stack-row__label">Tested on</div>
+      <div class="stack-row">
+        <span class="tag">Ubuntu</span>
+        <span class="tag">Windows</span>
+        <span class="tag">macOS</span>
+        <span class="tag">Node 18</span>
+        <span class="tag">Node 20</span>
+        <span class="tag">8 test suites</span>
+        <span class="tag">MCP protocol smoke</span>
+        <span class="tag">Zod schema validation</span>
       </div>
     </section>
   </main>
