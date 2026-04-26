@@ -790,6 +790,8 @@
       font-family: var(--font-mono);
       color: var(--fg);
     }
+    .prose__rewrite p + p { margin-top: 10px; }
+    .prose__rewrite p strong { color: var(--fg); font-weight: 500; }
 
     /* ════════════════════════════════════════════════════════════════
        CASE CITATION (inline span + hover/tap card)
@@ -1218,6 +1220,29 @@
       font-family: var(--font-mono);
       color: var(--accent);
       font-size: 12.5px;
+    }
+    .tools-roundtrip { margin-top: 28px; }
+    .tools-roundtrip__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dimmer);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .tools-roundtrip__note {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--fg-dim);
+      line-height: 1.55;
+      font-style: italic;
+      max-width: 70ch;
+    }
+    .tools-roundtrip__note code {
+      font-style: normal;
+      font-family: var(--font-mono);
+      color: var(--fg);
+      font-size: 12px;
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -1909,6 +1934,14 @@
           </div>
         </div>
       </div>
+
+      <div class="prose__rewrite" data-show-when="developer">
+        <div class="prose__rewrite-label">MCP call sequence</div>
+        <p><strong>Document → Shield:</strong> <code>anonymize_file({ file_path, session_id? })</code> → <code>{ session_id, entity_count, output_path, … }</code></p>
+        <p><strong>Shield → Claude API:</strong> Claude reads <code>output_path</code> from the connected folder. Only placeholders cross the wire.</p>
+        <p><strong>Claude API → Shield:</strong> model output flows back as text — still placeholder-only.</p>
+        <p><strong>Shield → Result:</strong> <code>deanonymize_docx({ file_path, session_id })</code> or <code>deanonymize_text({ text, session_id })</code> stitches the real PII back in, locally.</p>
+      </div>
     </section>
 
     <div class="divider"><span class="divider__num">02</span><span class="divider__txt">why this exists</span></div>
@@ -1931,6 +1964,11 @@
         <div class="prose__rewrite" data-show-when="developer">
           <div class="prose__rewrite-label">v1 → v2 · the rewrite</div>
           <p>v1 was Python + Presidio + spaCy + heavy ML deps. It worked, but every install fought Claude Desktop's runtime. v2.0.2 is a <strong class="strong--fg">complete Node.js rewrite</strong> over <code>onnxruntime-node</code> + <code>@xenova/transformers</code> — same detection coverage, no Python install, ~700 KB plugin instead of ~80 MB. v1 is still public at <code>gregmos/PII-Shield</code> for the legacy crowd.</p>
+        </div>
+
+        <div class="prose__rewrite" data-show-when="developer">
+          <div class="prose__rewrite-label">footprint · before / after</div>
+          <p>v1: ~80 MB plugin, Python runtime conflicts with Claude Desktop's bundled environment, Presidio + spaCy heavy install. v2.0.2: <strong class="strong--fg">700 KB plugin</strong> on Windows/Linux (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB <code>gliner-pii-base-v1.0</code> model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 18/20.</p>
         </div>
       </div>
     </section>
@@ -2174,6 +2212,20 @@
           </div>
         </div>
       </div>
+
+      <div class="first-run" data-show-when="developer" data-reveal="fade">
+        <div class="first-run__icon" aria-hidden="true">&lt;/&gt;</div>
+        <div>
+          <div class="first-run__title">Build &amp; verify locally</div>
+          <div class="first-run__body">
+            <code class="code">npm ci --ignore-scripts --legacy-peer-deps
+npm run build              <span class="comment"># esbuild bundle</span>
+npm run smoke              <span class="comment"># node scripts/smoke-protocol.mjs</span>
+npm test                   <span class="comment"># 8 suites, incl. multi-doc HITL &amp; session archival</span></code>
+            CI runs the same matrix on Ubuntu / Windows / macOS × Node 18 / 20.
+          </div>
+        </div>
+      </div>
     </section>
 
     <div class="divider"><span class="divider__num">06</span><span class="divider__txt">compliance &amp; audit</span></div>
@@ -2330,6 +2382,26 @@
 
       <div class="tools-callout">
         <code>scan_text</code> is the safest first call when you're trying things out — it shows you what would be redacted without creating a session or touching the file. Run it, eyeball the entities, then graduate to <code>anonymize_file</code> when you trust the model.
+      </div>
+
+      <div class="tools-roundtrip">
+        <div class="tools-roundtrip__label">Round-trip example</div>
+        <code class="code"><span class="comment">// 1. anonymize a file — original stays on disk; only placeholders cross the wire</span>
+<span class="accent">→</span> anonymize_file({ file_path: "~/contracts/nda.docx" })
+<span class="remote">←</span> { status: "success",
+    session_id: "m9q8x4-7b5a91",
+    entity_count: 14,
+    output_path: ".../nda.anon.txt",
+    docx_output_path: ".../nda.anon.docx",
+    by_type: { PERSON: 4, ORG: 3, MONEY: 2, ... } }
+
+<span class="comment">// 2. Claude reads output_path and drafts a memo using placeholders only</span>
+
+<span class="comment">// 3. restore PII into the draft, locally</span>
+<span class="accent">→</span> deanonymize_text({ text: draft, session_id: "m9q8x4-7b5a91" })
+<span class="remote">←</span> { status: "success",
+    deanonymized_text: "...John Smith signed the NDA..." }</code>
+        <p class="tools-roundtrip__note">All inputs validated with Zod. Errors return MCP-protocol-shaped <code>{ isError: true, content: [...] }</code> instead of throwing.</p>
       </div>
     </section>
 
