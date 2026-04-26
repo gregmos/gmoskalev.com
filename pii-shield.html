@@ -1973,12 +1973,9 @@
         <!-- Developer technical story -->
         <div class="prose__rewrite" data-show-when="developer">
           <div class="prose__rewrite-label">v1 → v2 · the rewrite</div>
-          <p>v1 was Python + Presidio + spaCy + heavy ML deps. It worked, but every install fought Claude Desktop's runtime. v2.0.2 is a <strong class="strong--fg">complete Node.js rewrite</strong> over <code>onnxruntime-node</code> + <code>@xenova/transformers</code> — same detection coverage, no Python install, ~700 KB plugin instead of ~80 MB. v1 is still public at <code>gregmos/PII-Shield</code> for the legacy crowd.</p>
-        </div>
-
-        <div class="prose__rewrite" data-show-when="developer">
-          <div class="prose__rewrite-label">footprint · before / after</div>
-          <p>v1: ~80 MB plugin, Python runtime conflicts with Claude Desktop's bundled environment, Presidio + spaCy heavy install. v2.0.2: <strong class="strong--fg">700 KB plugin</strong> on Windows/Linux (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB <code>gliner-pii-base-v1.0</code> model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 18/20.</p>
+          <p>v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2.0.2 is a <strong class="strong--fg">complete Node.js rewrite</strong> over <code>onnxruntime-node</code> + <code>@xenova/transformers</code>: same detection coverage, no Python.</p>
+          <p>Plugin: <strong class="strong--fg">700 KB on Windows/Linux</strong> (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB <code>gliner-pii-base-v1.0</code> model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 18/20.</p>
+          <p>v1 is still public at <code>gregmos/PII-Shield</code> for the legacy crowd.</p>
         </div>
       </div>
     </section>
