@@ -1,0 +1,268 @@
+# Grigorii Moskalev — Legal counsel and legal engineer
+
+> Grigorii Moskalev is a legal counsel at FaceApp who builds AI tools for legal teams. 11 years practicing law, 3 years writing Python. Author of PII Shield (open-source MCP server that anonymizes documents before LLM analysis) and Brand monitor (trademark-infringement scanner). Teaches a course on LLM use for lawyers — 100+ students. Based in Limassol, Cyprus.
+
+This file is the long-form Markdown export of gmoskalev.com for LLM ingestion. The slim index is at [llms.txt](https://gmoskalev.com/llms.txt).
+
+---
+
+# Profile
+
+- **Name:** Grigorii Moskalev (also Greg Moskalev / Grigory Moskalyov)
+- **Role:** Legal Counsel @ FaceApp
+- **Based:** Limassol, Cyprus
+- **Stack:** Law · Python · LLMs
+- **Languages:** English, Russian, Greek
+
+# About
+
+11 years practicing law, 3 years writing Python, and a growing overlap between the two. I run the legal function at FaceApp, a consumer AI product used by hundreds of millions, across IP, privacy, corporate, and app-store disputes. Before that, KPMG and senior in-house roles at international tech companies across Cyprus, the EU, and beyond.
+
+Legal engineering is what I genuinely love. I've built RAG pipelines over our internal corpus, contract analytics, MCP servers that keep client data off the API. I work with prompt engineering and fine-tuning, and I deploy local models when client data shouldn't reach a hosted one in the first place.
+
+I've also shipped legal-tech projects as a product owner, taking ideas from zero to launch and owning the spec, the flows, and the API.
+
+I teach a course and run a Telegram channel for lawyers learning to work with LLMs — 100+ students so far.
+
+## Quick facts
+
+- 11 years practicing law
+- Practice areas: IP · Privacy · Corporate
+- 100+ students taught
+- Legal function lead at FaceApp
+- Languages: EN · RU · GR
+
+# Projects
+
+## PII Shield
+
+- **Tagline:** Anonymize documents before Claude sees them. Restore real data after analysis.
+- **Status:** Live, v2.0.2
+- **Repo:** https://github.com/gregmos/PII-Shield-staging
+- **License:** MIT
+- **Stack:** Node.js, MCP, GLiNER, ONNX, DOCX
+
+MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (`<PERSON_1>`, `<ORG_1>`, etc.), and sends only the anonymized text to Claude. After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.
+
+## Brand monitor
+
+- **Tagline:** Find the apps stealing your name and the sites cracking your build — every week, on autopilot.
+- **Status:** Live
+- **Repo:** https://github.com/gregmos/Brand-monitor
+- **Stack:** SKILL.md, iTunes API, Vision, WHOIS, Excel
+
+Skill that scans the App Store and the open web for knockoffs and cracked APKs of your app. iTunes Search across countries plus fuzzy-matching narrows ~1,000 listings to ~50 real candidates; icon vision and WHOIS-backed evidence packages confirm the rest. An LLM layer scores risk, recommends action, and ships a prioritized Excel report. The whole thing is a single SKILL.md — drop it into Claude or OpenClaw, tell it your trademark and target countries, and it runs itself. Hours of manual work → ~20 minutes of review.
+
+# Contact
+
+- LinkedIn (primary): https://www.linkedin.com/in/grigorii-moskalev
+- Email: grigory.moskalyov@gmail.com
+- Telegram: https://t.me/gregms (@gregms)
+- GitHub: https://github.com/gregmos
+
+For anything at the intersection of law and AI — let's talk.
+
+---
+
+# PII Shield — full product page
+
+## What it is
+
+PII Shield is an open-source MCP server for Claude Desktop. The user drops a file into a connected folder; PII Shield reads it locally, replaces every name, ID, and number with placeholders, and only the anonymized text crosses the wire. After the model finishes, the real values are stitched back into the output on the user's machine. The original text never leaves the disk.
+
+## Pipeline (how it flows)
+
+The document is anonymized locally; only placeholder text reaches Claude. When the model is done, PII is stitched back in — without ever leaving your disk.
+
+Stages:
+1. **Document** (PDF · DOCX · TXT) — has PII
+2. **PII Shield** — anonymize (LOCAL)
+3. **Claude API** — analyze placeholders (REMOTE)
+4. **PII Shield** — restore (LOCAL)
+5. **Result** — analysis with real names
+
+PII never leaves the machine. Anonymization and restoration both happen locally.
+
+### MCP call sequence (developer view)
+
+- Document → Shield: `anonymize_file({ file_path, session_id? })` → `{ session_id, entity_count, output_path, … }`
+- Shield → Claude API: Claude reads `output_path` from the connected folder. Only placeholders cross the wire.
+- Claude API → Shield: model output flows back as text — still placeholder-only.
+- Shield → Result: `deanonymize_docx({ file_path, session_id })` or `deanonymize_text({ text, session_id })` stitches the real PII back in, locally.
+
+### Transform example (before/after Claude sees)
+
+Before (real document):
+- John Smith signed the NDA.
+- ACME Corp v. Globex.
+- Contact: john@acme.example
+- Amount: €120,000 via IBAN CY17…
+- UK NIN: AB123456C · DOB 1984-06-12
+
+After (what Claude sees over API):
+- `<PERSON_1>` signed the NDA.
+- `<ORG_1>` v. `<ORG_2>`.
+- Contact: `<EMAIL_1>`
+- Amount: `<MONEY_1>` via IBAN `<IBAN_1>`
+- UK NIN: `<UK_NIN_1>` · DOB `<DATE_1>`
+
+## Why this exists
+
+Pasting client material into a consumer LLM is both a privacy and a privilege problem.
+
+A federal court has already confirmed the privilege side directly: in *United States v. Heppner* (S.D.N.Y., February 2026), documents a defendant created with consumer Claude were ruled outside attorney-client privilege. An AI tool is not an attorney and owes no duty of confidentiality.
+
+PII Shield runs the redaction step before the model sees anything. It's an MCP server for Claude Desktop — drop a file, Claude receives placeholders like `<PERSON_1>` and `<ORG_2>`, and the real values are stitched back into the output on your machine. The original text never leaves your disk.
+
+### v1 → v2 · the rewrite (developer view)
+
+v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2.0.2 is a complete Node.js rewrite over `onnxruntime-node` + `@xenova/transformers`: same detection coverage, no Python.
+
+Plugin: 700 KB on Windows/Linux (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB `gliner-pii-base-v1.0` model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 18/20.
+
+v1 is still public at `gregmos/PII-Shield` for the legacy crowd.
+
+## Skill modes (six task-shaped workflows)
+
+The companion `pii-contract-analyze` skill ships six task-shaped modes. Each runs the same anonymize → analyze → deanonymize pipeline, just optimized for a different deliverable:
+
+1. **MEMO** — legal memorandum on a contract or set of contracts
+2. **REDLINE** — tracked-changes redline against a baseline document
+3. **SUMMARY** — short-form summary
+4. **COMPARISON** — diff two documents
+5. **BULK** — process up to five files in one session
+6. **ANONYMIZE** — anonymize without analysis (handoff use)
+
+## What it detects
+
+17 country-specific patterns on top of generic name and entity detection.
+
+### Jurisdictions (17 EU + UK patterns)
+
+- **United Kingdom** (5): NIN · NHS · Passport · CRN · Driving licence
+- **Germany** (2): Tax ID · Social security
+- **France** (2): NIR · CNI
+- **Italy** (2): Fiscal code · VAT
+- **Spain** (2): DNI · NIE
+- **Cyprus** (2): TIC · National ID
+- **EU-wide** (2): VAT · Passport
+
+### Generic, jurisdiction-agnostic
+
+person · org · location · email · phone · IBAN · credit card · crypto wallet · US SSN · US EIN · medical licence · money · date
+
+### Detection method (developer view)
+
+- **NER (zero-shot)** via GLiNER: person, org, location
+- **Regex / pattern**: all 17 jurisdiction patterns + email · phone · IBAN · credit card · crypto · SSN · EIN · licences · money · date
+
+## Quick start
+
+Four steps. No terminal.
+
+1. **Download the artefacts** — pick the `.mcpb` for your OS plus the contract-analyze skill. Direct links to the v2.0.2 release: https://github.com/gregmos/PII-Shield-staging/releases/tag/v2.0.2
+2. **Install in Claude Desktop** — Settings → Extensions → Advanced Settings → Install extension. On first call, PII Shield runs `npm ci --ignore-scripts` to install pinned runtime deps (`onnxruntime-node`, `@xenova/transformers`, `gliner`) into `~/.pii_shield/deps/` — 2-3 minutes once per machine, instant thereafter.
+3. **Connect a folder** with your documents — Claude Desktop → Settings → Connected folders. (Don't drag-attach files into the chat — the raw document hits the API before PII Shield can intercept.)
+4. **Use it from a chat** — pick the `pii-contract-analyze` skill, tell Claude what you need.
+
+### First-run model install
+
+The first time you ask Claude to anonymize, PII Shield notices the GLiNER model isn't on disk and opens an in-chat install panel: download (~634 MB, fetched by browser) and install ZIP (validated, atomic-extracted into `~/.pii_shield/models/`). Subsequent runs skip the panel.
+
+### Build & verify locally (developer)
+
+```
+npm ci --ignore-scripts --legacy-peer-deps
+npm run build              # esbuild bundle
+npm run smoke              # node scripts/smoke-protocol.mjs
+npm test                   # 8 suites, incl. multi-doc HITL & session archival
+```
+
+CI runs the same matrix on Ubuntu / Windows / macOS × Node 18 / 20.
+
+## Compliance & audit
+
+Three logs, all on-disk:
+
+- `~/.pii_shield/audit/mcp_audit.log` — every MCP call (anonymize, deanonymize, export, import) with timestamp, file path, entity counts.
+- `~/.pii_shield/audit/ner_init.log` — model initialization events.
+- `~/.pii_shield/audit/pii_shield_server.log` — server lifecycle.
+
+No telemetry, no remote logging endpoint. If your DPO asks "what did the tool do with that file at 14:02 UTC," the answer is on your filesystem.
+
+### Storage layout (developer)
+
+Encrypted handoff: `export_session(passphrase)` → `.pii-session` archive (AES-GCM + scrypt-derived key). Mappings live at `~/.pii_shield/mappings/`, models at `~/.pii_shield/models/`, audit trail appendable at `~/.pii_shield/audit/mcp_audit.log`. Session TTL 7 days, configurable. All inputs validated with Zod (TypeScript strict). Off-network by design — no telemetry endpoint to disable.
+
+## Features
+
+- **Zero PII in API** — every call to Claude carries placeholders only.
+- **GLiNER NER** — `gliner-pii-base-v1.0` running on `onnxruntime-node`, on-device.
+- **HITL review** — `start_review` opens an in-chat iframe to add/remove/edit detected entities; `apply_review_overrides` propagates corrections across all occurrences in the session.
+- **Entity dedup** — identical entities collapse to one placeholder; reduces output token noise.
+- **Cross-session deanon** — `deanonymize_docx` works in any chat using the docx's embedded session_id.
+- **Multi-file sessions** — pass `session_id` to `anonymize_file` to extend a session; identical entities across files share placeholders.
+- **Encrypted handoff** — `export_session(passphrase)` → `.pii-session` archive (AES-GCM via scrypt). Hand off to a colleague with just the passphrase.
+- **On-device audit logging** — every action recorded to `~/.pii_shield/audit/mcp_audit.log`.
+
+## MCP tools (developer view — 17 tools, 4 groups)
+
+### Anonymize (4)
+- `anonymize_file` — preferred entry point. Anonymizes PDF/DOCX/TXT. PII stays on host.
+- `anonymize_text` — anonymize raw string.
+- `anonymize_docx` — DOCX-specific, preserves formatting.
+- `anonymize_next_chunk` — chunked processing for documents >5000 chars.
+
+### Review (5)
+- `start_review` — open the HITL iframe inside Claude Desktop.
+- `apply_review_overrides` — apply user edits, propagate across the session.
+- `get_full_anonymized_text` — return full anonymized text for piping.
+- `deanonymize_text` — restore PII placeholders → real values in a string.
+- `deanonymize_docx` — restore PII in DOCX using its embedded `session_id`.
+
+### Session (3)
+- `export_session` — pack mapping + anonymized files into encrypted `.pii-session` archive.
+- `import_session` — unlock and load a `.pii-session` archive.
+- `get_mapping` — inspect the placeholder ↔ value mapping.
+
+### Utility (5)
+- `scan_text` — preview-only entity detection without creating a session.
+- `list_entities` — list all detected entities, grouped by type.
+- `find_file` — resolve a path inside a connected folder.
+- `resolve_path` — relative or absolute path resolution.
+- `install_model_from_download` — install GLiNER from a local download.
+
+### Round-trip example
+
+```
+// 1. anonymize a file — original stays on disk; only placeholders cross the wire
+→ anonymize_file({ file_path: "~/contracts/nda.docx" })
+← { status: "success",
+    session_id: "m9q8x4-7b5a91",
+    entity_count: 14,
+    output_path: ".../nda.anon.txt",
+    docx_output_path: ".../nda.anon.docx",
+    by_type: { PERSON: 4, ORG: 3, MONEY: 2, ... } }
+
+// 2. Claude reads output_path and drafts a memo using placeholders only
+
+// 3. restore PII into the draft, locally
+→ deanonymize_text({ text: draft, session_id: "m9q8x4-7b5a91" })
+← { status: "success",
+    deanonymized_text: "...John Smith signed the NDA..." }
+```
+
+All inputs validated with Zod. Errors return MCP-protocol-shaped `{ isError: true, content: [...] }` instead of throwing.
+
+## Stack
+
+Built with: Node.js 18+, MCP (Model Context Protocol), GLiNER, onnxruntime-node, @xenova/transformers, DOCX (pure JS), pdf-parse, AES-GCM / scrypt, MIT license.
+
+Tested on: Ubuntu / Windows / macOS, Node 18 / 20, 8 test suites, MCP protocol smoke test, Zod schema validation.
+
+---
+
+# Source
+
+Site source: https://github.com/gregmos/gmoskalev.com (MIT-licensed).
+Last updated: 2026-04-26.

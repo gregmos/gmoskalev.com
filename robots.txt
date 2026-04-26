@@ -1,0 +1,57 @@
+# gmoskalev.com — robots.txt
+# Default: allow everything to all crawlers.
+
+User-agent: *
+Allow: /
+
+# Explicitly allow AI / search bots used for grounding and training.
+# Names current as of April 2026.
+
+# OpenAI
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic — three-bot framework (Claude-Web and anthropic-ai are deprecated)
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Google AI Overviews / Gemini training
+User-agent: Google-Extended
+Allow: /
+
+# Apple Intelligence
+User-agent: Applebot-Extended
+Allow: /
+
+# Meta AI
+User-agent: meta-externalagent
+Allow: /
+
+# Bytedance / TikTok
+User-agent: Bytespider
+Allow: /
+
+# Common Crawl (powers many open datasets)
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://gmoskalev.com/sitemap.xml

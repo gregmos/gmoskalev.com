@@ -6,6 +6,71 @@
   <title>PII Shield — Anonymize documents before Claude sees them</title>
   <meta name="description" content="MCP server for Claude Desktop that reads documents locally, replaces personal data with placeholders, and restores it after analysis. PII never enters the API." />
 
+  <link rel="canonical" href="https://gmoskalev.com/pii-shield" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="PII Shield — Anonymize documents before Claude sees them" />
+  <meta property="og:description" content="Open-source MCP server for Claude Desktop. Anonymizes documents locally, sends only placeholders to the API, restores PII into the final output. Built by Grigorii Moskalev." />
+  <meta property="og:url" content="https://gmoskalev.com/pii-shield" />
+  <meta property="og:site_name" content="gmoskalev.com" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://gmoskalev.com/pii-shield#software",
+        "name": "PII Shield",
+        "url": "https://gmoskalev.com/pii-shield",
+        "softwareVersion": "2.0.2",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Windows, macOS, Linux",
+        "description": "Node.js MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (<PERSON_1>, <ORG_1>, etc.), and sends only the anonymized text to Claude. After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.",
+        "downloadUrl": "https://github.com/gregmos/PII-Shield-staging/releases",
+        "codeRepository": "https://github.com/gregmos/PII-Shield-staging",
+        "license": "https://opensource.org/licenses/MIT",
+        "programmingLanguage": ["TypeScript", "Node.js"],
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "author": { "@id": "https://gmoskalev.com/#person" },
+        "creator": { "@id": "https://gmoskalev.com/#person" },
+        "featureList": [
+          "Anonymize PDF, DOCX, TXT, MD, CSV documents locally",
+          "GLiNER-based NER for person, org, location",
+          "17 jurisdiction-specific pattern recognizers (UK, DE, FR, IT, ES, CY, EU)",
+          "Generic detection: email, phone, IBAN, credit card, crypto wallet, SSN, EIN, money, date",
+          "Encrypted session export with AES-GCM + scrypt-derived key",
+          "Multi-document session pooling — identical entities share placeholders across files",
+          "Human-in-the-loop review for false positives / negatives",
+          "On-device audit log at ~/.pii_shield/audit/mcp_audit.log"
+        ]
+      },
+      {
+        "@type": "Person",
+        "@id": "https://gmoskalev.com/#person",
+        "name": "Grigorii Moskalev",
+        "url": "https://gmoskalev.com/",
+        "jobTitle": "Legal Counsel",
+        "worksFor": { "@type": "Organization", "name": "FaceApp" },
+        "sameAs": [
+          "https://www.linkedin.com/in/grigorii-moskalev",
+          "https://github.com/gregmos",
+          "https://t.me/gregms"
+        ]
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://gmoskalev.com/pii-shield#webpage",
+        "url": "https://gmoskalev.com/pii-shield",
+        "name": "PII Shield — Anonymize documents before Claude sees them",
+        "primaryImageOfPage": null,
+        "about": { "@id": "https://gmoskalev.com/pii-shield#software" },
+        "inLanguage": "en"
+      }
+    ]
+  }
+  </script>
+
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230A0A0A'/><path d='M32 14 L18 20 V34 C18 43 24 49 32 52 C40 49 46 43 46 34 V20 Z' fill='none' stroke='%2300E27A' stroke-width='3' stroke-linejoin='round'/></svg>" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />

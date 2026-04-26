@@ -1,0 +1,25 @@
+# Grigorii Moskalev — Legal counsel and legal engineer
+
+> Grigorii Moskalev is a legal counsel at FaceApp who builds AI tools for legal teams. 11 years practicing law, 3 years writing Python. Author of PII Shield (open-source MCP server that anonymizes documents before LLM analysis) and Brand monitor (trademark-infringement scanner). Teaches a course on LLM use for lawyers — 100+ students. Based in Limassol, Cyprus.
+
+## Pages
+
+- [Home / About](https://gmoskalev.com/): Profile, about, projects, contact.
+- [PII Shield](https://gmoskalev.com/pii-shield): Product page — open-source MCP server for Claude Desktop that anonymizes documents locally before they reach the API. Covers pipeline, six skill modes, what it detects, install, compliance, MCP tools, stack.
+
+## Projects
+
+- [PII Shield (GitHub)](https://github.com/gregmos/PII-Shield-staging): Node.js MCP server v2.0.2. Anonymizes PDF, DOCX, TXT files locally with GLiNER NER + 17 jurisdiction-specific pattern recognizers (UK, DE, FR, IT, ES, CY, EU). AES-GCM session export, multi-document session pooling, HITL review. MIT-licensed.
+- [Brand monitor (GitHub)](https://github.com/gregmos/Brand-monitor): Skill that scans App Store and the open web for trademark infringers and pirated APKs. Runs weekly. Single SKILL.md file — works on Claude or OpenClaw.
+- [PII Shield v1 (GitHub, archived)](https://github.com/gregmos/PII-Shield): Python + Presidio + spaCy original. Replaced by v2 Node.js rewrite. Kept public for legacy users.
+
+## Contact
+
+- LinkedIn: https://www.linkedin.com/in/grigorii-moskalev
+- GitHub: https://github.com/gregmos
+- Telegram: https://t.me/gregms
+- Email: grigory.moskalyov@gmail.com
+
+## Optional
+
+- [llms-full.txt](https://gmoskalev.com/llms-full.txt): Full Markdown export of the site for LLM ingestion.
