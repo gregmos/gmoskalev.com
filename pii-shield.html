@@ -792,132 +792,261 @@
     }
 
     /* ════════════════════════════════════════════════════════════════
-       INLINE STATS (merged into "What it detects")
+       CASE CITATION (inline span + hover/tap card)
        ════════════════════════════════════════════════════════════════ */
-    .stats-inline {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 32px;
-      padding: 18px 22px;
-      border: 1px solid var(--hair);
+    .case {
+      font-style: italic;
+      color: var(--fg);
+      cursor: help;
+      border-bottom: 1px dotted var(--fg-dimmer);
+      padding-bottom: 1px;
+      transition: color 150ms ease, border-color 150ms ease;
+    }
+    .case:hover,
+    .case:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+    .case:focus-visible { outline-offset: 4px; }
+
+    .casecard {
+      position: fixed;
+      z-index: 80;
+      max-width: 360px;
+      background: var(--bg-elev-2);
+      border: 1px solid var(--hair-2);
       border-radius: 10px;
-      background: rgba(255,255,255,0.015);
-      margin-bottom: 32px;
+      padding: 18px 20px 20px;
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.3);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 140ms ease, transform 140ms ease;
     }
-    .stat-inline {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .casecard::before {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--accent) 50%, transparent), transparent);
+      border-radius: 10px 10px 0 0;
     }
-    .stat-inline__v {
-      font-family: var(--font-mono);
+    .casecard.show { opacity: 1; transform: translateY(0); }
+    .casecard.pinned { pointer-events: auto; }
+    .casecard-close {
+      display: none;
+      position: absolute;
+      top: 8px; right: 10px;
+      width: 28px; height: 28px;
+      background: transparent;
+      border: 0;
+      color: var(--fg-dimmer);
+      font-family: inherit;
       font-size: 22px;
-      font-weight: 500;
-      color: var(--accent);
-      letter-spacing: -0.02em;
       line-height: 1;
-      font-variant-numeric: tabular-nums;
+      cursor: pointer;
+      padding: 0;
+      transition: color 140ms ease;
     }
-    .stat-inline__k {
+    .casecard-close:hover,
+    .casecard-close:focus-visible { color: var(--fg); }
+    .casecard.pinned .casecard-close { display: block; }
+    .casecard__name {
+      font-style: italic;
+      font-size: 16.5px;
+      font-weight: 500;
+      color: var(--fg);
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+      padding-right: 28px;
+    }
+    .casecard__cit {
       font-family: var(--font-mono);
       font-size: 11px;
       color: var(--fg-dim);
-      text-transform: lowercase;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
+      margin-bottom: 14px;
     }
-    @media (max-width: 480px) {
-      .stats-inline { gap: 20px; padding: 14px 16px; }
+    .casecard__lbl {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--fg-dimmer);
+      margin-bottom: 6px;
+    }
+    .casecard__hld {
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--fg);
+    }
+    .casecard__rel {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--hair);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--fg-dim);
+      font-style: italic;
+    }
+    @media (max-width: 560px) {
+      .casecard {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 16px !important;
+        top: auto !important;
+        max-width: none !important;
+      }
     }
 
     /* ════════════════════════════════════════════════════════════════
-       RECOGNIZERS (jurisdiction grid + generic pills)
+       COVERAGE (unified jurisdictions + generic types)
+       Replaces .stats-inline, .recognizers, .juris, .generic-pills
        ════════════════════════════════════════════════════════════════ */
-    .recognizers {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 12px;
-    }
-    .juris {
-      padding: 18px 20px;
+    .coverage {
       border: 1px solid var(--hair);
       border-radius: 8px;
       background: rgba(255,255,255,0.015);
-      transition: border-color 180ms ease, background 180ms ease;
-      position: relative;
       overflow: hidden;
     }
-    .juris::after {
-      content: "";
-      position: absolute;
-      left: 0; top: 0;
-      width: 0;
-      height: 1px;
-      background: var(--accent);
-      opacity: 0;
-      transition: width 280ms var(--ease-out-cubic), opacity 220ms;
+    .coverage__row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 20px;
+      align-items: start;
+      padding: 16px 20px;
     }
-    .juris:hover {
-      border-color: var(--hair-2);
-      background: rgba(255,255,255,0.025);
+    .coverage__row + .coverage__row {
+      border-top: 1px solid var(--hair);
     }
-    .juris:hover::after { width: 100%; opacity: 0.5; }
-    .juris__head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .juris__code {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.08em;
-      padding: 2px 6px;
-      border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
-      border-radius: 3px;
-      background: color-mix(in oklab, var(--accent) 5%, transparent);
-    }
-    .juris__count {
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      color: var(--fg-faint);
-    }
-    .juris__name {
-      font-family: var(--font-mono);
-      font-size: 13.5px;
-      color: var(--fg);
-      margin-bottom: 8px;
-      letter-spacing: -0.01em;
-    }
-    .juris__items {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--fg-dim);
-      line-height: 1.6;
-    }
-    .generic-pills {
-      margin-top: 28px;
-      padding: 22px 24px;
-      border: 1px solid var(--hair);
-      border-radius: 8px;
-      background: rgba(255,255,255,0.015);
-    }
-    .generic-pills__title {
+    .coverage__label {
       font-family: var(--font-mono);
       font-size: 11px;
       color: var(--fg-dimmer);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      margin-bottom: 14px;
+      padding-top: 6px;
+      line-height: 1;
     }
-    .generic-pills__list {
+    .coverage__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 4px;
     }
-    .generic-pills .tag {
+
+    /* Jurisdiction chip — code + count visible, detail in absolute popover on hover/focus */
+    .cov {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px 5px 6px;
+      border: 1px solid var(--hair);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.015);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--fg-dim);
+      cursor: default;
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+    }
+    .cov:hover,
+    .cov:focus-visible {
+      border-color: var(--hair-2);
+      background: rgba(255,255,255,0.04);
+      color: var(--fg);
+      z-index: 2;
+    }
+    .cov__code {
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: color-mix(in oklab, var(--accent) 8%, transparent);
+      border: 1px solid color-mix(in oklab, var(--accent) 25%, transparent);
+      line-height: 1.4;
+      font-variant-numeric: tabular-nums;
+    }
+    .cov__n {
+      font-size: 10.5px;
+      color: var(--fg-faint);
+      font-variant-numeric: tabular-nums;
+    }
+    .cov__detail {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 3;
+      padding: 6px 10px;
+      border: 1px solid var(--hair-2);
+      border-radius: 4px;
+      background: var(--bg, #0b0b0d);
       font-size: 11.5px;
+      color: var(--fg);
+      letter-spacing: -0.005em;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(-2px);
+      pointer-events: none;
+      transition: opacity 140ms ease, transform 160ms var(--ease-out-cubic);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+    .cov:hover .cov__detail,
+    .cov:focus-visible .cov__detail {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Right-edge chips flip the popover origin so it doesn't clip off-screen.
+       Toggled by JS at load/resize via getBoundingClientRect. */
+    .cov.is-edge-right .cov__detail {
+      left: auto;
+      right: 0;
+    }
+
+    /* Generic types — same chip shape, no badge, no popover */
+    .cov--generic {
+      padding: 5px 8px;
+      color: var(--fg-dim);
+    }
+
+    /* Reduced motion: skip popover transform animation */
+    @media (prefers-reduced-motion: reduce) {
+      .cov__detail { transition: opacity 140ms ease; transform: none; }
+      .cov:hover .cov__detail,
+      .cov:focus-visible .cov__detail { transform: none; }
+    }
+
+    /* Mobile: stack label above chips, inline details below code (no hover on touch) */
+    @media (max-width: 600px) {
+      .coverage__row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px 12px 14px;
+      }
+      .coverage__label { padding-top: 0; }
+      .coverage__list { gap: 6px; }
+      .cov {
+        flex-wrap: wrap;
+        padding: 6px 10px;
+      }
+      .cov__detail {
+        position: static;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        white-space: normal;
+        flex-basis: 100%;
+        color: var(--fg-dim);
+        margin-top: 2px;
+        font-size: 11px;
+      }
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -1794,9 +1923,9 @@
       </div>
       <h2 class="section__h" data-reveal="settle">The problem with "just use a model"</h2>
       <div class="prose">
-        <p>Pasting an NDA, a deposition, or a client memo into an LLM is fast. It's also a leak — the text hits an API and may get logged, trained on, or retained past your policy.</p>
-        <p>That's not a trade a lawyer can make. The same paragraph carries client privilege, GDPR or BIPA consent, and an NDA — often all three at once.</p>
-        <p>PII Shield redacts <em>before</em> the model sees anything. Drop a file into Claude Desktop and Claude receives placeholders; when the answer comes back, PII Shield stitches the real values in — all without leaving your disk.</p>
+        <p>Pasting client material into a consumer LLM is both a privacy and a privilege problem.</p>
+        <p>A federal court has already confirmed the privilege side directly: in <span class="case" data-case="heppner">United States v. Heppner (SDNY, February 2026)</span>, documents a defendant created with consumer Claude were ruled outside attorney-client privilege. An AI tool is not an attorney and owes no duty of confidentiality.</p>
+        <p>PII Shield runs the redaction step before the model sees anything. It's an MCP server for Claude Desktop — drop a file, Claude receives placeholders like <code>&lt;PERSON_1&gt;</code> and <code>&lt;ORG_2&gt;</code>, and the real values are stitched back into the output on your machine. The original text never leaves your disk.</p>
 
         <!-- Developer technical story -->
         <div class="prose__rewrite" data-show-when="developer">
@@ -1876,82 +2005,62 @@
         <span class="section-label__title">What it detects</span>
       </div>
       <h2 class="section__h" data-reveal="settle">National IDs, tax numbers, passports — and the obvious stuff too</h2>
-      <p class="section__lede">17 country-specific patterns on top of generic name and entity detection. The fields a "find all emails" regex would never catch.</p>
+      <p class="section__lede">17 country-specific patterns on top of generic entity detection. The fields a "find all emails" regex would never catch.</p>
 
-      <!-- Inlined small stats — real numbers in HTML, no count-up flash -->
-      <div class="stats-inline">
-        <div class="stat-inline">
-          <span class="stat-inline__v">33</span>
-          <span class="stat-inline__k">entity types</span>
+      <!-- Unified dense coverage block — country chips with hover/tap detail + generic types inline -->
+      <div class="coverage" data-reveal="settle">
+        <div class="coverage__row">
+          <span class="coverage__label" data-show-when="lawyer">Jurisdictions</span>
+          <span class="coverage__label" data-show-when="developer">EU + UK patterns</span>
+          <ul class="coverage__list" role="list">
+            <li class="cov" tabindex="0" aria-label="United Kingdom: 5 patterns — NIN, NHS, Passport, CRN, Driving licence">
+              <span class="cov__code">UK</span><span class="cov__n">5</span>
+              <span class="cov__detail">NIN · NHS · Passport · CRN · Driving licence</span>
+            </li>
+            <li class="cov" tabindex="0" aria-label="Germany: 2 patterns — Tax ID, Social security">
+              <span class="cov__code">DE</span><span class="cov__n">2</span>
+              <span class="cov__detail">Tax ID · Social security</span>
+            </li>
+            <li class="cov" tabindex="0" aria-label="France: 2 patterns — NIR, CNI">
+              <span class="cov__code">FR</span><span class="cov__n">2</span>
+              <span class="cov__detail">NIR · CNI</span>
+            </li>
+            <li class="cov" tabindex="0" aria-label="Italy: 2 patterns — Fiscal code, VAT">
+              <span class="cov__code">IT</span><span class="cov__n">2</span>
+              <span class="cov__detail">Fiscal code · VAT</span>
+            </li>
+            <li class="cov" tabindex="0" aria-label="Spain: 2 patterns — DNI, NIE">
+              <span class="cov__code">ES</span><span class="cov__n">2</span>
+              <span class="cov__detail">DNI · NIE</span>
+            </li>
+            <li class="cov" tabindex="0" aria-label="Cyprus: 2 patterns — TIC, National ID">
+              <span class="cov__code">CY</span><span class="cov__n">2</span>
+              <span class="cov__detail">TIC · National ID</span>
+            </li>
+            <li class="cov" tabindex="0" aria-label="EU-wide: 2 patterns — VAT, Passport">
+              <span class="cov__code">EU</span><span class="cov__n">2</span>
+              <span class="cov__detail">VAT · Passport</span>
+            </li>
+          </ul>
         </div>
-        <div class="stat-inline">
-          <span class="stat-inline__v">17</span>
-          <span class="stat-inline__k">EU + UK patterns</span>
-        </div>
-        <div class="stat-inline" data-show-when="lawyer">
-          <span class="stat-inline__v">6</span>
-          <span class="stat-inline__k">skill modes</span>
-        </div>
-        <div class="stat-inline" data-show-when="developer">
-          <span class="stat-inline__v">17</span>
-          <span class="stat-inline__k">MCP tools</span>
-        </div>
-      </div>
 
-      <div class="recognizers" data-reveal="stagger">
-        <div class="juris">
-          <div class="juris__head"><span class="juris__code">UK</span><span class="juris__count">5</span></div>
-          <div class="juris__name">United Kingdom</div>
-          <div class="juris__items">NIN · NHS · Passport · CRN · Driving licence</div>
-        </div>
-        <div class="juris">
-          <div class="juris__head"><span class="juris__code">DE</span><span class="juris__count">2</span></div>
-          <div class="juris__name">Germany</div>
-          <div class="juris__items">Tax ID · Social security</div>
-        </div>
-        <div class="juris">
-          <div class="juris__head"><span class="juris__code">FR</span><span class="juris__count">2</span></div>
-          <div class="juris__name">France</div>
-          <div class="juris__items">NIR · CNI</div>
-        </div>
-        <div class="juris">
-          <div class="juris__head"><span class="juris__code">IT</span><span class="juris__count">2</span></div>
-          <div class="juris__name">Italy</div>
-          <div class="juris__items">Fiscal code · VAT</div>
-        </div>
-        <div class="juris">
-          <div class="juris__head"><span class="juris__code">ES</span><span class="juris__count">2</span></div>
-          <div class="juris__name">Spain</div>
-          <div class="juris__items">DNI · NIE</div>
-        </div>
-        <div class="juris">
-          <div class="juris__head"><span class="juris__code">CY</span><span class="juris__count">2</span></div>
-          <div class="juris__name">Cyprus</div>
-          <div class="juris__items">TIC · National ID</div>
-        </div>
-        <div class="juris">
-          <div class="juris__head"><span class="juris__code">EU</span><span class="juris__count">2</span></div>
-          <div class="juris__name">EU-wide</div>
-          <div class="juris__items">VAT · Passport</div>
-        </div>
-      </div>
-
-      <div class="generic-pills">
-        <div class="generic-pills__title">Generic, jurisdiction-agnostic</div>
-        <div class="generic-pills__list">
-          <span class="tag">person</span>
-          <span class="tag">org</span>
-          <span class="tag">location</span>
-          <span class="tag">email</span>
-          <span class="tag">phone</span>
-          <span class="tag">IBAN</span>
-          <span class="tag">credit card</span>
-          <span class="tag">crypto wallet</span>
-          <span class="tag">US SSN</span>
-          <span class="tag">US EIN</span>
-          <span class="tag">medical licence</span>
-          <span class="tag">money</span>
-          <span class="tag">date</span>
+        <div class="coverage__row coverage__row--generic">
+          <span class="coverage__label">Generic</span>
+          <ul class="coverage__list coverage__list--generic" role="list">
+            <li class="cov cov--generic">person</li>
+            <li class="cov cov--generic">org</li>
+            <li class="cov cov--generic">location</li>
+            <li class="cov cov--generic">email</li>
+            <li class="cov cov--generic">phone</li>
+            <li class="cov cov--generic">IBAN</li>
+            <li class="cov cov--generic">credit card</li>
+            <li class="cov cov--generic">crypto wallet</li>
+            <li class="cov cov--generic">US SSN</li>
+            <li class="cov cov--generic">US EIN</li>
+            <li class="cov cov--generic">medical licence</li>
+            <li class="cov cov--generic">money</li>
+            <li class="cov cov--generic">date</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -2266,6 +2375,8 @@
     </div>
   </footer>
 
+  <div class="casecard" id="casecard" role="dialog" aria-label="Case detail" aria-hidden="true"></div>
+
   <script>
     (function () {
       var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2291,6 +2402,48 @@
           syncToggleUI(audience);
         });
       });
+
+      // ─── 1b. Coverage chip popover edge-clip guard ───────────────
+      // Country chips have absolutely-positioned popovers anchored left:0.
+      // For chips whose right edge sits within their popover width of the
+      // viewport edge, flip the anchor to right:0 so the popover stays on-screen.
+      // Single rAF on load + resize, no scroll listener.
+      var coverageChips = document.querySelectorAll('.cov:not(.cov--generic)');
+      if (coverageChips.length) {
+        var edgeRaf = 0;
+        function updateEdgeFlags() {
+          edgeRaf = 0;
+          var vw = window.innerWidth;
+          // On mobile (<= 600px) popovers are static (CSS); skip the work.
+          if (vw <= 600) {
+            coverageChips.forEach(function (c) { c.classList.remove('is-edge-right'); });
+            return;
+          }
+          coverageChips.forEach(function (chip) {
+            var detail = chip.querySelector('.cov__detail');
+            if (!detail) return;
+            // Reset to default (left:0) so we measure intrinsic popover width.
+            chip.classList.remove('is-edge-right');
+            var chipRect = chip.getBoundingClientRect();
+            var popWidth = detail.offsetWidth;
+            // 8px viewport breathing room.
+            if (chipRect.left + popWidth + 8 > vw) {
+              chip.classList.add('is-edge-right');
+            }
+          });
+        }
+        function scheduleEdgeUpdate() {
+          if (edgeRaf) return;
+          edgeRaf = requestAnimationFrame(updateEdgeFlags);
+        }
+        // Initial pass after layout settles (fonts may shift widths).
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(scheduleEdgeUpdate);
+        } else {
+          scheduleEdgeUpdate();
+        }
+        window.addEventListener('resize', scheduleEdgeUpdate, { passive: true });
+      }
 
       // ─── 2. Wrap placeholder chars for entity-typeout ─────────────
       document.querySelectorAll('.transform__col--after .ph, .transform__col--after .ph-b').forEach(function (el) {
@@ -2348,7 +2501,124 @@
         spyTargets.forEach(function (s) { spyIo.observe(s); });
       }
 
-      // ─── 6. Year ──────────────────────────────────────────────────
+      // ─── 6. Case citation hover/tap card ──────────────────────────
+      var CASES = {
+        heppner: {
+          name: 'United States v. Heppner',
+          cit: 'S.D.N.Y., Feb. 2026',
+          hld: 'A defendant’s documents drafted using a consumer AI tool (Claude) were ruled outside attorney-client privilege.',
+          rel: 'An AI tool is not an attorney and owes no duty of confidentiality. Pasting privileged material into a consumer LLM strips the privilege.'
+        }
+      };
+      var caseCard = document.getElementById('casecard');
+      if (caseCard) {
+        var caseCurrent = null;
+        var casePinned = false;
+
+        function caseRender(el) {
+          var d = CASES[el.getAttribute('data-case')];
+          if (!d) return false;
+          caseCard.innerHTML =
+            '<button class="casecard-close" aria-label="Close" type="button">×</button>' +
+            '<div class="casecard__name"></div>' +
+            '<div class="casecard__cit"></div>' +
+            '<div class="casecard__lbl">Holding</div>' +
+            '<div class="casecard__hld"></div>' +
+            '<div class="casecard__rel"></div>';
+          caseCard.querySelector('.casecard__name').textContent = d.name;
+          caseCard.querySelector('.casecard__cit').textContent = d.cit;
+          caseCard.querySelector('.casecard__hld').textContent = d.hld;
+          caseCard.querySelector('.casecard__rel').textContent = d.rel;
+          caseCard.querySelector('.casecard-close').addEventListener('click', function (e) {
+            e.stopPropagation();
+            caseHide();
+          });
+          return true;
+        }
+
+        function casePosition(el) {
+          if (window.innerWidth <= 560) return; // CSS handles bottom-sheet
+          var r = el.getBoundingClientRect();
+          var cw = 360;
+          var ch = caseCard.offsetHeight || 220;
+          var left = r.left;
+          if (left + cw + 16 > window.innerWidth) left = window.innerWidth - cw - 16;
+          var top = r.bottom + 8;
+          if (top + ch + 16 > window.innerHeight) top = r.top - ch - 8;
+          if (top < 8) top = 8;
+          caseCard.style.left = left + 'px';
+          caseCard.style.top = top + 'px';
+          caseCard.style.right = 'auto';
+          caseCard.style.bottom = 'auto';
+        }
+
+        function caseShow(el) {
+          if (!caseRender(el)) return;
+          casePosition(el);
+          caseCard.classList.add('show');
+          caseCard.setAttribute('aria-hidden', 'false');
+        }
+        function caseHide() {
+          caseCard.classList.remove('show', 'pinned');
+          caseCard.setAttribute('aria-hidden', 'true');
+          casePinned = false;
+          caseCurrent = null;
+        }
+
+        document.querySelectorAll('.case').forEach(function (el) {
+          el.setAttribute('tabindex', '0');
+          el.setAttribute('role', 'button');
+          el.setAttribute('aria-haspopup', 'dialog');
+          el.addEventListener('mouseenter', function () {
+            if (casePinned) return;
+            caseCurrent = el;
+            caseShow(el);
+          });
+          el.addEventListener('mouseleave', function () {
+            if (casePinned) return;
+            caseCurrent = null;
+            caseHide();
+          });
+          el.addEventListener('focus', function () {
+            if (!casePinned) { caseCurrent = el; caseShow(el); }
+          });
+          el.addEventListener('blur', function () {
+            if (!casePinned) { caseCurrent = null; caseHide(); }
+          });
+          el.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (casePinned && caseCurrent === el) { caseHide(); return; }
+            caseCurrent = el;
+            casePinned = true;
+            caseCard.classList.add('pinned');
+            caseShow(el);
+          });
+          el.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              el.click();
+            }
+          });
+        });
+
+        document.addEventListener('click', function (e) {
+          if (!casePinned) return;
+          if (e.target.closest('.case') || e.target.closest('.casecard')) return;
+          caseHide();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && casePinned) caseHide();
+        });
+        window.addEventListener('scroll', function () {
+          if (caseCurrent && !casePinned) casePosition(caseCurrent);
+        }, { passive: true });
+        window.addEventListener('resize', function () {
+          if (caseCurrent) casePosition(caseCurrent);
+        });
+      }
+
+      // ─── 7. Year ──────────────────────────────────────────────────
       var yearEl = document.getElementById('year');
       if (yearEl) yearEl.textContent = new Date().getFullYear();
     })();
