@@ -4,8 +4,9 @@
 
 ## Pages
 
-- [Home / About](https://gmoskalev.com/): Profile, about, projects, contact.
+- [Home / About](https://gmoskalev.com/): Profile, about, projects, writing, contact.
 - [PII Shield](https://gmoskalev.com/pii-shield): Product page — open-source MCP server for Claude Desktop that anonymizes documents locally before they reach the API. Covers pipeline, six skill modes, what it detects, install, compliance, MCP tools, stack.
+- [Writing](https://gmoskalev.com/writing): Notes on legal-AI work — memos as web pages, PII Shield, AI agents for legal research, formatting skills, brand monitoring. Originally posted on LinkedIn.
 
 ## Projects
 

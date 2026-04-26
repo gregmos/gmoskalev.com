@@ -53,6 +53,34 @@ MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, an
 
 Skill that scans the App Store and the open web for knockoffs and cracked APKs of your app. iTunes Search across countries plus fuzzy-matching narrows ~1,000 listings to ~50 real candidates; icon vision and WHOIS-backed evidence packages confirm the rest. An LLM layer scores risk, recommends action, and ships a prioritized Excel report. The whole thing is a single SKILL.md — drop it into Claude or OpenClaw, tell it your trademark and target countries, and it runs itself. Hours of manual work → ~20 minutes of review.
 
+# Writing
+
+Notes on legal-AI work — originally posted on LinkedIn. Live index: https://gmoskalev.com/writing
+
+## Stop shipping memos as 14-page .docx (21 Apr 2026)
+
+Honest question to legal colleagues: aren't you tired of writing boring memos? Tech founders open a 14-page .docx in Times New Roman, see numbered paragraphs and a nine-line "Executive Summary," and ask privately: could you just tell me what this means? With Claude's design tool I turned the Duke Memo into a web page in a single prompt — headings that breathe, sections you can navigate, citations that look like citations. Sometimes you ship both: the web version for the client to actually read, the document version for the file. Clients who enjoy reading your work tend to come back for more. (Source: https://www.linkedin.com/posts/grigorii-moskalev_honest-question-for-my-legal-colleagues-share-7452308266916884480-pMAQ)
+
+## PII Shield + Human-in-the-Loop review (Apr 2026)
+
+Two days after I shipped PII Shield (500+ reactions, 80+ comments) I spent a night building what people asked for. HITL review: a local web UI showing every detected entity color-coded in context — click to remove false positives, select text to add missed ones; all matching occurrences update automatically; Claude re-anonymizes with corrections, override data never touches the API. Plus an audit log of every MCP call (proof for compliance teams that only file paths and session IDs flow through the API) and an NER log of every detection decision, both on-disk under ~/.pii_shield/audit/. (Source: https://www.linkedin.com/posts/grigorii-moskalev_two-days-ago-i-shared-pii-shield-local-ugcPost-7445484144651984897-PCSE)
+
+## Claude Cowork that never sees your client data (Apr 2026)
+
+PII Shield is a Cowork Skill paired with a local MCP server. Connect a folder, type "write a risk memo for vendor_agreement.docx" — anonymization happens locally before Claude sees a thing. "John Smith" becomes <PERSON_1>, "Acme Corp" becomes <ORG_1>. Claude analyzes the anonymized version; PII Shield restores everything in the final .docx with the formatting you prefer. Detection runs on a GLiNER NER model plus custom recognizers; 90%+ of PII gets replaced automatically. Important nuance: connect documents as a folder, don't drag-attach to the message — attached files get rendered before tools run.
+
+## An AI agent that follows citation chains (Mar 2026)
+
+An AI agent opened a case-law database, ran a search, screened 24 results, picked the four that mattered, followed their citation chains (ILVA A/S → Deutsche Wohnen → Nacionalinis → TR v Land Hessen), and delivered a structured digest. I made coffee. Not keyword matching — actual research behavior. Claude read all four CJEU rulings (60-100 paragraphs each) plus the AG opinions, came back with a table mapping how the proportionality doctrine developed across all four. Claude Max ($100/mo) holds the thread across long legal texts; Pro loses context after ~40 paragraphs. Output isn't perfect — fifteen minutes of editing versus half a day reading and taking notes. (Source: https://www.linkedin.com/posts/grigorii-moskalev_an-ai-agent-opened-a-case-law-database-ran-activity-7441766600648810496-E6py)
+
+## One memo and a Claude subscription (Mar 2026)
+
+I took our strongest memo and fed it to Claude's Skill creation. It parsed the .docx XML, figured out fonts, spacing, heading hierarchy, quote indentation, risk-assessment layout — turned it into a reusable SKILL.md. Now I throw raw notes from a call at it and get back a properly-formatted memo: numbered sections, citations in original language, risk assessments per issue, actual .docx not markdown. Reproduces Roboto 12pt, 11pt italic quotes with left indent, justified, single spacing. Also matches my writing style and terminology. Took 20 minutes to set up. Works for memos, contracts, claims, policies, board resolutions. I still do the legal analysis. I just stopped doing the formatting. (Source: https://www.linkedin.com/posts/grigorii-moskalev_one-memo-and-a-claude-subscription-thats-activity-7440289317366784000-yyQQ)
+
+## Brand monitor — weekly trademark hunt (Mar 2026)
+
+I deployed an AI agent that finds trademark infringers and pirated app builds every week. Two tracks: App Store — queries iTunes Search across countries, fuzzy-matches names and bundle IDs against registered trademarks, narrows ~1,000 listings to ~50 candidates, runs icon vision on the high-risk ones. Piracy — searches mod/cracked APK sites, parses download pages, collects evidence packages (screenshots, HTML, WHOIS) for confirmed violations. LLM layer scores risk, recommends action, ships a prioritized Excel report. Hours of manual work → ~20 minutes reviewing. Single SKILL.md file — drop into Claude or OpenClaw with your trademark and target countries. Repo: https://github.com/gregmos/Brand-monitor (Source: https://www.linkedin.com/posts/grigorii-moskalev_i-deployed-an-openclaw-ai-agent-to-find-trademark-activity-7439559446172835840-oP8n)
+
 # Contact
 
 - LinkedIn (primary): https://www.linkedin.com/in/grigorii-moskalev

@@ -681,6 +681,76 @@
     }
     .project--link:hover .project__open { color: var(--accent); }
 
+    /* WRITING */
+    .posts {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid var(--hair);
+      margin-top: 8px;
+    }
+    .post {
+      display: block;
+      padding: 22px 4px;
+      border-bottom: 1px solid var(--hair);
+      transition: background 160ms ease, padding 160ms ease;
+    }
+    .post:hover,
+    .post:focus-visible { background: rgba(255,255,255,0.018); padding-left: 14px; padding-right: 14px; outline: none; }
+    .post__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 6px;
+    }
+    .post__title {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--fg);
+      letter-spacing: -0.01em;
+      transition: color 160ms ease;
+      text-wrap: balance;
+    }
+    .post:hover .post__title,
+    .post:focus-visible .post__title { color: var(--accent); }
+    .post__meta {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--fg-dimmer);
+      white-space: nowrap;
+      flex: none;
+      transition: color 160ms ease;
+    }
+    .post:hover .post__meta,
+    .post:focus-visible .post__meta { color: var(--fg-dim); }
+    .post__excerpt {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--fg-dim);
+      max-width: 70ch;
+      text-wrap: pretty;
+    }
+    .posts__more {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--fg-dim);
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--hair-2);
+      transition: color 160ms ease, border-color 160ms ease;
+    }
+    .posts__more:hover,
+    .posts__more:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
+    @media (max-width: 560px) {
+      .post__head { flex-direction: column; gap: 4px; }
+      .post__meta { font-size: 11px; }
+      .post:hover, .post:focus-visible { padding-left: 4px; padding-right: 4px; }
+    }
+
     /* CONTACT */
     .section--contact { padding-bottom: clamp(120px, 16vh, 180px); }
 
@@ -877,7 +947,8 @@
       <ul class="nav__links">
         <li><a href="#about" class="nav__link" data-nav="about"><span class="nav__link-num">01</span><span>About</span></a></li>
         <li><a href="#projects" class="nav__link" data-nav="projects"><span class="nav__link-num">02</span><span>Projects</span></a></li>
-        <li><a href="#contact" class="nav__link" data-nav="contact"><span class="nav__link-num">03</span><span>Contact</span></a></li>
+        <li><a href="#writing" class="nav__link" data-nav="writing"><span class="nav__link-num">03</span><span>Writing</span></a></li>
+        <li><a href="#contact" class="nav__link" data-nav="contact"><span class="nav__link-num">04</span><span>Contact</span></a></li>
       </ul>
       <button class="nav__burger" id="navBurger" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navMenu">
         <svg class="nav__burger-icon" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
@@ -894,7 +965,8 @@
     <div class="nav__menu" id="navMenu" aria-hidden="true">
       <a href="#about" class="nav__link" data-nav-mobile="about"><span class="nav__link-num">01</span><span>About</span></a>
       <a href="#projects" class="nav__link" data-nav-mobile="projects"><span class="nav__link-num">02</span><span>Projects</span></a>
-      <a href="#contact" class="nav__link" data-nav-mobile="contact"><span class="nav__link-num">03</span><span>Contact</span></a>
+      <a href="#writing" class="nav__link" data-nav-mobile="writing"><span class="nav__link-num">03</span><span>Writing</span></a>
+      <a href="#contact" class="nav__link" data-nav-mobile="contact"><span class="nav__link-num">04</span><span>Contact</span></a>
     </div>
   </nav>
 
@@ -1017,10 +1089,51 @@
       </div>
     </section>
 
-    <section id="contact" class="section section--contact">
+    <section id="writing" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">03</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">Writing</span>
+      </div>
+      <p class="section__lede">Notes on legal-AI, originally posted on LinkedIn.</p>
+
+      <div class="posts">
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_honest-question-for-my-legal-colleagues-share-7452308266916884480-pMAQ" target="_blank" rel="noopener">
+          <div class="post__head">
+            <h3 class="post__title">Stop shipping memos as 14-page .docx</h3>
+            <span class="post__meta">Apr 2026 ↗</span>
+          </div>
+          <p class="post__excerpt">Why legal teams should deliver memos as web pages — and how I shipped one with Claude Design in a single prompt.</p>
+        </a>
+
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_two-days-ago-i-shared-pii-shield-local-ugcPost-7445484144651984897-PCSE" target="_blank" rel="noopener">
+          <div class="post__head">
+            <h3 class="post__title">PII Shield + Human-in-the-Loop review</h3>
+            <span class="post__meta">Apr 2026 ↗</span>
+          </div>
+          <p class="post__excerpt">Shipped HITL entity review and audit logs two days after launch — based on 500+ reactions and 80+ comments.</p>
+        </a>
+
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_an-ai-agent-opened-a-case-law-database-ran-activity-7441766600648810496-E6py" target="_blank" rel="noopener">
+          <div class="post__head">
+            <h3 class="post__title">An AI agent that follows citation chains</h3>
+            <span class="post__meta">Mar 2026 ↗</span>
+          </div>
+          <p class="post__excerpt">Claude opened a case-law database, traced GDPR-fine citations across four CJEU cases, delivered a structured digest. I made coffee.</p>
+        </a>
+      </div>
+
+      <a class="posts__more" href="/writing">
+        <span>See all writing</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </section>
+
+    <section id="contact" class="section section--contact">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">04</span>
         <span class="section-label__slash">/</span>
         <span class="section-label__title">Contact</span>
       </div>
@@ -1090,7 +1203,7 @@
       window.addEventListener('scroll', onScroll, { passive: true });
 
       var navLinks = document.querySelectorAll('.nav__link');
-      var sectionIds = ['hero', 'about', 'projects', 'contact'];
+      var sectionIds = ['hero', 'about', 'projects', 'writing', 'contact'];
       var sectionEls = sectionIds.map(function (id) { return document.getElementById(id); }).filter(Boolean);
       var navObserver = new IntersectionObserver(
         function (entries) {

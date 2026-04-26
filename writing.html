@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Writing — Grigorii Moskalev</title>
+  <meta name="description" content="Notes on legal-AI work by Grigorii Moskalev — memos as web pages, PII Shield, AI agents for case-law research, brand monitoring, formatting skills. Originally posted on LinkedIn." />
+
+  <link rel="canonical" href="https://gmoskalev.com/writing" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Writing — Grigorii Moskalev" />
+  <meta property="og:description" content="Notes on legal-AI work — originally posted on LinkedIn." />
+  <meta property="og:url" content="https://gmoskalev.com/writing" />
+  <meta property="og:site_name" content="gmoskalev.com" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": "https://gmoskalev.com/writing#webpage",
+        "url": "https://gmoskalev.com/writing",
+        "name": "Writing — Grigorii Moskalev",
+        "description": "Notes on legal-AI work, originally posted on LinkedIn.",
+        "author": { "@id": "https://gmoskalev.com/#person" },
+        "isPartOf": { "@id": "https://gmoskalev.com/#website" },
+        "inLanguage": "en"
+      },
+      {
+        "@type": "Person",
+        "@id": "https://gmoskalev.com/#person",
+        "name": "Grigorii Moskalev",
+        "url": "https://gmoskalev.com/",
+        "jobTitle": "Legal Counsel",
+        "worksFor": { "@type": "Organization", "name": "FaceApp" },
+        "sameAs": [
+          "https://www.linkedin.com/in/grigorii-moskalev",
+          "https://github.com/gregmos",
+          "https://t.me/gregms"
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230A0A0A'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='ui-monospace,monospace' font-weight='600' font-size='38' fill='%2300E27A'>G</text></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --bg-elev: #101114;
+      --fg: #EDEDED;
+      --fg-dim: #A0A0A6;
+      --fg-dimmer: #6E6E76;
+      --fg-faint: #3F3F46;
+      --hair: rgba(255, 255, 255, 0.07);
+      --hair-2: rgba(255, 255, 255, 0.12);
+      --accent: #00E27A;
+      --font-sans: "Inter", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+      --max: 1200px;
+      --gutter: clamp(20px, 4vw, 56px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    h1, h2, h3, p, ul { margin: 0; padding: 0; }
+    em { font-style: italic; color: var(--fg); }
+
+    ::selection { background: var(--accent); color: #000; }
+
+    :focus-visible {
+      outline: 1.5px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 80%);
+      z-index: 0;
+    }
+
+    main { position: relative; z-index: 1; }
+
+    /* NAV */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 14px var(--gutter);
+      transition: background 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease;
+      border-bottom: 1px solid transparent;
+    }
+    .nav--scrolled {
+      background: rgba(10, 10, 10, 0.72);
+      backdrop-filter: saturate(140%) blur(14px);
+      -webkit-backdrop-filter: saturate(140%) blur(14px);
+      border-bottom-color: var(--hair);
+    }
+    .nav__inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav__brand {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      font-weight: 500;
+    }
+    .nav__back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid var(--hair-2);
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--fg-dim);
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    .nav__back:hover, .nav__back:focus-visible { border-color: var(--accent); color: var(--accent); }
+
+    /* HEADER */
+    .page-header {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: clamp(120px, 16vh, 180px) var(--gutter) 48px;
+    }
+    .page-header__label {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--fg-dim);
+      margin-bottom: 24px;
+      padding: 8px 12px;
+      border: 1px solid var(--hair);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.02);
+    }
+    .page-header__label .sigil { color: var(--accent); }
+    .page-header__title {
+      font-family: var(--font-mono);
+      font-size: clamp(40px, 7vw, 80px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--fg);
+      margin-bottom: 20px;
+    }
+    .page-header__lede {
+      font-size: 19px;
+      line-height: 1.5;
+      color: var(--fg-dim);
+      max-width: 60ch;
+      text-wrap: pretty;
+    }
+
+    /* POSTS */
+    .posts-section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 24px var(--gutter) clamp(120px, 16vh, 180px);
+    }
+    .posts {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid var(--hair);
+    }
+    .post {
+      display: block;
+      padding: 28px 4px;
+      border-bottom: 1px solid var(--hair);
+      transition: background 160ms ease, padding 160ms ease;
+    }
+    a.post:hover, a.post:focus-visible {
+      background: rgba(255,255,255,0.018);
+      padding-left: 14px;
+      padding-right: 14px;
+      outline: none;
+    }
+    .post__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+    .post__title {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--fg);
+      letter-spacing: -0.01em;
+      transition: color 160ms ease;
+      text-wrap: balance;
+    }
+    a.post:hover .post__title,
+    a.post:focus-visible .post__title { color: var(--accent); }
+    .post__meta {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--fg-dimmer);
+      white-space: nowrap;
+      flex: none;
+      transition: color 160ms ease;
+    }
+    a.post:hover .post__meta,
+    a.post:focus-visible .post__meta { color: var(--fg-dim); }
+    .post__excerpt {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--fg-dim);
+      max-width: 72ch;
+      text-wrap: pretty;
+    }
+    .post__excerpt code {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--fg);
+    }
+
+    @media (max-width: 560px) {
+      .post__head { flex-direction: column; gap: 4px; }
+      .post__meta { font-size: 11px; }
+      a.post:hover, a.post:focus-visible { padding-left: 4px; padding-right: 4px; }
+    }
+
+    /* FOOTER */
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 32px var(--gutter) 48px;
+      border-top: 1px solid var(--hair);
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .footer__copy { color: var(--fg-dim); }
+    .footer a { color: var(--fg-dim); border-bottom: 1px dashed var(--fg-faint); }
+    .footer a:hover, .footer a:focus-visible { color: var(--accent); border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="/" class="nav__brand">gmoskalev</a>
+      <a href="/" class="nav__back">
+        <span aria-hidden="true">←</span>
+        <span>Home</span>
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <header class="page-header">
+      <div class="page-header__label">
+        <span class="sigil">§</span>
+        <span>Writing</span>
+      </div>
+      <h1 class="page-header__title">Writing</h1>
+      <p class="page-header__lede">Notes on legal-AI work — memos as web pages, anonymizing client data, AI agents for legal research, formatting skills, trademark monitoring. Originally posted on LinkedIn.</p>
+    </header>
+
+    <section class="posts-section">
+      <div class="posts">
+
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_honest-question-for-my-legal-colleagues-share-7452308266916884480-pMAQ" target="_blank" rel="noopener">
+          <div class="post__head">
+            <h2 class="post__title">Stop shipping memos as 14-page .docx</h2>
+            <span class="post__meta">21 Apr 2026 ↗</span>
+          </div>
+          <p class="post__excerpt">Honest question to legal colleagues: aren't you tired of writing boring memos? Tech founders open a 14-page .docx in Times New Roman, see numbered paragraphs and a nine-line "Executive Summary," and ask privately: <em>could you just tell me what this means?</em> With Claude's design tool I turned the Duke Memo into a web page in a single prompt — headings that breathe, sections you can navigate, citations that look like citations.</p>
+        </a>
+
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_two-days-ago-i-shared-pii-shield-local-ugcPost-7445484144651984897-PCSE" target="_blank" rel="noopener">
+          <div class="post__head">
+            <h2 class="post__title">PII Shield + Human-in-the-Loop review</h2>
+            <span class="post__meta">Apr 2026 ↗</span>
+          </div>
+          <p class="post__excerpt">Two days after I shipped PII Shield (500+ reactions, 80+ comments) I spent a night building what people asked for. <strong>HITL review:</strong> a local web UI showing every detected entity color-coded in context — click to remove false positives, select text to add missed ones. Plus an audit log of every MCP call and an NER log of every detection decision, both on-disk under <code>~/.pii_shield/audit/</code>.</p>
+        </a>
+
+        <!-- TODO: add LinkedIn permalink for original PII Shield announcement -->
+        <div class="post">
+          <div class="post__head">
+            <h2 class="post__title">Claude Cowork that never sees your client data</h2>
+            <span class="post__meta">Apr 2026</span>
+          </div>
+          <p class="post__excerpt">PII Shield is a Cowork Skill paired with a local MCP server. Connect a folder, type <em>"write a risk memo for vendor_agreement.docx"</em> — anonymization happens locally before Claude sees a thing. <code>John Smith</code> becomes <code>&lt;PERSON_1&gt;</code>, <code>Acme Corp</code> becomes <code>&lt;ORG_1&gt;</code>. Claude analyzes the anonymized version; PII Shield restores everything in the final .docx. 90%+ of PII gets replaced automatically, no flag-by-flag work.</p>
+        </div>
+
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_an-ai-agent-opened-a-case-law-database-ran-activity-7441766600648810496-E6py" target="_blank" rel="noopener">
+          <div class="post__head">
+            <h2 class="post__title">An AI agent that follows citation chains</h2>
+            <span class="post__meta">Mar 2026 ↗</span>
+          </div>
+          <p class="post__excerpt">An AI agent opened a case-law database, ran a search, screened 24 results, picked the four that mattered, followed their citation chains (ILVA A/S → Deutsche Wohnen → Nacionalinis → TR v Land Hessen), and delivered a structured digest. I made coffee. Not keyword matching — actual research behavior. Claude Max ($100/mo) holds the thread across 80-paragraph CJEU rulings without losing context.</p>
+        </a>
+
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_one-memo-and-a-claude-subscription-thats-activity-7440289317366784000-yyQQ" target="_blank" rel="noopener">
+          <div class="post__head">
+            <h2 class="post__title">One memo and a Claude subscription</h2>
+            <span class="post__meta">Mar 2026 ↗</span>
+          </div>
+          <p class="post__excerpt">I took our strongest memo and fed it to Claude's Skill creation. It parsed the .docx XML, figured out fonts, spacing, heading hierarchy, quote indentation, risk-assessment layout — turned it into a reusable <code>SKILL.md</code>. Now I throw raw notes from a call at it and get back a properly-formatted memo: Roboto 12pt, 11pt italic quotes, justified, single spacing, in my writing style. 20 minutes to set up. I still do the legal analysis. I just stopped doing the formatting.</p>
+        </a>
+
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_i-deployed-an-openclaw-ai-agent-to-find-trademark-activity-7439559446172835840-oP8n" target="_blank" rel="noopener">
+          <div class="post__head">
+            <h2 class="post__title">Brand monitor — weekly trademark hunt</h2>
+            <span class="post__meta">Mar 2026 ↗</span>
+          </div>
+          <p class="post__excerpt">I deployed an AI agent that finds trademark infringers and pirated app builds every week. <strong>App Store track:</strong> queries iTunes Search across countries, fuzzy-matches names and bundle IDs, narrows ~1,000 listings to ~50 candidates, runs icon vision on the high-risk ones. <strong>Piracy track:</strong> searches mod/cracked APK sites, parses download pages, collects evidence packages (screenshots, HTML, WHOIS). LLM scores risk and ships a prioritized Excel report. Single <code>SKILL.md</code> file — works on Claude or OpenClaw.</p>
+        </a>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__copy">© <span id="year">2026</span> Grigorii Moskalev</div>
+    <div>
+      <a href="https://www.linkedin.com/in/grigorii-moskalev" target="_blank" rel="noopener">See all on LinkedIn ↗</a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var nav = document.getElementById('nav');
+      var ticking = false;
+      function onScroll() {
+        if (!ticking) {
+          ticking = true;
+          window.requestAnimationFrame(function () {
+            if (window.scrollY > 10) nav.classList.add('nav--scrolled');
+            else nav.classList.remove('nav--scrolled');
+            ticking = false;
+          });
+        }
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      var yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
