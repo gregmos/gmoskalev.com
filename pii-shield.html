@@ -859,6 +859,35 @@
     .prose__rewrite p strong { color: var(--fg); font-weight: 500; }
 
     /* ════════════════════════════════════════════════════════════════
+       DEMO VIDEO
+       ════════════════════════════════════════════════════════════════ */
+    .demo-video {
+      margin: 40px 0 0;
+      position: relative;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--bg-deep);
+      box-shadow: 0 24px 56px rgba(0, 0, 0, 0.4);
+    }
+    .demo-video__el {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: var(--bg-deep);
+    }
+    .demo-video__cap {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dimmer);
+      text-align: center;
+      padding: 10px 12px;
+      border-top: 1px solid var(--hair);
+      background: rgba(255, 255, 255, 0.015);
+      letter-spacing: 0.02em;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
        CASE CITATION (inline span + hover/tap card)
        ════════════════════════════════════════════════════════════════ */
     .case {
@@ -2017,6 +2046,22 @@
         <p><strong>Claude API → Shield:</strong> model output flows back as text — still placeholder-only.</p>
         <p><strong>Shield → Result:</strong> <code>deanonymize_docx({ file_path, session_id })</code> or <code>deanonymize_text({ text, session_id })</code> stitches the real PII back in, locally.</p>
       </div>
+
+      <figure class="demo-video">
+        <video
+          class="demo-video__el"
+          src="/videos/pii-shield-demo.mp4"
+          muted
+          playsinline
+          controls
+          controlslist="nodownload"
+          preload="metadata"
+          aria-label="PII Shield demo: anonymizing a contract in Claude Desktop"
+        >
+          Your browser doesn't support HTML5 video. <a href="/videos/pii-shield-demo.mp4">Download the demo</a>.
+        </video>
+        <figcaption class="demo-video__cap">Demo · 1:40 · auto-plays muted when in view</figcaption>
+      </figure>
     </section>
 
     <div class="divider"><span class="divider__num">02</span><span class="divider__txt">why this exists</span></div>
@@ -2791,7 +2836,27 @@ npm test                   <span class="comment"># 8 suites, incl. multi-doc HIT
         });
       }
 
-      // ─── 7. Year ──────────────────────────────────────────────────
+      // ─── 7. Demo video — lazy autoplay (muted) on first viewport entry ──
+      // Don't use the HTML autoplay attribute: that eagerly downloads ~16MB
+      // even if visitors never reach the video. IntersectionObserver triggers
+      // play() only once the element actually enters view; preload="metadata"
+      // means we only fetch the first ~200KB up front for first-frame display.
+      var demoVid = document.querySelector('.demo-video__el');
+      if (demoVid && !prefersReduced) {
+        var demoStarted = false;
+        var demoIo = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting && !demoStarted) {
+              demoVid.play().catch(function () { /* autoplay denied — user can press play */ });
+              demoStarted = true;
+              demoIo.disconnect();
+            }
+          });
+        }, { threshold: 0.5 });
+        demoIo.observe(demoVid);
+      }
+
+      // ─── 8. Year ──────────────────────────────────────────────────
       var yearEl = document.getElementById('year');
       if (yearEl) yearEl.textContent = new Date().getFullYear();
     })();
