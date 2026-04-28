@@ -38,7 +38,7 @@ I teach a course and run a Telegram channel for lawyers learning to work with LL
 
 - **Tagline:** Anonymize documents before Claude sees them. Restore real data after analysis.
 - **Status:** Live, v2.0.2
-- **Repo:** https://github.com/gregmos/PII-Shield-staging
+- **Repo:** https://github.com/gregmos/PII-Shield
 - **License:** MIT
 - **Stack:** Node.js, MCP, GLiNER, ONNX, DOCX
 
@@ -148,7 +148,7 @@ v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundl
 
 Plugin: 700 KB on Windows/Linux (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB `gliner-pii-base-v1.0` model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 18/20.
 
-v1 is still public at `gregmos/PII-Shield` for the legacy crowd.
+Both v1.0.0 and v2.0.2 release tags live in `gregmos/PII-Shield` — the v1 Python build remains downloadable for legacy installs.
 
 ## Skill modes (six task-shaped workflows)
 
@@ -188,7 +188,7 @@ person · org · location · email · phone · IBAN · credit card · crypto wal
 
 Four steps. No terminal.
 
-1. **Download the artefacts** — pick the `.mcpb` for your OS plus the contract-analyze skill. Direct links to the v2.0.2 release: https://github.com/gregmos/PII-Shield-staging/releases/tag/v2.0.2
+1. **Download the artefacts** — pick the `.mcpb` for your OS plus the contract-analyze skill. Direct links to the v2.0.2 release: https://github.com/gregmos/PII-Shield/releases/tag/v2.0.2
 2. **Install in Claude Desktop** — Settings → Extensions → Advanced Settings → Install extension. On first call, PII Shield runs `npm ci --ignore-scripts` to install pinned runtime deps (`onnxruntime-node`, `@xenova/transformers`, `gliner`) into `~/.pii_shield/deps/` — 2-3 minutes once per machine, instant thereafter.
 3. **Connect a folder** with your documents — Claude Desktop → Settings → Connected folders. (Don't drag-attach files into the chat — the raw document hits the API before PII Shield can intercept.)
 4. **Use it from a chat** — pick the `pii-contract-analyze` skill, tell Claude what you need.

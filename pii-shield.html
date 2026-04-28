@@ -27,8 +27,8 @@
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Windows, macOS, Linux",
         "description": "Node.js MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (<PERSON_1>, <ORG_1>, etc.), and sends only the anonymized text to Claude. After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.",
-        "downloadUrl": "https://github.com/gregmos/PII-Shield-staging/releases",
-        "codeRepository": "https://github.com/gregmos/PII-Shield-staging",
+        "downloadUrl": "https://github.com/gregmos/PII-Shield/releases",
+        "codeRepository": "https://github.com/gregmos/PII-Shield",
         "license": "https://opensource.org/licenses/MIT",
         "programmingLanguage": ["TypeScript", "Node.js"],
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -1853,7 +1853,7 @@
       <div class="subnav__crumb">
         gmoskalev.com<span class="subnav__crumb-sep">/</span>projects<span class="subnav__crumb-sep">/</span><span class="accent">pii-shield</span>
       </div>
-      <a href="https://github.com/gregmos/PII-Shield-staging" class="subnav__gh" target="_blank" rel="noopener">
+      <a href="https://github.com/gregmos/PII-Shield" class="subnav__gh" target="_blank" rel="noopener">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.79 8.21 11.38.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.09 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.61-.01 2.91-.01 3.3 0 .32.22.7.83.58C20.56 22.29 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/></svg>
         <span>GitHub</span>
         <span aria-hidden="true">↗</span>
@@ -1895,7 +1895,7 @@
       </div>
 
       <div class="subhero__cta">
-        <a href="https://github.com/gregmos/PII-Shield-staging" class="btn btn--primary" target="_blank" rel="noopener">
+        <a href="https://github.com/gregmos/PII-Shield" class="btn btn--primary" target="_blank" rel="noopener">
           <span>Install from GitHub</span>
           <span aria-hidden="true">↗</span>
         </a>
@@ -2085,7 +2085,7 @@
           <div class="prose__rewrite-label">v1 → v2 · the rewrite</div>
           <p>v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2.0.2 is a <strong class="strong--fg">complete Node.js rewrite</strong> over <code>onnxruntime-node</code> + <code>@xenova/transformers</code>: same detection coverage, no Python.</p>
           <p>Plugin: <strong class="strong--fg">700 KB on Windows/Linux</strong> (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB <code>gliner-pii-base-v1.0</code> model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 18/20.</p>
-          <p>v1 is still public at <code>gregmos/PII-Shield</code> for the legacy crowd.</p>
+          <p>Both v1.0.0 and v2.0.2 release tags live in <code>gregmos/PII-Shield</code> — the v1 Python build remains downloadable for legacy installs.</p>
         </div>
       </div>
     </section>
@@ -2259,9 +2259,9 @@
           <div class="step__n">1</div>
           <div class="step__body">
             <div class="step__title">Download the artefacts</div>
-            <div class="step__desc">Pick the <code>.mcpb</code> for your OS plus the contract-analyze skill. Direct links to the <a href="https://github.com/gregmos/PII-Shield-staging/releases/tag/v2.0.2" target="_blank" rel="noopener" class="release-link">v2.0.2 release ↗</a>.</div>
+            <div class="step__desc">Pick the <code>.mcpb</code> for your OS plus the contract-analyze skill. Direct links to the <a href="https://github.com/gregmos/PII-Shield/releases/tag/v2.0.2" target="_blank" rel="noopener" class="release-link">v2.0.2 release ↗</a>.</div>
             <div class="downloads">
-              <a class="download" href="https://github.com/gregmos/PII-Shield-staging/releases/download/v2.0.2/pii-shield-v2.0.2-windows-linux.mcpb" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.2/pii-shield-v2.0.2-windows-linux.mcpb" target="_blank" rel="noopener">
                 <div class="download__os-tag">WIN · LINUX</div>
                 <div class="download__file">pii-shield-v2.0.2-windows-linux.mcpb</div>
                 <div class="download__meta">
@@ -2270,7 +2270,7 @@
                 </div>
                 <span class="download__icon" aria-hidden="true">↓</span>
               </a>
-              <a class="download" href="https://github.com/gregmos/PII-Shield-staging/releases/download/v2.0.2/pii-shield-v2.0.2-macos.mcpb" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.2/pii-shield-v2.0.2-macos.mcpb" target="_blank" rel="noopener">
                 <div class="download__os-tag">MACOS</div>
                 <div class="download__file">pii-shield-v2.0.2-macos.mcpb</div>
                 <div class="download__meta">
@@ -2279,7 +2279,7 @@
                 </div>
                 <span class="download__icon" aria-hidden="true">↓</span>
               </a>
-              <a class="download" href="https://github.com/gregmos/PII-Shield-staging/releases/download/v2.0.2/pii-contract-analyze.skill" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.2/pii-contract-analyze.skill" target="_blank" rel="noopener">
                 <div class="download__os-tag">SKILL · ANY OS</div>
                 <div class="download__file">pii-contract-analyze.skill</div>
                 <div class="download__meta">
@@ -2585,10 +2585,10 @@ npm test                   <span class="comment"># 8 suites, incl. multi-doc HIT
     </div>
     <div class="footer__col footer__col--right">
       <div>
-        <a href="https://github.com/gregmos/PII-Shield-staging" target="_blank" rel="noopener">GitHub (v2 staging) ↗</a>
+        <a href="https://github.com/gregmos/PII-Shield" target="_blank" rel="noopener">GitHub ↗</a>
       </div>
       <div>
-        <a href="https://github.com/gregmos/PII-Shield" target="_blank" rel="noopener">GitHub (v1, public) ↗</a>
+        <a href="https://github.com/gregmos/PII-Shield/releases" target="_blank" rel="noopener">Releases ↗</a>
       </div>
     </div>
   </footer>

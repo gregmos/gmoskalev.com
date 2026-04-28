@@ -10,9 +10,9 @@
 
 ## Projects
 
-- [PII Shield (GitHub)](https://github.com/gregmos/PII-Shield-staging): Node.js MCP server v2.0.2. Anonymizes PDF, DOCX, TXT files locally with GLiNER NER + 17 jurisdiction-specific pattern recognizers (UK, DE, FR, IT, ES, CY, EU). AES-GCM session export, multi-document session pooling, HITL review. MIT-licensed.
+- [PII Shield (GitHub)](https://github.com/gregmos/PII-Shield): Node.js MCP server v2.0.2. Anonymizes PDF, DOCX, TXT files locally with GLiNER NER + 17 jurisdiction-specific pattern recognizers (UK, DE, FR, IT, ES, CY, EU). AES-GCM session export, multi-document session pooling, HITL review. MIT-licensed.
 - [Brand monitor (GitHub)](https://github.com/gregmos/Brand-monitor): Skill that scans App Store and the open web for trademark infringers and pirated APKs. Runs weekly. Single SKILL.md file — works on Claude or OpenClaw.
-- [PII Shield v1 (GitHub, archived)](https://github.com/gregmos/PII-Shield): Python + Presidio + spaCy original. Replaced by v2 Node.js rewrite. Kept public for legacy users.
+- [PII Shield v1.0.0 release](https://github.com/gregmos/PII-Shield/releases/tag/v1.0.0): Python + Presidio + spaCy original. Replaced by v2 Node.js rewrite. Kept downloadable for legacy installs.
 
 ## Contact
 
