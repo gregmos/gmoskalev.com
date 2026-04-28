@@ -16,7 +16,7 @@ This file is the long-form Markdown export of gmoskalev.com for LLM ingestion. T
 
 # About
 
-11 years practicing law, 3 years writing Python, and a growing overlap between the two. I run the legal function at FaceApp, a consumer AI product used by hundreds of millions, across IP, privacy, corporate, and app-store disputes. Before that, KPMG and senior in-house roles at international tech companies across Cyprus, the EU, and beyond.
+11 years practicing law, 3 years writing Python, and a growing overlap between the two. I run the legal function at FaceApp, a consumer product used by hundreds of millions, across IP, privacy, corporate, and app-store disputes. Before that, KPMG and senior in-house roles at international tech companies across Cyprus, the EU, and beyond.
 
 Legal engineering is what I genuinely love. I've built RAG pipelines over our internal corpus, contract analytics, MCP servers that keep client data off the API. I work with prompt engineering and fine-tuning, and I deploy local models when client data shouldn't reach a hosted one in the first place.
 
