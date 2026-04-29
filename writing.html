@@ -51,21 +51,49 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
+  <!-- Restore theme preference before paint to avoid flash. Default = dark. -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <style>
     :root {
+      /* Theme: dark by default. --ink flips on [data-theme="light"]. */
+      --ink: 255 255 255;
       --bg: #0A0A0A;
       --bg-elev: #101114;
       --fg: #EDEDED;
       --fg-dim: #A0A0A6;
       --fg-dimmer: #6E6E76;
       --fg-faint: #3F3F46;
-      --hair: rgba(255, 255, 255, 0.07);
-      --hair-2: rgba(255, 255, 255, 0.12);
+      --hair: rgb(var(--ink) / 0.07);
+      --hair-2: rgb(var(--ink) / 0.12);
       --accent: #00E27A;
+      --nav-bg-scrolled: rgba(10, 10, 10, 0.72);
       --font-sans: "Inter", system-ui, sans-serif;
       --font-mono: "JetBrains Mono", ui-monospace, monospace;
       --max: 1200px;
       --gutter: clamp(20px, 4vw, 56px);
+      color-scheme: dark;
+    }
+
+    [data-theme="light"] {
+      --ink: 0 0 0;
+      --bg: #FAFAF7;
+      --bg-elev: #FFFFFF;
+      --fg: #18181B;
+      --fg-dim: #4C4C56;
+      --fg-dimmer: #7A7A86;
+      --fg-faint: #B8B8C0;
+      --accent: #008C4D;
+      --nav-bg-scrolled: rgba(250, 250, 247, 0.78);
+      color-scheme: light;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -107,8 +135,8 @@
       inset: 0;
       pointer-events: none;
       background-image:
-        linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+        linear-gradient(to right, rgb(var(--ink) / 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(var(--ink) / 0.025) 1px, transparent 1px);
       background-size: 64px 64px;
       mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 80%);
       z-index: 0;
@@ -126,7 +154,7 @@
       border-bottom: 1px solid transparent;
     }
     .nav--scrolled {
-      background: rgba(10, 10, 10, 0.72);
+      background: var(--nav-bg-scrolled);
       backdrop-filter: saturate(140%) blur(14px);
       -webkit-backdrop-filter: saturate(140%) blur(14px);
       border-bottom-color: var(--hair);
@@ -159,6 +187,35 @@
       transition: border-color 150ms ease, color 150ms ease;
     }
     .nav__back:hover, .nav__back:focus-visible { border-color: var(--accent); color: var(--accent); }
+    .nav__right { display: inline-flex; align-items: center; gap: 8px; }
+
+    /* Theme toggle (sun ↔ moon) */
+    .theme-toggle {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--hair-2);
+      border-radius: 6px;
+      color: var(--fg-dim);
+      cursor: pointer;
+      transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+      flex: none;
+    }
+    .theme-toggle:hover,
+    .theme-toggle:focus-visible {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .theme-toggle__icon {
+      grid-area: 1 / 1;
+      display: block;
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+    .theme-toggle__icon--sun { opacity: 1; transform: rotate(0); }
+    .theme-toggle__icon--moon { opacity: 0; transform: rotate(-90deg); }
+    [data-theme="light"] .theme-toggle__icon--sun { opacity: 0; transform: rotate(90deg); }
+    [data-theme="light"] .theme-toggle__icon--moon { opacity: 1; transform: rotate(0); }
 
     /* HEADER */
     .page-header {
@@ -177,7 +234,7 @@
       padding: 8px 12px;
       border: 1px solid var(--hair);
       border-radius: 6px;
-      background: rgba(255,255,255,0.02);
+      background: rgb(var(--ink) / 0.02);
     }
     .page-header__label .sigil { color: var(--accent); }
     .page-header__title {
@@ -214,7 +271,7 @@
       transition: background 160ms ease, padding 160ms ease;
     }
     a.post:hover, a.post:focus-visible {
-      background: rgba(255,255,255,0.018);
+      background: rgb(var(--ink) / 0.018);
       padding-left: 14px;
       padding-right: 14px;
       outline: none;
@@ -288,10 +345,21 @@
   <nav class="nav" id="nav">
     <div class="nav__inner">
       <a href="/" class="nav__brand">gmoskalev</a>
-      <a href="/" class="nav__back">
-        <span aria-hidden="true">←</span>
-        <span>Home</span>
-      </a>
+      <div class="nav__right">
+        <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <a href="/" class="nav__back">
+          <span aria-hidden="true">←</span>
+          <span>Home</span>
+        </a>
+      </div>
     </div>
   </nav>
 
@@ -384,6 +452,17 @@
       }
       onScroll();
       window.addEventListener('scroll', onScroll, { passive: true });
+
+      var themeBtn = document.getElementById('themeToggle');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          var html = document.documentElement;
+          var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+          if (next === 'light') html.setAttribute('data-theme', 'light');
+          else html.removeAttribute('data-theme');
+          try { localStorage.setItem('theme', next); } catch (e) {}
+        });
+      }
 
       var yearEl = document.getElementById('year');
       if (yearEl) yearEl.textContent = new Date().getFullYear();

@@ -17,6 +17,17 @@
 
   <link rel="canonical" href="https://gmoskalev.com/" />
 
+  <!-- Restore theme preference before paint to avoid flash. Default = dark. -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) { /* localStorage may be blocked — fall back to dark default */ }
+    })();
+  </script>
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -99,6 +110,10 @@
 
   <style>
     :root {
+      /* Theme: dark by default. Light overrides at the [data-theme="light"]
+         block below. --ink is the surface-tint base color (255/255/255 on
+         dark, 0/0/0 on light) — flipped automatically by the theme switch. */
+      --ink: 255 255 255;
       --bg: #0A0A0A;
       --bg-elev: #101114;
       --bg-elev-2: #15171B;
@@ -106,16 +121,33 @@
       --fg-dim: #A0A0A6;
       --fg-dimmer: #6E6E76;
       --fg-faint: #3F3F46;
-      --hair: rgba(255, 255, 255, 0.07);
-      --hair-2: rgba(255, 255, 255, 0.12);
-      --hair-strong: rgba(255, 255, 255, 0.22);
+      --hair: rgb(var(--ink) / 0.07);
+      --hair-2: rgb(var(--ink) / 0.12);
+      --hair-strong: rgb(var(--ink) / 0.22);
       --accent: #00E27A;
       --danger: #FF4D4D;
+      --nav-bg-scrolled: rgba(10, 10, 10, 0.72);
       --font-sans: "Inter", system-ui, sans-serif;
       --font-mono: "JetBrains Mono", ui-monospace, monospace;
       --max: 1200px;
       --gutter: clamp(20px, 4vw, 56px);
       --glow-opacity: 1;
+      color-scheme: dark;
+    }
+
+    [data-theme="light"] {
+      --ink: 0 0 0;
+      --bg: #FAFAF7;
+      --bg-elev: #FFFFFF;
+      --bg-elev-2: #F4F1EB;
+      --fg: #18181B;
+      --fg-dim: #4C4C56;
+      --fg-dimmer: #7A7A86;
+      --fg-faint: #B8B8C0;
+      --accent: #008C4D;
+      --danger: #C92626;
+      --nav-bg-scrolled: rgba(250, 250, 247, 0.78);
+      color-scheme: light;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -172,8 +204,8 @@
       inset: 0;
       pointer-events: none;
       background-image:
-        linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+        linear-gradient(to right, rgb(var(--ink) / 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(var(--ink) / 0.025) 1px, transparent 1px);
       background-size: 64px 64px;
       mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 80%);
       z-index: 0;
@@ -191,7 +223,7 @@
       border-bottom: 1px solid transparent;
     }
     .nav--scrolled {
-      background: rgba(10, 10, 10, 0.72);
+      background: var(--nav-bg-scrolled);
       backdrop-filter: saturate(140%) blur(14px);
       -webkit-backdrop-filter: saturate(140%) blur(14px);
       border-bottom-color: var(--hair);
@@ -231,7 +263,7 @@
       white-space: nowrap;
     }
     .nav__link:hover,
-    .nav__link:focus-visible { color: var(--fg); background: rgba(255,255,255,0.04); }
+    .nav__link:focus-visible { color: var(--fg); background: rgb(var(--ink) / 0.04); }
     .nav__link.is-active { color: var(--fg); }
     .nav__link.is-active .nav__link-num { color: var(--accent); }
     .nav__link-num { color: var(--fg-dimmer); font-size: 10.5px; }
@@ -253,6 +285,43 @@
       border-color: var(--accent);
       color: var(--accent);
     }
+
+    /* Right cluster wraps burger + theme-toggle + CTA so they share one
+       grid cell (preserves the existing auto/1fr/auto layout). */
+    .nav__right {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Theme toggle (sun ↔ moon) */
+    .theme-toggle {
+      display: grid;
+      place-items: center;
+      position: relative;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--hair-2);
+      border-radius: 6px;
+      color: var(--fg-dim);
+      cursor: pointer;
+      transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+      flex: none;
+    }
+    .theme-toggle:hover,
+    .theme-toggle:focus-visible {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .theme-toggle__icon {
+      grid-area: 1 / 1;
+      display: block;
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+    .theme-toggle__icon--sun { opacity: 1; transform: rotate(0); }
+    .theme-toggle__icon--moon { opacity: 0; transform: rotate(-90deg); }
+    [data-theme="light"] .theme-toggle__icon--sun { opacity: 0; transform: rotate(90deg); }
+    [data-theme="light"] .theme-toggle__icon--moon { opacity: 1; transform: rotate(0); }
 
     /* Mobile burger menu */
     .nav__burger {
@@ -288,7 +357,7 @@
       left: var(--gutter);
       max-width: 320px;
       margin-left: auto;
-      background: rgba(15, 17, 20, 0.96);
+      background: var(--bg-elev-2);
       backdrop-filter: saturate(140%) blur(14px);
       -webkit-backdrop-filter: saturate(140%) blur(14px);
       border: 1px solid var(--hair-2);
@@ -452,7 +521,7 @@
       color: var(--fg);
     }
     .btn--ghost:hover,
-    .btn--ghost:focus-visible { border-color: var(--fg-dim); background: rgba(255,255,255,0.03); }
+    .btn--ghost:focus-visible { border-color: var(--fg-dim); background: rgb(var(--ink) / 0.03); }
 
     @media (max-width: 560px) {
       .hero { min-height: auto; padding-top: 120px; }
@@ -486,7 +555,7 @@
       padding: 8px 12px;
       border: 1px solid var(--hair);
       border-radius: 6px;
-      background: rgba(255,255,255,0.02);
+      background: rgb(var(--ink) / 0.02);
     }
     .section-label__sigil { color: var(--accent); }
     .section-label__num { color: var(--fg); }
@@ -566,7 +635,7 @@
       padding: 28px;
       border: 1px solid var(--hair);
       border-radius: 10px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0) 60%);
+      background: linear-gradient(180deg, rgb(var(--ink) / 0.015), transparent 60%);
       transition: border-color 180ms ease, transform 240ms ease, background 180ms ease;
       display: flex;
       flex-direction: column;
@@ -583,7 +652,7 @@
       padding: 36px 40px;
       border-color: var(--hair-2);
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0) 60%),
+        linear-gradient(180deg, rgb(var(--ink) / 0.025), transparent 60%),
         radial-gradient(ellipse 80% 60% at 0% 0%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 60%);
     }
     .project--pinned::before {
@@ -666,7 +735,7 @@
       font-family: var(--font-mono);
       font-size: 11px;
       color: var(--fg-dim);
-      background: rgba(255,255,255,0.02);
+      background: rgb(var(--ink) / 0.02);
     }
     .tag--mono { letter-spacing: -0.01em; }
 
@@ -695,7 +764,7 @@
       transition: background 160ms ease, padding 160ms ease;
     }
     .post:hover,
-    .post:focus-visible { background: rgba(255,255,255,0.018); padding-left: 14px; padding-right: 14px; outline: none; }
+    .post:focus-visible { background: rgb(var(--ink) / 0.018); padding-left: 14px; padding-right: 14px; outline: none; }
     .post__head {
       display: flex;
       align-items: baseline;
@@ -774,7 +843,7 @@
       border-radius: 10px;
       font-family: var(--font-mono);
       font-size: clamp(15px, 2vw, 20px);
-      background: rgba(255,255,255,0.02);
+      background: rgb(var(--ink) / 0.02);
       transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
       margin-bottom: 14px;
       max-width: 100%;
@@ -887,7 +956,7 @@
       border: 1px dashed var(--hair-2);
       border-radius: 10px;
       text-decoration: none;
-      background: rgba(255,255,255,0.01);
+      background: rgb(var(--ink) / 0.01);
       transition: border-color 180ms ease, transform 240ms ease, background 180ms ease;
     }
     .project--soon:hover,
@@ -950,17 +1019,28 @@
         <li><a href="#writing" class="nav__link" data-nav="writing"><span class="nav__link-num">03</span><span>Writing</span></a></li>
         <li><a href="#contact" class="nav__link" data-nav="contact"><span class="nav__link-num">04</span><span>Contact</span></a></li>
       </ul>
-      <button class="nav__burger" id="navBurger" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navMenu">
-        <svg class="nav__burger-icon" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-          <line x1="4" y1="7" x2="18" y2="7"></line>
-          <line x1="4" y1="11" x2="18" y2="11"></line>
-          <line x1="4" y1="15" x2="18" y2="15"></line>
-        </svg>
-      </button>
-      <a href="#contact" class="nav__cta">
-        <span>Get in touch</span>
-        <span aria-hidden="true">→</span>
-      </a>
+      <div class="nav__right">
+        <button class="nav__burger" id="navBurger" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navMenu">
+          <svg class="nav__burger-icon" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+            <line x1="4" y1="7" x2="18" y2="7"></line>
+            <line x1="4" y1="11" x2="18" y2="11"></line>
+            <line x1="4" y1="15" x2="18" y2="15"></line>
+          </svg>
+        </button>
+        <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <a href="#contact" class="nav__cta">
+          <span>Get in touch</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
     </div>
     <div class="nav__menu" id="navMenu" aria-hidden="true">
       <a href="#about" class="nav__link" data-nav-mobile="about"><span class="nav__link-num">01</span><span>About</span></a>
@@ -1187,6 +1267,19 @@
           }
         })
         .catch(function () {});
+
+      // Theme toggle (sun ↔ moon). Pre-paint script in <head> sets the
+      // attribute before first render; this just handles user clicks.
+      var themeBtn = document.getElementById('themeToggle');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          var html = document.documentElement;
+          var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+          if (next === 'light') html.setAttribute('data-theme', 'light');
+          else html.removeAttribute('data-theme');
+          try { localStorage.setItem('theme', next); } catch (e) {}
+        });
+      }
 
       var nav = document.getElementById('nav');
       var navTicking = false;

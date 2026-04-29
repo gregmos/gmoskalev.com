@@ -89,11 +89,26 @@
     })();
   </script>
 
+  <!-- Restore theme preference before paint to avoid flash. Default = dark. -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <style>
     /* ════════════════════════════════════════════════════════════════
        VARIABLES
        ════════════════════════════════════════════════════════════════ */
     :root {
+      /* Theme: dark by default. Light overrides at the [data-theme="light"]
+         block below. --ink flips between 255/255/255 (dark) and 0/0/0 (light)
+         to recolor every surface tint via rgb(var(--ink) / X) in one move. */
+      --ink: 255 255 255;
       --bg: #0A0A0A;
       --bg-elev: #101114;
       --bg-elev-2: #15171B;
@@ -102,18 +117,37 @@
       --fg-dim: #A0A0A6;
       --fg-dimmer: #6E6E76;
       --fg-faint: #3F3F46;
-      --hair: rgba(255, 255, 255, 0.07);
-      --hair-2: rgba(255, 255, 255, 0.12);
-      --hair-strong: rgba(255, 255, 255, 0.22);
+      --hair: rgb(var(--ink) / 0.07);
+      --hair-2: rgb(var(--ink) / 0.12);
+      --hair-strong: rgb(var(--ink) / 0.22);
       --accent: #00E27A;
       --remote: #9CA3FF;
       --warn: #FFB020;
+      --nav-bg-scrolled: rgba(10, 10, 10, 0.72);
       --font-sans: "Inter", system-ui, sans-serif;
       --font-mono: "JetBrains Mono", ui-monospace, monospace;
       --max: 1200px;
       --gutter: clamp(20px, 4vw, 56px);
       --ease-expo: cubic-bezier(0.22, 0.61, 0.36, 1);
       --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+      color-scheme: dark;
+    }
+
+    [data-theme="light"] {
+      --ink: 0 0 0;
+      --bg: #FAFAF7;
+      --bg-elev: #FFFFFF;
+      --bg-elev-2: #F4F1EB;
+      --bg-deep: #ECE9E2;
+      --fg: #18181B;
+      --fg-dim: #4C4C56;
+      --fg-dimmer: #7A7A86;
+      --fg-faint: #B8B8C0;
+      --accent: #008C4D;
+      --remote: #4F5BCC;
+      --warn: #B36900;
+      --nav-bg-scrolled: rgba(250, 250, 247, 0.78);
+      color-scheme: light;
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -184,8 +218,8 @@
       inset: 0;
       pointer-events: none;
       background-image:
-        linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+        linear-gradient(to right, rgb(var(--ink) / 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(var(--ink) / 0.025) 1px, transparent 1px);
       background-size: 64px 64px;
       mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 80%);
       z-index: 0;
@@ -197,7 +231,7 @@
       right: 0;
       width: 600px;
       height: 600px;
-      background: radial-gradient(400px at 100% 100%, rgba(0, 226, 122, 0.05), transparent 70%);
+      background: radial-gradient(400px at 100% 100%, color-mix(in oklab, var(--accent) 5%, transparent), transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -211,7 +245,7 @@
       top: 0;
       z-index: 50;
       padding: 14px var(--gutter);
-      background: rgba(10, 10, 10, 0.72);
+      background: var(--nav-bg-scrolled);
       backdrop-filter: saturate(140%) blur(14px);
       -webkit-backdrop-filter: saturate(140%) blur(14px);
       border-bottom: 1px solid var(--hair);
@@ -234,7 +268,7 @@
       border-radius: 6px;
       transition: color 150ms ease, background 150ms ease;
     }
-    .subnav__back:hover { color: var(--fg); background: rgba(255,255,255,0.04); }
+    .subnav__back:hover { color: var(--fg); background: rgb(var(--ink) / 0.04); }
     .subnav__crumb {
       color: var(--fg-dimmer);
       flex: 1;
@@ -258,6 +292,34 @@
     .subnav__gh:hover { border-color: var(--accent); color: var(--accent); }
     @media (max-width: 640px) { .subnav__crumb { display: none; } }
 
+    /* Theme toggle (sun ↔ moon) */
+    .theme-toggle {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--hair-2);
+      border-radius: 6px;
+      color: var(--fg-dim);
+      cursor: pointer;
+      transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+      flex: none;
+    }
+    .theme-toggle:hover,
+    .theme-toggle:focus-visible {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .theme-toggle__icon {
+      grid-area: 1 / 1;
+      display: block;
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+    .theme-toggle__icon--sun { opacity: 1; transform: rotate(0); }
+    .theme-toggle__icon--moon { opacity: 0; transform: rotate(-90deg); }
+    [data-theme="light"] .theme-toggle__icon--sun { opacity: 0; transform: rotate(90deg); }
+    [data-theme="light"] .theme-toggle__icon--moon { opacity: 1; transform: rotate(0); }
+
     /* ════════════════════════════════════════════════════════════════
        AUDIENCE TOGGLE
        ════════════════════════════════════════════════════════════════ */
@@ -266,7 +328,7 @@
       align-items: center;
       gap: 0;
       padding: 3px;
-      background: rgba(255,255,255,0.03);
+      background: rgb(var(--ink) / 0.03);
       border: 1px solid var(--hair);
       border-radius: 100px;
       font-family: var(--font-mono);
@@ -407,7 +469,7 @@
       font-family: var(--font-mono);
       font-size: 12px;
       color: var(--fg-dim);
-      background: rgba(255,255,255,0.02);
+      background: rgb(var(--ink) / 0.02);
     }
     .pill--live { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
     .pill--live .pill__dot {
@@ -446,7 +508,7 @@
       border-color: var(--hair-2);
       color: var(--fg);
     }
-    .btn--ghost:hover { border-color: var(--fg-dim); background: rgba(255,255,255,0.03); }
+    .btn--ghost:hover { border-color: var(--fg-dim); background: rgb(var(--ink) / 0.03); }
 
     /* ════════════════════════════════════════════════════════════════
        SECTION BASE + DIVIDERS
@@ -468,7 +530,7 @@
       padding: 6px 12px 6px 10px;
       border: 1px solid var(--hair);
       border-radius: 6px;
-      background: rgba(255,255,255,0.02);
+      background: rgb(var(--ink) / 0.02);
     }
     .section-label__sigil { color: var(--accent); }
     .section-label__num { color: var(--fg); }
@@ -524,7 +586,7 @@
       border: 1px solid var(--hair);
       border-radius: 10px;
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0) 60%),
+        linear-gradient(180deg, rgb(var(--ink) / 0.015), transparent 60%),
         radial-gradient(ellipse 60% 40% at 50% 0%, color-mix(in oklab, var(--accent) 5%, transparent), transparent 60%);
       overflow: hidden;
     }
@@ -724,7 +786,7 @@
       padding: 22px 24px;
       border: 1px solid var(--hair);
       border-radius: 10px;
-      background: rgba(255,255,255,0.015);
+      background: rgb(var(--ink) / 0.015);
       position: relative;
     }
     .transform__col--after {
@@ -815,7 +877,7 @@
       margin-top: 28px;
       padding: 14px 18px;
       border-left: 2px solid var(--accent);
-      background: rgba(255,255,255,0.01);
+      background: rgb(var(--ink) / 0.01);
       font-size: 14.5px !important;
       line-height: 1.55 !important;
       color: var(--fg-dim) !important;
@@ -834,7 +896,7 @@
       margin-top: 32px;
       padding: 22px 26px;
       border-left: 2px solid var(--accent);
-      background: rgba(255,255,255,0.015);
+      background: rgb(var(--ink) / 0.015);
     }
     .prose__rewrite-label {
       font-family: var(--font-mono);
@@ -883,7 +945,7 @@
       text-align: center;
       padding: 10px 12px;
       border-top: 1px solid var(--hair);
-      background: rgba(255, 255, 255, 0.015);
+      background: rgb(var(--ink) / 0.015);
       letter-spacing: 0.02em;
     }
 
@@ -1001,7 +1063,7 @@
     .coverage {
       border: 1px solid var(--hair);
       border-radius: 8px;
-      background: rgba(255,255,255,0.015);
+      background: rgb(var(--ink) / 0.015);
       overflow: hidden;
     }
     .coverage__row {
@@ -1041,7 +1103,7 @@
       padding: 5px 8px 5px 6px;
       border: 1px solid var(--hair);
       border-radius: 4px;
-      background: rgba(255,255,255,0.015);
+      background: rgb(var(--ink) / 0.015);
       font-family: var(--font-mono);
       font-size: 12px;
       color: var(--fg-dim);
@@ -1051,7 +1113,7 @@
     .cov:hover,
     .cov:focus-visible {
       border-color: var(--hair-2);
-      background: rgba(255,255,255,0.04);
+      background: rgb(var(--ink) / 0.04);
       color: var(--fg);
       z-index: 2;
     }
@@ -1205,7 +1267,7 @@
       padding: 22px;
       border: 1px solid var(--hair);
       border-radius: 10px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0) 60%);
+      background: linear-gradient(180deg, rgb(var(--ink) / 0.015), transparent 60%);
       transition: border-color 220ms ease, background 220ms ease;
       display: flex;
       flex-direction: column;
@@ -1223,7 +1285,7 @@
       opacity: 0;
       transition: width 280ms var(--ease-out-cubic), opacity 220ms;
     }
-    .feature:hover { border-color: var(--hair-2); background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0) 60%); }
+    .feature:hover { border-color: var(--hair-2); background: linear-gradient(180deg, rgb(var(--ink) / 0.025), transparent 60%); }
     .feature:hover::after { width: 100%; opacity: 0.4; }
     .feature__num {
       font-family: var(--font-mono);
@@ -1290,7 +1352,7 @@
       justify-content: space-between;
       gap: 8px;
     }
-    .tool:hover { background: rgba(255,255,255,0.04); color: var(--accent); }
+    .tool:hover { background: rgb(var(--ink) / 0.04); color: var(--accent); }
     .tool__name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tool__hint {
       font-size: 10px;
@@ -1350,7 +1412,7 @@
       padding: 22px;
       border: 1px solid var(--hair);
       border-radius: 10px;
-      background: rgba(255,255,255,0.015);
+      background: rgb(var(--ink) / 0.015);
     }
     .step__n {
       width: 40px; height: 40px;
@@ -1422,7 +1484,7 @@
       padding: 18px 20px;
       border: 1px solid var(--hair);
       border-radius: 8px;
-      background: rgba(255,255,255,0.015);
+      background: rgb(var(--ink) / 0.015);
       transition: border-color 220ms ease, background 220ms ease, transform 220ms ease;
       position: relative;
       overflow: hidden;
@@ -1609,10 +1671,10 @@
       padding: 24px;
       border: 1px solid var(--hair);
       border-radius: 10px;
-      background: rgba(255,255,255,0.015);
+      background: rgb(var(--ink) / 0.015);
       transition: border-color 220ms ease, background 220ms ease;
     }
-    .log:hover { border-color: var(--hair-2); background: rgba(255,255,255,0.025); }
+    .log:hover { border-color: var(--hair-2); background: rgb(var(--ink) / 0.025); }
     .log__name {
       font-family: var(--font-mono);
       font-size: 13.5px;
@@ -1644,7 +1706,7 @@
       padding: 14px 18px;
       border: 1px solid var(--hair);
       border-radius: 6px;
-      background: rgba(255,255,255,0.015);
+      background: rgb(var(--ink) / 0.015);
       line-height: 1.6;
     }
     .logs-footer .accent { color: var(--accent); }
@@ -1677,7 +1739,7 @@
       font-family: var(--font-mono);
       font-size: 12px;
       color: var(--fg-dim);
-      background: rgba(255,255,255,0.02);
+      background: rgb(var(--ink) / 0.02);
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -1853,6 +1915,15 @@
       <div class="subnav__crumb">
         gmoskalev.com<span class="subnav__crumb-sep">/</span>projects<span class="subnav__crumb-sep">/</span><span class="accent">pii-shield</span>
       </div>
+      <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
       <a href="https://github.com/gregmos/PII-Shield" class="subnav__gh" target="_blank" rel="noopener">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.79 8.21 11.38.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.09 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.61-.01 2.91-.01 3.3 0 .32.22.7.83.58C20.56 22.29 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/></svg>
         <span>GitHub</span>
@@ -2620,6 +2691,17 @@ npm test                   <span class="comment"># 8 suites, incl. multi-doc HIT
           syncToggleUI(audience);
         });
       });
+
+      // ─── 1a. Theme toggle (sun ↔ moon) ────────────────────────────
+      var themeBtn = document.getElementById('themeToggle');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+          if (next === 'light') html.setAttribute('data-theme', 'light');
+          else html.removeAttribute('data-theme');
+          try { localStorage.setItem('theme', next); } catch (e) {}
+        });
+      }
 
       // ─── 1b. Coverage chip popover edge-clip guard ───────────────
       // Country chips have absolutely-positioned popovers anchored left:0.
