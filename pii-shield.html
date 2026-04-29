@@ -171,7 +171,6 @@
       [data-reveal] {
         opacity: 1 !important;
         transform: none !important;
-        letter-spacing: -0.045em !important;
       }
       .arrow__line { transform: scaleX(1) !important; }
       .arrow__head { opacity: 1 !important; }
@@ -1839,13 +1838,11 @@
       transform: none;
     }
     [data-reveal="settle"] {
-      letter-spacing: -0.030em;
       opacity: 0;
       transform: translateY(6px);
-      transition: letter-spacing 420ms var(--ease-out-cubic), opacity 360ms ease-out, transform 420ms var(--ease-out-cubic);
+      transition: opacity 360ms ease-out, transform 420ms var(--ease-out-cubic);
     }
     [data-reveal="settle"].reveal--in {
-      letter-spacing: -0.045em;
       opacity: 1;
       transform: none;
     }
