@@ -167,31 +167,33 @@
       max-width: var(--max);
       margin: 0 auto;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 16px;
-    }
-    .nav__brand {
+      gap: 20px;
       font-family: var(--font-mono);
-      font-size: 14px;
-      letter-spacing: -0.01em;
-      color: var(--fg);
-      font-weight: 500;
+      font-size: 12.5px;
     }
     .nav__back {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 14px;
-      border: 1px solid var(--hair-2);
-      border-radius: 6px;
-      font-family: var(--font-mono);
-      font-size: 12.5px;
+      padding: 6px 10px;
       color: var(--fg-dim);
-      transition: border-color 150ms ease, color 150ms ease;
+      border-radius: 6px;
+      transition: color 150ms ease, background 150ms ease;
+      flex: none;
     }
-    .nav__back:hover, .nav__back:focus-visible { border-color: var(--accent); color: var(--accent); }
-    .nav__right { display: inline-flex; align-items: center; gap: 8px; }
+    .nav__back:hover, .nav__back:focus-visible { color: var(--fg); background: rgb(var(--ink) / 0.04); }
+    .nav__crumb {
+      color: var(--fg-dimmer);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .nav__crumb .accent { color: var(--accent); }
+    .nav__crumb-sep { color: var(--fg-faint); padding: 0 6px; }
+    @media (max-width: 640px) { .nav__crumb { display: none; } }
 
     /* Theme toggle (sun ↔ moon) */
     .theme-toggle {
@@ -348,22 +350,22 @@
 <body>
   <nav class="nav" id="nav">
     <div class="nav__inner">
-      <a href="/" class="nav__brand">gmoskalev</a>
-      <div class="nav__right">
-        <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
-          <svg class="theme-toggle__icon theme-toggle__icon--sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="4"/>
-            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-          </svg>
-          <svg class="theme-toggle__icon theme-toggle__icon--moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-        </button>
-        <a href="/" class="nav__back">
-          <span aria-hidden="true">←</span>
-          <span>Home</span>
-        </a>
+      <a href="/" class="nav__back">
+        <span aria-hidden="true">←</span>
+        <span>Back</span>
+      </a>
+      <div class="nav__crumb">
+        gmoskalev.com<span class="nav__crumb-sep">/</span><span class="accent">writing</span>
       </div>
+      <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
     </div>
   </nav>
 
