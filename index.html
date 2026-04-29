@@ -150,6 +150,11 @@
       color-scheme: light;
     }
 
+    /* Cross-document View Transitions: cross-fade between pages of the
+       same origin (e.g. / → /pii-shield → /writing). Browser auto-skips
+       the animation when prefers-reduced-motion is set. */
+    @view-transition { navigation: auto; }
+
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }

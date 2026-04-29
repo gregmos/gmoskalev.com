@@ -96,6 +96,10 @@
       color-scheme: light;
     }
 
+    /* Cross-document View Transitions: cross-fade between pages of the
+       same origin. Auto-skipped under prefers-reduced-motion. */
+    @view-transition { navigation: auto; }
+
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
