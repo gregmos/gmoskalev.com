@@ -127,6 +127,7 @@
       --hair-strong: rgb(var(--ink) / 0.22);
       --accent: #00E27A;
       --danger: #FF4D4D;
+      --warn: #FFB020;
       --nav-bg-scrolled: rgba(10, 10, 10, 0.72);
       --font-sans: "Inter", system-ui, sans-serif;
       --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -147,6 +148,7 @@
       --fg-faint: #B8B8C0;
       --accent: #008C4D;
       --danger: #C92626;
+      --warn: #B36900;
       --nav-bg-scrolled: rgba(250, 250, 247, 0.78);
       color-scheme: light;
     }
@@ -715,6 +717,8 @@
     }
     .project__status--live { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
     .project__status--live .project__status-dot { box-shadow: 0 0 8px var(--accent); }
+    .project__status--new { color: var(--warn); border-color: color-mix(in oklab, var(--warn) 40%, transparent); }
+    .project__status--new .project__status-dot { box-shadow: 0 0 8px var(--warn); }
 
     .project__tagline {
       font-size: 16px;
@@ -1140,6 +1144,32 @@
           <li class="tag tag--mono">GLiNER</li>
           <li class="tag tag--mono">ONNX</li>
           <li class="tag tag--mono">DOCX</li>
+        </ul>
+        <span class="project__open" aria-hidden="true">See details →</span>
+      </a>
+
+      <a class="project project--pinned project--link" href="/legal-memo-writer">
+        <header class="project__head">
+          <div class="project__head-left">
+            <span class="project__pin" aria-label="Pinned">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 3h6l-1 7 4 3H6l4-3-1-7z"/></svg>
+              <span>pinned</span>
+            </span>
+            <h3 class="project__name">Legal Memo Writer</h3>
+          </div>
+          <span class="project__status project__status--new">
+            <span class="project__status-dot" aria-hidden="true"></span>
+            v0.1.0 · New
+          </span>
+        </header>
+        <p class="project__tagline">Ask a legal question. Get a finished memo.</p>
+        <p class="project__desc">Multi-agent plugin for Claude Cowork. Fifteen specialists run intake, parallel research, IRAC drafting, and peer review — and ship a formatted <code>.docx</code> with real statute and case citations, named contrary authority, and concrete risk scores. Not generic disclaimers — a memo a partner can sign off on.</p>
+        <ul class="project__stack">
+          <li class="tag tag--mono">Python</li>
+          <li class="tag tag--mono">Claude Cowork</li>
+          <li class="tag tag--mono">MCP</li>
+          <li class="tag tag--mono">python-docx</li>
+          <li class="tag tag--mono">IRAC</li>
         </ul>
         <span class="project__open" aria-hidden="true">See details →</span>
       </a>

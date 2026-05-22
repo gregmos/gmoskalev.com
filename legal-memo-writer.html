@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal Memo Writer — Ask a legal question. Get a finished memo.</title>
+  <meta name="description" content="Multi-agent plugin for Claude Cowork. Fifteen specialists run intake, parallel research, IRAC drafting, peer review, and polish — and ship a formatted .docx with real citations and named contrary authority." />
+
+  <link rel="canonical" href="https://gmoskalev.com/legal-memo-writer" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Legal Memo Writer — Ask a legal question. Get a finished memo." />
+  <meta property="og:description" content="Multi-agent plugin for Claude Cowork. Fifteen specialists run intake, parallel research, IRAC drafting, peer review, and polish — and ship a formatted .docx with real citations and named contrary authority." />
+  <meta property="og:url" content="https://gmoskalev.com/legal-memo-writer" />
+  <meta property="og:site_name" content="gmoskalev.com" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://gmoskalev.com/legal-memo-writer#software",
+        "name": "Legal Memo Writer",
+        "url": "https://gmoskalev.com/legal-memo-writer",
+        "softwareVersion": "0.1.0",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Windows, macOS, Linux",
+        "description": "Multi-agent legal-memo drafting plugin for Claude Cowork and Claude Code. Takes a free-form legal question, runs a 15-agent pipeline (intake → parallel research → IRAC drafting → peer review → polish), and ships a formatted .docx memo with real statute and case citations, named contrary authority, and concrete risk scores.",
+        "codeRepository": "https://github.com/gregmos/legal-memo-writer",
+        "license": "https://opensource.org/licenses/MIT",
+        "programmingLanguage": ["Python"],
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "author": { "@id": "https://gmoskalev.com/#person" },
+        "creator": { "@id": "https://gmoskalev.com/#person" },
+        "featureList": [
+          "Multi-agent pipeline: 15 specialists plus orchestrator",
+          "Parallel statutory, case-law and doctrinal research",
+          "IRAC drafting with full citations and named contrary authority",
+          "Peer review by logic, citations, style, clarity and counter-argument specialists",
+          "Currency check on every cited statute and judgment",
+          "Brief mode (1–3 pages, 3 reviewers) and Full mode (5–15 pages, 5 reviewers, up to 3 revision rounds)",
+          "Three mandatory user checkpoints — intake, mode, plan approval",
+          "Formatted .docx export plus full research and review audit trail"
+        ]
+      },
+      {
+        "@type": "Person",
+        "@id": "https://gmoskalev.com/#person",
+        "name": "Grigorii Moskalev",
+        "url": "https://gmoskalev.com/",
+        "jobTitle": "Legal Counsel",
+        "worksFor": { "@type": "Organization", "name": "FaceApp" },
+        "sameAs": [
+          "https://www.linkedin.com/in/grigorii-moskalev",
+          "https://github.com/gregmos",
+          "https://t.me/gregms"
+        ]
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://gmoskalev.com/legal-memo-writer#webpage",
+        "url": "https://gmoskalev.com/legal-memo-writer",
+        "name": "Legal Memo Writer — Ask a legal question. Get a finished memo.",
+        "about": { "@id": "https://gmoskalev.com/legal-memo-writer#software" },
+        "inLanguage": "en"
+      }
+    ]
+  }
+  </script>
+
+  <link rel="icon" type="image/svg+xml" href="/favicon-legal-memo-writer.svg" />
+  <link rel="alternate icon" href="/favicon.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Restore theme preference before paint to avoid flash. Default = dark. -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <style>
+    /* ════════════════════════════════════════════════════════════════
+       VARIABLES
+       ════════════════════════════════════════════════════════════════ */
+    :root {
+      --ink: 255 255 255;
+      --bg: #0A0A0A;
+      --bg-elev: #101114;
+      --bg-elev-2: #15171B;
+      --bg-deep: #07070A;
+      --fg: #EDEDED;
+      --fg-dim: #A0A0A6;
+      --fg-dimmer: #6E6E76;
+      --fg-faint: #3F3F46;
+      --hair: rgb(var(--ink) / 0.07);
+      --hair-2: rgb(var(--ink) / 0.12);
+      --hair-strong: rgb(var(--ink) / 0.22);
+      --accent: #00E27A;
+      --remote: #9CA3FF;
+      --warn: #FFB020;
+      --nav-bg-scrolled: rgba(10, 10, 10, 0.72);
+      --font-sans: "Inter", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+      --max: 1200px;
+      --gutter: clamp(20px, 4vw, 56px);
+      --ease-expo: cubic-bezier(0.22, 0.61, 0.36, 1);
+      --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+      color-scheme: dark;
+    }
+
+    [data-theme="light"] {
+      --ink: 0 0 0;
+      --bg: #FAFAF7;
+      --bg-elev: #FFFFFF;
+      --bg-elev-2: #F4F1EB;
+      --bg-deep: #ECE9E2;
+      --fg: #18181B;
+      --fg-dim: #4C4C56;
+      --fg-dimmer: #7A7A86;
+      --fg-faint: #B8B8C0;
+      --accent: #008C4D;
+      --remote: #4F5BCC;
+      --warn: #B36900;
+      --nav-bg-scrolled: rgba(250, 250, 247, 0.78);
+      color-scheme: light;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       REDUCED MOTION
+       ════════════════════════════════════════════════════════════════ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+      .arrow__line { transform: scaleX(1) !important; }
+      .arrow__head { opacity: 1 !important; }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       BASE
+       ════════════════════════════════════════════════════════════════ */
+    @view-transition { navigation: auto; }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; background: none; border: 0; color: inherit; cursor: pointer; padding: 0; }
+    h1, h2, h3, h4, p, ul, ol { margin: 0; padding: 0; }
+    ul, ol { list-style: none; }
+    ::selection { background: color-mix(in oklab, var(--accent) 35%, transparent); color: var(--fg); }
+    :focus-visible { outline: 1.5px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+    html { scrollbar-width: thin; scrollbar-color: var(--hair-2) transparent; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--hair-2); border-radius: 2px; border: 3px solid var(--bg); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--fg-faint); }
+
+    /* Background grid + ambient corner glow */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgb(var(--ink) / 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(var(--ink) / 0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 80%);
+      z-index: 0;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(400px at 100% 100%, color-mix(in oklab, var(--accent) 5%, transparent), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    main { position: relative; z-index: 1; }
+
+    /* ════════════════════════════════════════════════════════════════
+       SUBNAV
+       ════════════════════════════════════════════════════════════════ */
+    .subnav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 14px var(--gutter);
+      background: var(--nav-bg-scrolled);
+      backdrop-filter: saturate(140%) blur(14px);
+      -webkit-backdrop-filter: saturate(140%) blur(14px);
+      border-bottom: 1px solid var(--hair);
+    }
+    .subnav__inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+    }
+    .subnav__back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--fg-dim);
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: color 150ms ease, background 150ms ease;
+    }
+    .subnav__back:hover { color: var(--fg); background: rgb(var(--ink) / 0.04); }
+    .subnav__crumb {
+      color: var(--fg-dimmer);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .subnav__crumb .accent { color: var(--accent); }
+    .subnav__crumb-sep { color: var(--fg-faint); padding: 0 6px; }
+    .subnav__gh {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid var(--hair-2);
+      border-radius: 6px;
+      color: var(--fg);
+      transition: border-color 150ms ease, color 150ms ease;
+    }
+    .subnav__gh:hover { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 640px) { .subnav__crumb { display: none; } }
+
+    /* Theme toggle */
+    .theme-toggle {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--hair-2);
+      border-radius: 6px;
+      color: var(--fg-dim);
+      cursor: pointer;
+      transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+      flex: none;
+    }
+    .theme-toggle:hover, .theme-toggle:focus-visible { border-color: var(--accent); color: var(--accent); }
+    .theme-toggle__icon { grid-area: 1 / 1; display: block; transition: opacity 200ms ease, transform 200ms ease; }
+    .theme-toggle__icon--sun { opacity: 1; transform: rotate(0); }
+    .theme-toggle__icon--moon { opacity: 0; transform: rotate(-90deg); }
+    [data-theme="light"] .theme-toggle__icon--sun { opacity: 0; transform: rotate(90deg); }
+    [data-theme="light"] .theme-toggle__icon--moon { opacity: 1; transform: rotate(0); }
+
+    /* ════════════════════════════════════════════════════════════════
+       SUBHERO
+       ════════════════════════════════════════════════════════════════ */
+    .subhero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: clamp(50px, 9vh, 100px) var(--gutter) clamp(40px, 6vh, 60px);
+      position: relative;
+    }
+    .subhero__top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .subhero__glow {
+      position: absolute;
+      inset: -10% -10% auto -10%;
+      height: 100%;
+      background: radial-gradient(ellipse 50% 40% at 30% 30%, color-mix(in oklab, var(--accent) 15%, transparent) 0%, transparent 60%);
+      filter: blur(20px);
+      z-index: -1;
+      pointer-events: none;
+    }
+    .subhero__pin {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: lowercase;
+      letter-spacing: 0.04em;
+      background: color-mix(in oklab, var(--accent) 6%, transparent);
+    }
+    .subhero__pin-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    .subhero__pin-sep { color: var(--fg-faint); }
+    .subhero__pin-new {
+      color: var(--warn);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 10px;
+    }
+    .subhero__title {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: clamp(48px, 8vw, 108px);
+      line-height: 0.94;
+      letter-spacing: -0.045em;
+      color: var(--fg);
+      margin-bottom: 20px;
+      display: inline-flex;
+      align-items: baseline;
+    }
+    .caret {
+      display: inline-block;
+      width: 0.44em;
+      height: 0.9em;
+      background: var(--accent);
+      margin-left: 0.1em;
+      animation: blink 1.05s steps(2, end) infinite;
+      box-shadow: 0 0 24px color-mix(in oklab, var(--accent) 50%, transparent);
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .subhero__tagline {
+      font-size: clamp(20px, 2.4vw, 30px);
+      line-height: 1.35;
+      color: var(--fg);
+      max-width: 720px;
+      letter-spacing: -0.01em;
+      margin-bottom: 18px;
+      text-wrap: balance;
+    }
+    .subhero__friendly {
+      font-size: 15px;
+      color: var(--fg-dim);
+      margin-bottom: 28px;
+      max-width: 680px;
+      text-wrap: pretty;
+      line-height: 1.6;
+    }
+    .subhero__friendly strong {
+      color: var(--fg);
+      font-weight: 500;
+      font-family: var(--font-mono);
+      font-size: 14px;
+    }
+    .subhero__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--hair);
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--fg-dim);
+      background: rgb(var(--ink) / 0.02);
+    }
+    .pill--new { color: var(--warn); border-color: color-mix(in oklab, var(--warn) 40%, transparent); }
+    .pill--new .pill__dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--warn);
+      box-shadow: 0 0 8px var(--warn);
+    }
+    .subhero__cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: -0.005em;
+      transition: transform 140ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
+      border: 1px solid transparent;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn--primary {
+      background: var(--accent);
+      color: #00110A;
+      font-weight: 600;
+      box-shadow:
+        0 0 0 1px color-mix(in oklab, var(--accent) 30%, transparent),
+        0 12px 40px -12px color-mix(in oklab, var(--accent) 80%, transparent);
+    }
+    .btn--primary:hover { background: color-mix(in oklab, var(--accent) 85%, white); }
+    .btn--ghost { border-color: var(--hair-2); color: var(--fg); }
+    .btn--ghost:hover { border-color: var(--fg-dim); background: rgb(var(--ink) / 0.03); }
+
+    /* ════════════════════════════════════════════════════════════════
+       SECTION BASE + DIVIDERS
+       ════════════════════════════════════════════════════════════════ */
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: clamp(60px, 9vh, 100px) var(--gutter);
+      position: relative;
+    }
+    .section-label {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--fg-dim);
+      margin-bottom: 24px;
+      padding: 6px 12px 6px 10px;
+      border: 1px solid var(--hair);
+      border-radius: 6px;
+      background: rgb(var(--ink) / 0.02);
+    }
+    .section-label__sigil { color: var(--accent); }
+    .section-label__num { color: var(--fg); }
+    .section-label__slash { color: var(--fg-faint); }
+    .section-label__title { color: var(--fg-dim); }
+    .section__h {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      font-size: clamp(28px, 4vw, 40px);
+      letter-spacing: -0.045em;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      text-wrap: balance;
+      max-width: 28ch;
+    }
+    .section__lede {
+      font-size: 18px;
+      line-height: 1.55;
+      color: var(--fg-dim);
+      max-width: 64ch;
+      margin-bottom: 48px;
+      text-wrap: pretty;
+    }
+    .accent { color: var(--accent); }
+
+    .divider {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--fg-faint);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      border-top: 1px dashed var(--hair);
+    }
+    .divider__num { color: var(--fg-dimmer); }
+    .divider__txt { color: var(--fg-dim); }
+
+    /* ════════════════════════════════════════════════════════════════
+       PIPELINE (4-stage super-pipeline)
+       ════════════════════════════════════════════════════════════════ */
+    .pipeline {
+      position: relative;
+      padding: 40px 24px 56px;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgb(var(--ink) / 0.015), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 50% 0%, color-mix(in oklab, var(--accent) 5%, transparent), transparent 60%);
+      overflow: hidden;
+    }
+    .pipeline__stages {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      align-items: stretch;
+      position: relative;
+    }
+    .stage {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 20px 14px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .stage__icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 4px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--hair-2);
+      background: var(--bg-elev);
+      color: var(--fg-dim);
+    }
+    .stage--local .stage__icon {
+      border-color: color-mix(in oklab, var(--accent) 45%, transparent);
+      color: var(--accent);
+      background:
+        linear-gradient(180deg, color-mix(in oklab, var(--accent) 10%, transparent), transparent),
+        var(--bg-elev);
+      box-shadow: 0 0 24px -4px color-mix(in oklab, var(--accent) 40%, transparent);
+    }
+    .stage--remote .stage__icon {
+      border-color: color-mix(in oklab, var(--remote) 45%, transparent);
+      color: var(--remote);
+      background:
+        linear-gradient(180deg, color-mix(in oklab, var(--remote) 10%, transparent), transparent),
+        var(--bg-elev);
+    }
+    .stage__label {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--fg);
+      font-weight: 500;
+    }
+    .stage__sub {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dimmer);
+      text-transform: lowercase;
+    }
+    .stage__tag {
+      display: inline-block;
+      margin: 4px auto 0;
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1px solid var(--hair);
+    }
+    .stage--local .stage__tag { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
+    .stage--remote .stage__tag { color: var(--remote); border-color: color-mix(in oklab, var(--remote) 40%, transparent); }
+
+    /* Animated arrows for 4-stage layout (3 arrows between 4 stages).
+       Columns: 12.5/37.5/62.5/87.5%. Icons are 48px → 24px from center
+       to edge, +4px breathing room = 28px offset. */
+    .pipeline__arrows {
+      position: absolute;
+      top: 60px;
+      left: 24px;
+      right: 24px;
+      height: 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .pipeline__arrows-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 6px;
+    }
+    .arrow--1 { left: calc(12.5% + 28px); right: calc(62.5% + 28px); }
+    .arrow--2 { left: calc(37.5% + 28px); right: calc(37.5% + 28px); }
+    .arrow--3 { left: calc(62.5% + 28px); right: calc(12.5% + 28px); }
+    .arrow__line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--hair-strong);
+      transform: scaleX(0);
+      transform-origin: 0 50%;
+      transition: transform 600ms var(--ease-out-cubic);
+    }
+    .arrow__head {
+      position: absolute;
+      right: -1px;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      border-top: 1px solid var(--fg-dim);
+      border-right: 1px solid var(--fg-dim);
+      transform: translateY(-50%) rotate(45deg);
+      opacity: 0;
+      transition: opacity 200ms ease;
+    }
+    .arrow__packet {
+      position: absolute;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      margin-top: -3px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      opacity: 0;
+      pointer-events: none;
+      left: 0;
+    }
+    @keyframes packet-travel {
+      0% { left: 0; opacity: 0; transform: scale(0.5); }
+      8% { opacity: 1; transform: scale(1); }
+      92% { opacity: 1; transform: scale(1); }
+      100% { left: calc(100% - 6px); opacity: 0; transform: scale(0.5); }
+    }
+    .pipeline.reveal--in .arrow__line { transform: scaleX(1); }
+    .pipeline.reveal--in .arrow__head { opacity: 1; }
+    .pipeline.reveal--in .arrow:nth-child(1) .arrow__line { transition-delay: 0ms; }
+    .pipeline.reveal--in .arrow:nth-child(1) .arrow__head { transition-delay: 600ms; }
+    .pipeline.reveal--in .arrow:nth-child(2) .arrow__line { transition-delay: 140ms; }
+    .pipeline.reveal--in .arrow:nth-child(2) .arrow__head { transition-delay: 740ms; }
+    .pipeline.reveal--in .arrow:nth-child(3) .arrow__line { transition-delay: 280ms; }
+    .pipeline.reveal--in .arrow:nth-child(3) .arrow__head { transition-delay: 880ms; }
+    .pipeline.reveal--in .arrow__packet {
+      animation: packet-travel 1.4s var(--ease-out-cubic) 1 forwards;
+    }
+    .pipeline.reveal--in .arrow:nth-child(1) .arrow__packet { animation-delay: 1100ms; }
+    .pipeline.reveal--in .arrow:nth-child(2) .arrow__packet { animation-delay: 1350ms; }
+    .pipeline.reveal--in .arrow:nth-child(3) .arrow__packet { animation-delay: 1600ms; }
+
+    .pipeline__bracket {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .pipeline__bracket-inner {
+      position: relative;
+      padding: 12px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--fg-dim);
+      border: 1px dashed color-mix(in oklab, var(--accent) 30%, transparent);
+      border-radius: 8px;
+      background: color-mix(in oklab, var(--accent) 4%, transparent);
+      max-width: 640px;
+      text-align: center;
+    }
+    .pipeline__bracket-inner b { color: var(--accent); font-weight: 500; }
+
+    @media (max-width: 760px) {
+      .pipeline__stages { grid-template-columns: 1fr; gap: 8px; }
+      .pipeline__arrows { display: none; }
+      .stage { padding: 14px 12px; flex-direction: row; align-items: center; text-align: left; gap: 14px; }
+      .stage__icon { margin: 0; flex: none; }
+      .stage__meta { flex: 1; text-align: left; }
+      .stage__label, .stage__sub { text-align: left; }
+      .stage__tag { margin: 4px 0 0; }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       PHASE LIST (the 9-phase breakdown beneath the pipeline)
+       ════════════════════════════════════════════════════════════════ */
+    .phases {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 980px) { .phases { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px) { .phases { grid-template-columns: 1fr; } }
+    .phases__col {
+      padding: 18px 18px 20px;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      background: rgb(var(--ink) / 0.015);
+    }
+    .phases__head {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .phases__count {
+      color: var(--fg-faint);
+      font-size: 10px;
+    }
+    .phases__list { display: flex; flex-direction: column; gap: 10px; }
+    .phases__item {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--fg-dim);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+    }
+    .phases__num {
+      color: var(--fg-faint);
+      font-variant-numeric: tabular-nums;
+    }
+    .phases__name { color: var(--fg); }
+    .phases__desc { color: var(--fg-dim); display: block; margin-top: 2px; }
+
+    /* ════════════════════════════════════════════════════════════════
+       PROSE
+       ════════════════════════════════════════════════════════════════ */
+    .prose p {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--fg);
+      margin-bottom: 18px;
+      max-width: 70ch;
+    }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose p em {
+      color: var(--accent);
+      font-style: normal;
+      font-family: var(--font-mono);
+      font-size: 15px;
+    }
+    .prose code {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      color: var(--fg);
+      padding: 1px 6px;
+      border-radius: 3px;
+      background: color-mix(in oklab, var(--accent) 8%, transparent);
+    }
+
+    /* Inline code in cards / hero / phases / checkpoints / install steps —
+       unified accent-on-tint chip. Smaller than prose code; sits inline. */
+    .code-chip,
+    .subhero__friendly code,
+    .install-step__body code,
+    .phases__desc code,
+    .checkpoints__lede code {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--accent);
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: color-mix(in oklab, var(--accent) 10%, transparent);
+    }
+    .project__desc code,
+    .agent__role code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      color: var(--accent);
+      padding: 0 4px;
+      border-radius: 3px;
+      background: color-mix(in oklab, var(--accent) 8%, transparent);
+    }
+    .prose__rewrite {
+      margin-top: 28px;
+      padding: 18px 22px;
+      border-left: 2px solid var(--accent);
+      background: rgb(var(--ink) / 0.015);
+    }
+    .prose__rewrite-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .prose__rewrite p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--fg-dim);
+      margin-bottom: 0;
+      max-width: 65ch;
+    }
+    .prose__rewrite p + p { margin-top: 10px; }
+    .prose__rewrite p strong { color: var(--fg); font-weight: 500; }
+
+    /* ════════════════════════════════════════════════════════════════
+       DECISION CARDS (Brief vs Full)
+       ════════════════════════════════════════════════════════════════ */
+    .decision {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+    @media (max-width: 760px) { .decision { grid-template-columns: 1fr; } }
+    .decision__card {
+      padding: 28px 28px 30px;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgb(var(--ink) / 0.015), transparent 60%);
+      transition: border-color 220ms ease, background 220ms ease;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .decision__card::after {
+      content: "";
+      position: absolute;
+      left: 0; top: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      opacity: 0;
+      transition: width 280ms var(--ease-out-cubic), opacity 220ms;
+    }
+    .decision__card:hover { border-color: var(--hair-2); background: linear-gradient(180deg, rgb(var(--ink) / 0.025), transparent 60%); }
+    .decision__card:hover::after { width: 100%; opacity: 0.4; }
+    .decision__head {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .decision__head-tag {
+      font-size: 10.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg-dimmer);
+      border: 1px solid var(--hair);
+      padding: 3px 8px;
+      border-radius: 100px;
+    }
+    .decision__specs {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .decision__specs dt {
+      color: var(--fg-dimmer);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 10.5px;
+      align-self: center;
+    }
+    .decision__specs dd {
+      color: var(--fg);
+      margin: 0;
+    }
+    .decision__when {
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--fg-dim);
+      padding-left: 14px;
+      border-left: 2px solid var(--hair);
+      margin-top: 2px;
+    }
+    .decision__when strong { color: var(--fg); font-weight: 500; }
+
+    /* ════════════════════════════════════════════════════════════════
+       AGENT CONSTELLATION
+       ════════════════════════════════════════════════════════════════ */
+    .agents {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .agents__group {
+      padding: 22px 24px 26px;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgb(var(--ink) / 0.015), transparent 50%),
+        var(--bg-elev);
+      position: relative;
+    }
+    .agents__group--research { border-left: 2px solid color-mix(in oklab, var(--remote) 50%, transparent); }
+    .agents__group--review { border-left: 2px solid color-mix(in oklab, var(--warn) 50%, transparent); }
+    .agents__group--polish,
+    .agents__group--intake,
+    .agents__group--draft,
+    .agents__group--quality { border-left: 2px solid color-mix(in oklab, var(--accent) 50%, transparent); }
+    .agents__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .agents__head-left {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      font-family: var(--font-mono);
+    }
+    .agents__phase {
+      font-size: 13px;
+      color: var(--fg);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+    .agents__group--research .agents__phase { color: var(--remote); }
+    .agents__group--review .agents__phase { color: var(--warn); }
+    .agents__count {
+      font-size: 10.5px;
+      color: var(--fg-dimmer);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 7px;
+      border: 1px solid var(--hair);
+      border-radius: 100px;
+    }
+    .agents__hint {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dimmer);
+      letter-spacing: 0.02em;
+    }
+    .agents__hint .accent { color: var(--accent); }
+    .agents__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .agent {
+      padding: 14px 16px 16px;
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      background: var(--bg-deep);
+      transition: border-color 200ms ease, background 200ms ease, transform 200ms ease;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .agent:hover {
+      border-color: var(--hair-2);
+      background: var(--bg-elev-2);
+      transform: translateY(-1px);
+    }
+    .agent__slug {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--accent);
+      font-weight: 500;
+      letter-spacing: -0.005em;
+      word-break: break-word;
+    }
+    .agents__group--research .agent__slug { color: var(--remote); }
+    .agents__group--review .agent__slug { color: var(--warn); }
+    .agent__role {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--fg-dim);
+    }
+    .agents__orchestrator {
+      margin-top: 6px;
+      padding: 16px 20px;
+      border: 1px dashed var(--hair-2);
+      border-radius: 8px;
+      background: rgb(var(--ink) / 0.01);
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--fg-dim);
+      line-height: 1.55;
+    }
+    .agents__orchestrator strong { color: var(--fg); font-weight: 500; }
+    .agents__orchestrator .accent { color: var(--accent); }
+
+    /* ════════════════════════════════════════════════════════════════
+       OUTPUT BUNDLE
+       ════════════════════════════════════════════════════════════════ */
+    .bundle {
+      padding: 24px 28px;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      background: var(--bg-deep);
+      box-shadow: 0 24px 56px -32px rgba(0, 0, 0, 0.5);
+      overflow-x: auto;
+    }
+    .bundle__inner {
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.7;
+      min-width: 0;
+    }
+    .bundle__root {
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: block;
+      letter-spacing: -0.005em;
+    }
+    .bundle__row {
+      display: grid;
+      grid-template-columns: minmax(180px, 240px) 1fr;
+      gap: 24px;
+      padding-left: 20px;
+      position: relative;
+      color: var(--fg);
+    }
+    .bundle__row::before {
+      content: "├";
+      position: absolute;
+      left: 4px;
+      color: var(--fg-faint);
+    }
+    .bundle__row:last-child::before { content: "└"; }
+    .bundle__name { color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bundle__name--accent { color: var(--accent); }
+    .bundle__name--remote { color: var(--remote); }
+    .bundle__name--warn { color: var(--warn); }
+    .bundle__desc { color: var(--fg-dim); font-size: 12.5px; }
+
+    @media (max-width: 640px) {
+      .bundle { padding: 18px; }
+      .bundle__inner { font-size: 12.5px; }
+      .bundle__row { grid-template-columns: 1fr; gap: 2px; padding-bottom: 6px; }
+      .bundle__desc { padding-left: 0; font-size: 11.5px; }
+    }
+
+    .bundle__note {
+      margin-top: 22px;
+      padding: 14px 18px;
+      border-left: 2px solid var(--accent);
+      background: rgb(var(--ink) / 0.015);
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--fg-dim);
+      max-width: 64ch;
+    }
+    .bundle__note code {
+      font-family: var(--font-mono);
+      color: var(--fg);
+      padding: 1px 6px;
+      border-radius: 3px;
+      background: color-mix(in oklab, var(--accent) 8%, transparent);
+      font-size: 12.5px;
+    }
+    .bundle__note strong { color: var(--fg); font-weight: 500; }
+
+    /* ════════════════════════════════════════════════════════════════
+       QUICK START — INSTALL STEPS + CHECKPOINTS + EXAMPLES
+       ════════════════════════════════════════════════════════════════ */
+    .install-steps {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 760px) { .install-steps { grid-template-columns: 1fr; } }
+    .install-step {
+      padding: 22px 24px 24px;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      background: rgb(var(--ink) / 0.015);
+    }
+    .install-step__num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .install-step__title {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: var(--fg);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+    .install-step__body {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--fg-dim);
+      margin-bottom: 14px;
+    }
+    .install-step__body strong { color: var(--fg); font-weight: 500; }
+    .install-step__cmd {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent);
+      padding: 10px 14px;
+      border: 1px dashed var(--hair-2);
+      border-radius: 6px;
+      background: var(--bg-deep);
+      word-break: break-word;
+    }
+    .install-step__cmd-prompt { color: var(--fg-faint); margin-right: 6px; }
+    .install-step a { color: var(--accent); border-bottom: 1px dashed currentColor; }
+    .install-step a:hover { color: color-mix(in oklab, var(--accent) 70%, white); }
+
+    .checkpoints {
+      padding: 22px 24px 26px;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      background: rgb(var(--ink) / 0.015);
+      margin-bottom: 40px;
+    }
+    .checkpoints__head {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .checkpoints__lede {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--fg-dim);
+      margin-bottom: 18px;
+      max-width: 60ch;
+    }
+    .checkpoints__list {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px 18px;
+      align-items: baseline;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .checkpoints__list dt {
+      color: var(--fg-dimmer);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .checkpoints__phase {
+      color: var(--fg);
+      font-size: 13px;
+    }
+    .checkpoints__reply {
+      color: var(--accent);
+      font-size: 12px;
+      padding: 3px 8px;
+      border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+      border-radius: 100px;
+      background: color-mix(in oklab, var(--accent) 6%, transparent);
+      white-space: nowrap;
+    }
+    @media (max-width: 640px) {
+      .checkpoints__list { grid-template-columns: 1fr; gap: 4px 0; }
+      .checkpoints__list > * { padding-left: 0; }
+      .checkpoints__reply { justify-self: start; margin-bottom: 8px; }
+    }
+
+    .examples__lede {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+    .examples__list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .examples__item {
+      padding: 12px 16px;
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      background: var(--bg-deep);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--fg);
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .examples__item::before {
+      content: "›";
+      color: var(--fg-faint);
+      flex: none;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       REVEAL ANIMATIONS
+       ════════════════════════════════════════════════════════════════ */
+    [data-reveal="fade"] {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 520ms var(--ease-expo), transform 520ms var(--ease-expo);
+    }
+    [data-reveal="fade"].reveal--in {
+      opacity: 1;
+      transform: none;
+    }
+    [data-reveal="stagger"] > * {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 420ms var(--ease-expo), transform 420ms var(--ease-expo);
+      transition-delay: calc(var(--i, 0) * 70ms);
+    }
+    [data-reveal="stagger"].reveal--in > * {
+      opacity: 1;
+      transform: none;
+    }
+    [data-reveal="settle"] {
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 360ms ease-out, transform 420ms var(--ease-out-cubic);
+    }
+    [data-reveal="settle"].reveal--in {
+      opacity: 1;
+      transform: none;
+    }
+    [data-reveal="pipeline"] {
+      opacity: 0;
+      transition: opacity 400ms ease;
+    }
+    [data-reveal="pipeline"].reveal--in { opacity: 1; }
+
+    /* ════════════════════════════════════════════════════════════════
+       FOOTER
+       ════════════════════════════════════════════════════════════════ */
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 40px var(--gutter) 56px;
+      border-top: 1px solid var(--hair);
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--fg-dimmer);
+    }
+    .footer__col { display: flex; flex-direction: column; gap: 6px; }
+    .footer__col--right { text-align: right; align-items: flex-end; }
+    .footer__copy { color: var(--fg-dim); }
+    .footer a { color: var(--fg-dim); border-bottom: 1px dashed var(--fg-faint); }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+    @media (max-width: 560px) {
+      .footer { flex-direction: column; }
+      .footer__col--right { text-align: left; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ═════════════════════════════════ SUBNAV ═════════════════════════════════ -->
+  <nav class="subnav">
+    <div class="subnav__inner">
+      <a href="/" class="subnav__back">
+        <span aria-hidden="true">←</span>
+        <span>Back</span>
+      </a>
+      <div class="subnav__crumb">
+        gmoskalev.com<span class="subnav__crumb-sep">/</span>projects<span class="subnav__crumb-sep">/</span><span class="accent">legal-memo-writer</span>
+      </div>
+      <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+      <a href="https://github.com/gregmos/legal-memo-writer" class="subnav__gh" target="_blank" rel="noopener">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.79 8.21 11.38.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.09 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.61-.01 2.91-.01 3.3 0 .32.22.7.83.58C20.56 22.29 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/></svg>
+        <span>GitHub</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- ═════════════════════════════════ HERO ═════════════════════════════════ -->
+    <header class="subhero">
+      <div class="subhero__glow" aria-hidden="true"></div>
+
+      <div class="subhero__top">
+        <span class="subhero__pin">
+          <span class="subhero__pin-dot" aria-hidden="true"></span>
+          pinned project
+          <span class="subhero__pin-sep" aria-hidden="true">·</span>
+          <span class="subhero__pin-new">new</span>
+        </span>
+      </div>
+
+      <h1 class="subhero__title">
+        Legal Memo Writer<span class="caret" aria-hidden="true"></span>
+      </h1>
+      <p class="subhero__tagline">Ask a legal question. Get a finished memo.</p>
+      <p class="subhero__friendly">
+        Multi-agent plugin for Claude Cowork. <strong>Fifteen specialists</strong> run intake, parallel research, IRAC drafting, peer review, and polish — and ship a formatted <code>.docx</code> with real citations and named contrary authority.
+      </p>
+
+      <div class="subhero__meta">
+        <span class="pill pill--new"><span class="pill__dot" aria-hidden="true"></span>v0.1.0 · New</span>
+        <span class="pill">Claude Cowork plugin</span>
+        <span class="pill">Python</span>
+        <span class="pill">MCP-backed citations</span>
+        <span class="pill">MIT</span>
+      </div>
+
+      <div class="subhero__cta">
+        <a href="https://github.com/gregmos/legal-memo-writer" class="btn btn--primary" target="_blank" rel="noopener">
+          <span>Install from GitHub</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a href="#pipeline" class="btn btn--ghost">
+          <span>See how it works</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </header>
+
+    <div class="divider"><span class="divider__num">01</span><span class="divider__txt">how it flows</span></div>
+
+    <!-- ═════════════════════════════════ 01 PIPELINE ═════════════════════════════════ -->
+    <section id="pipeline" class="section">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">01</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">How it flows</span>
+      </div>
+      <h2 class="section__h" data-reveal="settle">From a free-form question to a court-citable memo.</h2>
+      <p class="section__lede">A four-stage flow runs underneath: intake gathers facts and scope; three researchers go out in parallel; the writer drafts IRAC; up to five reviewers stress-test the draft before polish and export. Nine phases, three mandatory human checkpoints.</p>
+
+      <div class="pipeline" data-reveal="pipeline">
+        <div class="pipeline__arrows" aria-hidden="true">
+          <div class="pipeline__arrows-inner">
+            <div class="arrow arrow--1"><span class="arrow__line"></span><span class="arrow__head"></span><span class="arrow__packet"></span></div>
+            <div class="arrow arrow--2"><span class="arrow__line"></span><span class="arrow__head"></span><span class="arrow__packet"></span></div>
+            <div class="arrow arrow--3"><span class="arrow__line"></span><span class="arrow__head"></span><span class="arrow__packet"></span></div>
+          </div>
+        </div>
+
+        <div class="pipeline__stages">
+          <div class="stage stage--local">
+            <div class="stage__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>
+            </div>
+            <div class="stage__meta">
+              <div class="stage__label">Intake</div>
+              <div class="stage__sub">triage · plan · approve</div>
+              <span class="stage__tag">Lawyer</span>
+            </div>
+          </div>
+
+          <div class="stage stage--remote">
+            <div class="stage__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></svg>
+            </div>
+            <div class="stage__meta">
+              <div class="stage__label">Research</div>
+              <div class="stage__sub">statutes · cases · doctrine</div>
+              <span class="stage__tag">Parallel</span>
+            </div>
+          </div>
+
+          <div class="stage stage--local">
+            <div class="stage__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h4"/></svg>
+            </div>
+            <div class="stage__meta">
+              <div class="stage__label">Draft</div>
+              <div class="stage__sub">IRAC · full citations</div>
+              <span class="stage__tag">Writer</span>
+            </div>
+          </div>
+
+          <div class="stage stage--local">
+            <div class="stage__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div class="stage__meta">
+              <div class="stage__label">Review &amp; Ship</div>
+              <div class="stage__sub">peer review · polish · export</div>
+              <span class="stage__tag">.docx</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipeline__bracket">
+          <div class="pipeline__bracket-inner">
+            <b>Three mandatory user checkpoints.</b> Intake answers, mode choice, plan approval — you stay in control of scope.
+          </div>
+        </div>
+      </div>
+
+      <!-- 9-phase breakdown -->
+      <div class="phases" data-reveal="stagger">
+        <div class="phases__col">
+          <div class="phases__head">
+            <span>Intake</span>
+            <span class="phases__count">2 phases</span>
+          </div>
+          <div class="phases__list">
+            <div class="phases__item">
+              <span class="phases__num">01</span>
+              <div>
+                <span class="phases__name">Triage</span>
+                <span class="phases__desc">Identifies missing facts; gathers safe assumptions.</span>
+              </div>
+            </div>
+            <div class="phases__item">
+              <span class="phases__num">02</span>
+              <div>
+                <span class="phases__name">Planning</span>
+                <span class="phases__desc">Selects template, scopes research. <span class="accent">You approve.</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phases__col">
+          <div class="phases__head">
+            <span style="color: var(--remote);">Research</span>
+            <span class="phases__count">2 phases</span>
+          </div>
+          <div class="phases__list">
+            <div class="phases__item">
+              <span class="phases__num">03</span>
+              <div>
+                <span class="phases__name">Parallel research</span>
+                <span class="phases__desc">Statutes, case law, regulatory guidance — concurrent.</span>
+              </div>
+            </div>
+            <div class="phases__item">
+              <span class="phases__num">04</span>
+              <div>
+                <span class="phases__name">Quality gates</span>
+                <span class="phases__desc">Sufficiency and currency verified before drafting.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phases__col">
+          <div class="phases__head">
+            <span>Draft</span>
+            <span class="phases__count">1 phase</span>
+          </div>
+          <div class="phases__list">
+            <div class="phases__item">
+              <span class="phases__num">05</span>
+              <div>
+                <span class="phases__name">Drafting</span>
+                <span class="phases__desc">IRAC structure per issue; full citations; no hedging.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phases__col">
+          <div class="phases__head">
+            <span>Review &amp; ship</span>
+            <span class="phases__count">4 phases</span>
+          </div>
+          <div class="phases__list">
+            <div class="phases__item">
+              <span class="phases__num">06</span>
+              <div>
+                <span class="phases__name">Peer review</span>
+                <span class="phases__desc">Up to 5 specialists stress-test the draft.</span>
+              </div>
+            </div>
+            <div class="phases__item">
+              <span class="phases__num">07</span>
+              <div>
+                <span class="phases__name">Mediation</span>
+                <span class="phases__desc">Feedback consolidated; up to 3 revision rounds in Full.</span>
+              </div>
+            </div>
+            <div class="phases__item">
+              <span class="phases__num">08</span>
+              <div>
+                <span class="phases__name">Polish</span>
+                <span class="phases__desc">Client-readiness final check.</span>
+              </div>
+            </div>
+            <div class="phases__item">
+              <span class="phases__num">09</span>
+              <div>
+                <span class="phases__name">Export</span>
+                <span class="phases__desc">Formatted <code>.docx</code> plus full audit trail.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"><span class="divider__num">02</span><span class="divider__txt">why this exists</span></div>
+
+    <!-- ═════════════════════════════════ 02 WHY ═════════════════════════════════ -->
+    <section id="why" class="section">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">02</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">Why this exists</span>
+      </div>
+      <h2 class="section__h" data-reveal="settle">Why naive memo prompts produce unusable memos.</h2>
+      <div class="prose">
+        <p><em>Hallucinated citations.</em> One model writing one draft will invent statutes and misquote cases. The model that wrote the citation has no incentive to verify it, so nothing catches the error before it reaches your inbox.</p>
+        <p><em>No contrary authority.</em> The same model that drafted the analysis will not stress-test it. You get a confident one-sided read — and no idea where opposing counsel would attack first.</p>
+        <p><em>No currency check.</em> A 2022 judgment that was overruled in 2024 will still show up as authority. A regulation cross-referencing a repealed act will still get cited. Nothing flags it.</p>
+
+        <div class="prose__rewrite">
+          <div class="prose__rewrite-label">the fix</div>
+          <p>Legal Memo Writer runs specialists that <strong>disagree with each other</strong> before the memo ever reaches you.</p>
+          <p>A statutory researcher pulls primary acts. A citation auditor checks that every claim traces to a source. A currency checker verifies cited judgments still represent current law. A counter-argument reviewer drafts the opposing read. A mediator consolidates the disagreements into one revision list, and a client-readiness reviewer makes the final call.</p>
+          <p>The output isn't generic disclaimers — it's a memo with <strong>named contrary authority</strong>, concrete risk scores, and recommendations a partner can actually sign off on.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"><span class="divider__num">03</span><span class="divider__txt">two modes</span></div>
+
+    <!-- ═════════════════════════════════ 03 MODES ═════════════════════════════════ -->
+    <section id="modes" class="section">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">03</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">Two modes</span>
+      </div>
+      <h2 class="section__h" data-reveal="settle">Brief or Full — pick the depth at intake.</h2>
+      <p class="section__lede">Both modes run the same agents and the same checkpoints. Full takes longer because more reviewers weigh in and the mediator runs multiple revision rounds. You choose at the second checkpoint.</p>
+
+      <div class="decision" data-reveal="stagger">
+        <div class="decision__card">
+          <div class="decision__head">
+            <span>Brief</span>
+            <span class="decision__head-tag">quick read</span>
+          </div>
+          <dl class="decision__specs">
+            <dt>Length</dt><dd>1–3 pages</dd>
+            <dt>Runtime</dt><dd>3–6 min</dd>
+            <dt>Reviewers</dt><dd>3 of 5</dd>
+            <dt>Revisions</dt><dd>1 round</dd>
+          </dl>
+          <p class="decision__when">Use when you need a <strong>quick risk read</strong> on a single question — a deal term that just landed, a vendor's privacy claim, a fast partner check.</p>
+        </div>
+
+        <div class="decision__card">
+          <div class="decision__head">
+            <span>Full</span>
+            <span class="decision__head-tag">deep cut</span>
+          </div>
+          <dl class="decision__specs">
+            <dt>Length</dt><dd>5–15 pages</dd>
+            <dt>Runtime</dt><dd>10–25 min</dd>
+            <dt>Reviewers</dt><dd>all 5</dd>
+            <dt>Revisions</dt><dd>up to 3 rounds</dd>
+          </dl>
+          <p class="decision__when">Use when the memo is <strong>going outside the legal team</strong> — pre-launch sign-off, regulatory response, board paper, anything where a counter-argument review matters.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"><span class="divider__num">04</span><span class="divider__txt">the specialists</span></div>
+
+    <!-- ═════════════════════════════════ 04 AGENTS ═════════════════════════════════ -->
+    <section id="agents" class="section">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">04</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">The specialists</span>
+      </div>
+      <h2 class="section__h" data-reveal="settle">Fifteen specialists, one orchestrator.</h2>
+      <p class="section__lede">Each agent does one thing — and challenges the next one's output. A statutory researcher doesn't review style. A clarity reviewer doesn't check citations. Disagreement is the design, not a bug.</p>
+
+      <div class="agents">
+
+        <div class="agents__group agents__group--intake">
+          <div class="agents__head">
+            <div class="agents__head-left">
+              <span class="agents__phase">Intake</span>
+              <span class="agents__count">1 agent</span>
+            </div>
+            <div class="agents__hint">runs once · gates planning</div>
+          </div>
+          <div class="agents__grid">
+            <div class="agent">
+              <div class="agent__slug">fact-assumption-analyst</div>
+              <div class="agent__role">Identifies missing facts, surfaces hidden variables, drafts safe defaults you can override.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="agents__group agents__group--research">
+          <div class="agents__head">
+            <div class="agents__head-left">
+              <span class="agents__phase">Research</span>
+              <span class="agents__count">3 agents · parallel</span>
+            </div>
+            <div class="agents__hint">routes to <span class="accent">Legal Data Hunter</span> · <span class="accent">CourtListener</span> MCPs first</div>
+          </div>
+          <div class="agents__grid">
+            <div class="agent">
+              <div class="agent__slug">statutory-researcher</div>
+              <div class="agent__role">Primary acts: statutes, regulations, directives, secondary legislation across jurisdictions.</div>
+            </div>
+            <div class="agent">
+              <div class="agent__slug">case-law-researcher</div>
+              <div class="agent__role">Judgments and opinions. US case law via CourtListener; multi-jurisdictional via Legal Data Hunter.</div>
+            </div>
+            <div class="agent">
+              <div class="agent__slug">doctrinal-researcher</div>
+              <div class="agent__role">Soft law, regulatory guidance, peer-reviewed commentary. Activated only when the plan calls for it.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="agents__group agents__group--quality">
+          <div class="agents__head">
+            <div class="agents__head-left">
+              <span class="agents__phase">Quality gates</span>
+              <span class="agents__count">3 agents</span>
+            </div>
+            <div class="agents__hint">block drafting if any gate fails</div>
+          </div>
+          <div class="agents__grid">
+            <div class="agent">
+              <div class="agent__slug">research-sufficiency-reviewer</div>
+              <div class="agent__role">Confirms each issue has enough primary sources and named contrary authority before the writer starts.</div>
+            </div>
+            <div class="agent">
+              <div class="agent__slug">currency-checker</div>
+              <div class="agent__role">Verifies cited acts and judgments still represent current law. Blocks on stale or overruled sources.</div>
+            </div>
+            <div class="agent">
+              <div class="agent__slug">source-pack-builder</div>
+              <div class="agent__role">Builds the evidence table the writer and the citation auditor share. Single source of truth.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="agents__group agents__group--draft">
+          <div class="agents__head">
+            <div class="agents__head-left">
+              <span class="agents__phase">Drafting</span>
+              <span class="agents__count">1 agent</span>
+            </div>
+            <div class="agents__hint">IRAC per issue · cites only the source pack</div>
+          </div>
+          <div class="agents__grid">
+            <div class="agent">
+              <div class="agent__slug">memo-writer</div>
+              <div class="agent__role">Writes the memo. IRAC structure per issue, full citations, concrete recommendations — not generic disclaimers.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="agents__group agents__group--review">
+          <div class="agents__head">
+            <div class="agents__head-left">
+              <span class="agents__phase">Peer review</span>
+              <span class="agents__count">5 agents</span>
+            </div>
+            <div class="agents__hint"><span class="accent">3 of 5</span> in Brief · all 5 in Full</div>
+          </div>
+          <div class="agents__grid">
+            <div class="agent">
+              <div class="agent__slug">logic-reviewer</div>
+              <div class="agent__role">Premise-to-conclusion soundness across issues. Catches contradictions between sections.</div>
+            </div>
+            <div class="agent">
+              <div class="agent__slug">citation-auditor</div>
+              <div class="agent__role">Every claim must trace to a source in the pack. Flags paraphrase drift and overreach.</div>
+            </div>
+            <div class="agent">
+              <div class="agent__slug">style-reviewer</div>
+              <div class="agent__role">Tone, AI-tells, em-dash overuse, vague attributions. House-style enforcement.</div>
+            </div>
+            <div class="agent">
+              <div class="agent__slug">clarity-reviewer</div>
+              <div class="agent__role">Sentence length, jargon-without-explanation, accessibility for a non-lawyer business reader.</div>
+            </div>
+            <div class="agent">
+              <div class="agent__slug">counterargument-reviewer</div>
+              <div class="agent__role">Contrary authority, overconfident conclusions, how an opposing lawyer or regulator would attack the analysis.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="agents__group agents__group--polish">
+          <div class="agents__head">
+            <div class="agents__head-left">
+              <span class="agents__phase">Polish</span>
+              <span class="agents__count">2 agents</span>
+            </div>
+            <div class="agents__hint">consolidate · ship</div>
+          </div>
+          <div class="agents__grid">
+            <div class="agent">
+              <div class="agent__slug">revision-mediator</div>
+              <div class="agent__role">Consolidates parallel reviewer JSONs into one actionable revision list. Resolves conflicts by house priority.</div>
+            </div>
+            <div class="agent">
+              <div class="agent__slug">client-readiness-reviewer</div>
+              <div class="agent__role">Final external-client check. Tone, assumptions, disclaimers, confidentiality, recommendation quality.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="agents__orchestrator">
+          <strong>Plus one orchestrator</strong> — your Cowork session itself. It picks the right specialist per phase, runs the parallel calls, gates on quality, and routes the human checkpoints. <span class="accent">You answer; it dispatches.</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"><span class="divider__num">05</span><span class="divider__txt">what you get</span></div>
+
+    <!-- ═════════════════════════════════ 05 OUTPUT ═════════════════════════════════ -->
+    <section id="output" class="section">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">05</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">What you get</span>
+      </div>
+      <h2 class="section__h" data-reveal="settle">Not just a memo — the whole audit trail.</h2>
+      <p class="section__lede">Every memo ships with the research it was built on, every draft revision, and a per-reviewer record of what was flagged and how it was resolved. If a partner asks <em>"where did this citation come from?"</em>, the answer is one folder away.</p>
+
+      <div class="bundle" data-reveal="fade">
+        <div class="bundle__inner">
+          <span class="bundle__root">~/Documents/legal-memos/&lt;task_id&gt;/</span>
+          <div class="bundle__row">
+            <span class="bundle__name bundle__name--accent">memo.docx</span>
+            <span class="bundle__desc">Formatted final memo — Arial 12pt, IRAC structure, full citations.</span>
+          </div>
+          <div class="bundle__row">
+            <span class="bundle__name">drafts/v*.md</span>
+            <span class="bundle__desc">Every revision the writer produced, in order.</span>
+          </div>
+          <div class="bundle__row">
+            <span class="bundle__name bundle__name--remote">research/</span>
+            <span class="bundle__desc">Cited statutes, judgments and guidance — raw sources, grouped by issue.</span>
+          </div>
+          <div class="bundle__row">
+            <span class="bundle__name bundle__name--warn">reviews/</span>
+            <span class="bundle__desc">Per-reviewer JSON findings: what was flagged, severity, suggested fix.</span>
+          </div>
+          <div class="bundle__row">
+            <span class="bundle__name">state.json</span>
+            <span class="bundle__desc">Full pipeline state — phases, decisions, mode, checkpoints.</span>
+          </div>
+          <div class="bundle__row">
+            <span class="bundle__name">events.jsonl</span>
+            <span class="bundle__desc">Append-only audit log: phase transitions, agent calls, fallbacks.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bundle__note">
+        <strong>Every claim in <code>memo.docx</code> is grounded in something inside <code>research/</code>.</strong> The citation auditor enforces it — if a sentence in the draft doesn't trace to a source in the pack, it gets flagged in <code>reviews/</code> and revised before export.
+      </div>
+    </section>
+
+    <div class="divider"><span class="divider__num">06</span><span class="divider__txt">quick start</span></div>
+
+    <!-- ═════════════════════════════════ 06 INSTALL ═════════════════════════════════ -->
+    <section id="install" class="section">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">06</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">Quick start</span>
+      </div>
+      <h2 class="section__h" data-reveal="settle">Install in Cowork. Run one command.</h2>
+      <p class="section__lede">Bundled MCP servers (Legal Data Hunter, CourtListener) auto-register on first run. The first call may trigger an OAuth prompt; after that, citations come back without you doing anything.</p>
+
+      <div class="install-steps" data-reveal="stagger">
+        <div class="install-step">
+          <div class="install-step__num">Step 01</div>
+          <div class="install-step__title">Install the plugin</div>
+          <div class="install-step__body">
+            Open Cowork → <strong>Settings → Plugins</strong>. Drag the <code>.zip</code> from <a href="https://github.com/gregmos/legal-memo-writer/releases" target="_blank" rel="noopener">Releases</a>, or install via the Cowork marketplace.
+          </div>
+        </div>
+
+        <div class="install-step">
+          <div class="install-step__num">Step 02</div>
+          <div class="install-step__title">Ask a question</div>
+          <div class="install-step__body">
+            Open a new Cowork chat and run the <code>/memo</code> command with your legal question:
+          </div>
+          <span class="install-step__cmd">
+            <span class="install-step__cmd-prompt">›</span>/legal-memo-writer:memo "&lt;your legal question&gt;"
+          </span>
+        </div>
+      </div>
+
+      <div class="checkpoints">
+        <div class="checkpoints__head">Three mandatory checkpoints</div>
+        <p class="checkpoints__lede">The orchestrator pauses three times for your input. Two more pauses (heartbeat, pre-polish) are optional and can be skipped.</p>
+        <dl class="checkpoints__list">
+          <dt>Intake</dt>
+          <dd class="checkpoints__phase">Up to 5 fact questions before research starts.</dd>
+          <dd class="checkpoints__reply">answer: &lt;facts&gt;</dd>
+
+          <dt>Mode</dt>
+          <dd class="checkpoints__phase">Pick Brief or Full once research scope is known.</dd>
+          <dd class="checkpoints__reply">mode: brief</dd>
+
+          <dt>Plan</dt>
+          <dd class="checkpoints__phase">Approve the research plan before parallel calls fire.</dd>
+          <dd class="checkpoints__reply">approve</dd>
+        </dl>
+      </div>
+
+      <div class="examples">
+        <div class="examples__lede">Example queries that already work</div>
+        <div class="examples__list">
+          <div class="examples__item">GDPR biometric processing for minors — Art. 9 and Art. 22 implications.</div>
+          <div class="examples__item">CCPA notice requirements for a B2B SaaS that processes employee data.</div>
+          <div class="examples__item">UK consumer arbitration clause enforceability post-2024 reforms.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__col">
+      <div class="footer__copy">© <span id="year">2026</span> Grigorii Moskalev</div>
+      <div>
+        <a href="/">← Back to home</a>
+      </div>
+    </div>
+    <div class="footer__col footer__col--right">
+      <div>
+        <a href="https://github.com/gregmos/legal-memo-writer" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+      <div>
+        <a href="https://github.com/gregmos/legal-memo-writer/releases" target="_blank" rel="noopener">Releases ↗</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var html = document.documentElement;
+
+      // ─── Theme toggle (sun ↔ moon) ─────────────────────────────────
+      var themeBtn = document.getElementById('themeToggle');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+          if (next === 'light') html.setAttribute('data-theme', 'light');
+          else html.removeAttribute('data-theme');
+          try { localStorage.setItem('theme', next); } catch (e) {}
+        });
+      }
+
+      // ─── Set --i index for stagger groups (mobile-cap at 6) ───────
+      var staggerCap = window.innerWidth < 720 ? 6 : 24;
+      document.querySelectorAll('[data-reveal="stagger"]').forEach(function (group) {
+        Array.prototype.forEach.call(group.children, function (child, i) {
+          child.style.setProperty('--i', Math.min(i, staggerCap));
+        });
+      });
+
+      // ─── Single IntersectionObserver — dispatches by data-reveal ───
+      var revealEls = document.querySelectorAll('[data-reveal]');
+      if (!prefersReduced) {
+        var revealIo = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            e.target.classList.add('reveal--in');
+            revealIo.unobserve(e.target);
+          });
+        }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+        revealEls.forEach(function (el) { revealIo.observe(el); });
+      } else {
+        revealEls.forEach(function (el) { el.classList.add('reveal--in'); });
+      }
+
+      // ─── Year ──────────────────────────────────────────────────────
+      var yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>
