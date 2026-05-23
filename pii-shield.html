@@ -23,7 +23,7 @@
         "@id": "https://gmoskalev.com/pii-shield#software",
         "name": "PII Shield",
         "url": "https://gmoskalev.com/pii-shield",
-        "softwareVersion": "2.0.2",
+        "softwareVersion": "2.0.4",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Windows, macOS, Linux",
         "description": "Node.js MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (<PERSON_1>, <ORG_1>, etc.), and sends only the anonymized text to Claude. After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.",
@@ -1961,7 +1961,7 @@
       </p>
 
       <div class="subhero__meta">
-        <span class="pill pill--live"><span class="pill__dot" aria-hidden="true"></span>v2.0.2 · Live</span>
+        <span class="pill pill--live"><span class="pill__dot" aria-hidden="true"></span>v2.0.4 · Live</span>
         <span class="pill">MCP server</span>
         <span class="pill">Node.js 18+</span>
         <span class="pill">Windows · macOS · Linux</span>
@@ -2157,9 +2157,9 @@
         <!-- Developer technical story -->
         <div class="prose__rewrite" data-show-when="developer">
           <div class="prose__rewrite-label">v1 → v2 · the rewrite</div>
-          <p>v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2.0.2 is a <strong class="strong--fg">complete Node.js rewrite</strong> over <code>onnxruntime-node</code> + <code>@xenova/transformers</code>: same detection coverage, no Python.</p>
+          <p>v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2.0.4 is a <strong class="strong--fg">complete Node.js rewrite</strong> over <code>onnxruntime-node</code> + <code>@xenova/transformers</code>: same detection coverage, no Python.</p>
           <p>Plugin: <strong class="strong--fg">700 KB on Windows/Linux</strong> (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB <code>gliner-pii-base-v1.0</code> model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 18/20.</p>
-          <p>Both v1.0.0 and v2.0.2 release tags live in <code>gregmos/PII-Shield</code> — the v1 Python build remains downloadable for legacy installs.</p>
+          <p>Both v1.0.0 and v2.0.4 release tags live in <code>gregmos/PII-Shield</code> — the v1 Python build remains downloadable for legacy installs.</p>
         </div>
       </div>
     </section>
@@ -2333,27 +2333,27 @@
           <div class="step__n">1</div>
           <div class="step__body">
             <div class="step__title">Download the artefacts</div>
-            <div class="step__desc">Pick the <code>.mcpb</code> for your OS plus the contract-analyze skill. Direct links to the <a href="https://github.com/gregmos/PII-Shield/releases/tag/v2.0.2" target="_blank" rel="noopener" class="release-link">v2.0.2 release ↗</a>.</div>
+            <div class="step__desc">Pick the <code>.mcpb</code> for your OS plus the contract-analyze skill. Direct links to the <a href="https://github.com/gregmos/PII-Shield/releases/tag/v2.0.4" target="_blank" rel="noopener" class="release-link">v2.0.4 release ↗</a>.</div>
             <div class="downloads">
-              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.2/pii-shield-v2.0.2-windows-linux.mcpb" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.4/pii-shield-v2.0.4-windows-linux.mcpb" target="_blank" rel="noopener">
                 <div class="download__os-tag">WIN · LINUX</div>
-                <div class="download__file">pii-shield-v2.0.2-windows-linux.mcpb</div>
+                <div class="download__file">pii-shield-v2.0.4-windows-linux.mcpb</div>
                 <div class="download__meta">
                   <span class="download__size">700 KB</span>
                   <span class="download__note">host Node</span>
                 </div>
                 <span class="download__icon" aria-hidden="true">↓</span>
               </a>
-              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.2/pii-shield-v2.0.2-macos.mcpb" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.4/pii-shield-v2.0.4-macos.mcpb" target="_blank" rel="noopener">
                 <div class="download__os-tag">MACOS</div>
-                <div class="download__file">pii-shield-v2.0.2-macos.mcpb</div>
+                <div class="download__file">pii-shield-v2.0.4-macos.mcpb</div>
                 <div class="download__meta">
                   <span class="download__size">83 MB</span>
                   <span class="download__note">bundled Node 24</span>
                 </div>
                 <span class="download__icon" aria-hidden="true">↓</span>
               </a>
-              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.2/pii-contract-analyze.skill" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.4/pii-contract-analyze.skill" target="_blank" rel="noopener">
                 <div class="download__os-tag">SKILL · ANY OS</div>
                 <div class="download__file">pii-contract-analyze.skill</div>
                 <div class="download__meta">
