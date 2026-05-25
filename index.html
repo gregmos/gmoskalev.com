@@ -1104,7 +1104,7 @@
         </div>
         <div class="about__facts">
           <div class="fact"><div class="fact__v">11</div><div class="fact__k">Years practicing</div></div>
-          <div class="fact"><div class="fact__v" id="ghStars">73</div><div class="fact__k">★ PII Shield on GitHub</div></div>
+          <div class="fact"><div class="fact__v" id="ghStars">100</div><div class="fact__k">★ GitHub project stars</div></div>
           <div class="fact"><div class="fact__v fact__v--small">IP · Privacy · Corporate</div><div class="fact__k">Practice areas</div></div>
           <div class="fact"><div class="fact__v">100+</div><div class="fact__k">Students taught</div></div>
           <div class="fact"><div class="fact__v">FaceApp</div><div class="fact__k">Legal function at</div></div>
@@ -1293,13 +1293,18 @@
 
   <script>
     (function () {
-      // Live GitHub stars on PII Shield (falls back to hardcoded count on failure)
-      fetch('https://api.github.com/repos/gregmos/PII-Shield')
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (d) {
-          if (d && typeof d.stargazers_count === 'number') {
+      // Live GitHub stars summed across projects (falls back to hardcoded count on failure)
+      Promise.all([
+        fetch('https://api.github.com/repos/gregmos/PII-Shield').then(function (r) { return r.ok ? r.json() : null; }),
+        fetch('https://api.github.com/repos/gregmos/legal-memo-writer').then(function (r) { return r.ok ? r.json() : null; })
+      ])
+        .then(function (results) {
+          var total = results.reduce(function (sum, d) {
+            return sum + (d && typeof d.stargazers_count === 'number' ? d.stargazers_count : 0);
+          }, 0);
+          if (total > 0) {
             var el = document.getElementById('ghStars');
-            if (el) el.textContent = d.stargazers_count;
+            if (el) el.textContent = total;
           }
         })
         .catch(function () {});
