@@ -723,6 +723,39 @@
     .project__status--new { color: var(--warn); border-color: color-mix(in oklab, var(--warn) 40%, transparent); }
     .project__status--new .project__status-dot { box-shadow: 0 0 8px var(--warn); }
 
+    /* Right-side meta cluster: stars + forks + status pill */
+    .project__meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .project__stats {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .project__stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border: 1px solid var(--hair);
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dim);
+      background: rgb(var(--ink) / 0.02);
+      white-space: nowrap;
+      transition: color 160ms ease, border-color 160ms ease;
+    }
+    .project--link:hover .project__stat { border-color: var(--hair-2); }
+    .project__stat svg { display: block; width: 11px; height: 11px; color: var(--fg-faint); }
+    .project__stat--star:hover svg,
+    .project--link:hover .project__stat--star svg { color: var(--warn); }
+    .project__stat-n { color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums; }
+
     .project__tagline {
       font-size: 16px;
       line-height: 1.5;
@@ -1107,7 +1140,7 @@
         </div>
         <div class="about__facts">
           <div class="fact"><div class="fact__v">11</div><div class="fact__k">Years practicing</div></div>
-          <div class="fact"><div class="fact__v" id="ghStars">100</div><div class="fact__k">★ GitHub project stars</div></div>
+          <div class="fact"><div class="fact__v" id="ghStars">104</div><div class="fact__k">★ GitHub project stars</div></div>
           <div class="fact"><div class="fact__v fact__v--small">IP · Privacy · Corporate</div><div class="fact__k">Practice areas</div></div>
           <div class="fact"><div class="fact__v">100+</div><div class="fact__k">Students taught</div></div>
           <div class="fact"><div class="fact__v">FaceApp</div><div class="fact__k">Legal function at</div></div>
@@ -1125,7 +1158,7 @@
       </div>
       <p class="section__lede">Tools and workflows I build for legal teams — in-house and law firms.</p>
 
-      <a class="project project--pinned project--link" href="/pii-shield">
+      <a class="project project--pinned project--link" href="/pii-shield" data-repo="gregmos/PII-Shield">
         <header class="project__head">
           <div class="project__head-left">
             <span class="project__pin" aria-label="Pinned">
@@ -1134,10 +1167,22 @@
             </span>
             <h3 class="project__name">PII Shield</h3>
           </div>
-          <span class="project__status project__status--live">
-            <span class="project__status-dot" aria-hidden="true"></span>
-            v2.1.0 · Live
-          </span>
+          <div class="project__meta">
+            <span class="project__stats" aria-label="GitHub stats">
+              <span class="project__stat project__stat--star" title="Stars">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.92 6.16 6.58.62-4.9 4.62 1.42 6.6L12 17l-6.02 3.5 1.42-6.6L2.5 9.28l6.58-.62L12 2.5z"/></svg>
+                <span class="project__stat-n" data-stat="stars">100</span>
+              </span>
+              <span class="project__stat project__stat--fork" title="Forks">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="4" r="2"/><circle cx="18" cy="4" r="2"/><circle cx="12" cy="20" r="2"/><path d="M6 6v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6M12 12v6"/></svg>
+                <span class="project__stat-n" data-stat="forks">22</span>
+              </span>
+            </span>
+            <span class="project__status project__status--live">
+              <span class="project__status-dot" aria-hidden="true"></span>
+              v2.1.0 · Live
+            </span>
+          </div>
         </header>
         <p class="project__tagline">Anonymize documents before Claude sees them. Restore real data after analysis.</p>
         <p class="project__desc">MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (<code>&lt;PERSON_1&gt;</code>, <code>&lt;ORG_1&gt;</code>, etc.), and sends only the anonymized text to Claude. After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.</p>
@@ -1151,7 +1196,7 @@
         <span class="project__open" aria-hidden="true">See details →</span>
       </a>
 
-      <a class="project project--pinned project--link" href="/legal-memo-writer">
+      <a class="project project--pinned project--link" href="/legal-memo-writer" data-repo="gregmos/legal-memo-writer">
         <header class="project__head">
           <div class="project__head-left">
             <span class="project__pin" aria-label="Pinned">
@@ -1160,10 +1205,22 @@
             </span>
             <h3 class="project__name">Legal Memo Writer</h3>
           </div>
-          <span class="project__status project__status--new">
-            <span class="project__status-dot" aria-hidden="true"></span>
-            v0.1.0 · New
-          </span>
+          <div class="project__meta">
+            <span class="project__stats" aria-label="GitHub stats">
+              <span class="project__stat project__stat--star" title="Stars">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.92 6.16 6.58.62-4.9 4.62 1.42 6.6L12 17l-6.02 3.5 1.42-6.6L2.5 9.28l6.58-.62L12 2.5z"/></svg>
+                <span class="project__stat-n" data-stat="stars">3</span>
+              </span>
+              <span class="project__stat project__stat--fork" title="Forks">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="4" r="2"/><circle cx="18" cy="4" r="2"/><circle cx="12" cy="20" r="2"/><path d="M6 6v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6M12 12v6"/></svg>
+                <span class="project__stat-n" data-stat="forks">1</span>
+              </span>
+            </span>
+            <span class="project__status project__status--new">
+              <span class="project__status-dot" aria-hidden="true"></span>
+              v0.1.0 · New
+            </span>
+          </div>
         </header>
         <p class="project__tagline">Ask a legal question. Get a finished memo.</p>
         <p class="project__desc">Multi-agent plugin for Claude Cowork. Fifteen specialists run intake, parallel research, IRAC drafting, and peer review — and ship a formatted <code>.docx</code> with real statute and case citations, named contrary authority, and concrete risk scores. Not generic disclaimers — a memo a partner can sign off on.</p>
@@ -1177,15 +1234,27 @@
         <span class="project__open" aria-hidden="true">See details →</span>
       </a>
 
-      <a class="project project--link" href="https://github.com/gregmos/Brand-monitor" target="_blank" rel="noopener">
+      <a class="project project--link" href="https://github.com/gregmos/Brand-monitor" target="_blank" rel="noopener" data-repo="gregmos/Brand-monitor">
         <header class="project__head">
           <div class="project__head-left">
             <h3 class="project__name">Brand monitor</h3>
           </div>
-          <span class="project__status project__status--live">
-            <span class="project__status-dot" aria-hidden="true"></span>
-            Live
-          </span>
+          <div class="project__meta">
+            <span class="project__stats" aria-label="GitHub stats">
+              <span class="project__stat project__stat--star" title="Stars">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.92 6.16 6.58.62-4.9 4.62 1.42 6.6L12 17l-6.02 3.5 1.42-6.6L2.5 9.28l6.58-.62L12 2.5z"/></svg>
+                <span class="project__stat-n" data-stat="stars">1</span>
+              </span>
+              <span class="project__stat project__stat--fork" title="Forks">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="4" r="2"/><circle cx="18" cy="4" r="2"/><circle cx="12" cy="20" r="2"/><path d="M6 6v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6M12 12v6"/></svg>
+                <span class="project__stat-n" data-stat="forks">0</span>
+              </span>
+            </span>
+            <span class="project__status project__status--live">
+              <span class="project__status-dot" aria-hidden="true"></span>
+              Live
+            </span>
+          </div>
         </header>
         <p class="project__tagline">Find the apps stealing your name and the sites cracking your build — every week, on autopilot.</p>
         <p class="project__desc">Skill that scans the App Store and the open web for knockoffs and cracked APKs of your app. iTunes Search across countries plus fuzzy-matching narrows ~1,000 listings to ~50 real candidates; icon vision and WHOIS-backed evidence packages confirm the rest. An LLM layer scores risk, recommends action, and ships a prioritized Excel report. The whole thing is a single <code>SKILL.md</code> — drop it into Claude or OpenClaw, tell it your trademark and target countries, and it runs itself. Hours of manual work → ~20 minutes of review.</p>
@@ -1296,21 +1365,34 @@
 
   <script>
     (function () {
-      // Live GitHub stars summed across projects (falls back to hardcoded count on failure)
-      Promise.all([
-        fetch('https://api.github.com/repos/gregmos/PII-Shield').then(function (r) { return r.ok ? r.json() : null; }),
-        fetch('https://api.github.com/repos/gregmos/legal-memo-writer').then(function (r) { return r.ok ? r.json() : null; })
-      ])
-        .then(function (results) {
-          var total = results.reduce(function (sum, d) {
-            return sum + (d && typeof d.stargazers_count === 'number' ? d.stargazers_count : 0);
-          }, 0);
-          if (total > 0) {
-            var el = document.getElementById('ghStars');
-            if (el) el.textContent = total;
-          }
-        })
-        .catch(function () {});
+      // Live GitHub stars + forks per project card, plus running total in the
+      // about fact. Falls back to hardcoded counts on network / rate-limit failure.
+      var cards = document.querySelectorAll('[data-repo]');
+      var totalStarsEl = document.getElementById('ghStars');
+      var totalStars = 0;
+      var resolved = 0;
+
+      cards.forEach(function (card) {
+        var repo = card.getAttribute('data-repo');
+        fetch('https://api.github.com/repos/' + repo)
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            if (d && typeof d.stargazers_count === 'number') {
+              var starEl = card.querySelector('[data-stat="stars"]');
+              var forkEl = card.querySelector('[data-stat="forks"]');
+              if (starEl) starEl.textContent = d.stargazers_count;
+              if (forkEl) forkEl.textContent = d.forks_count;
+              totalStars += d.stargazers_count;
+            }
+          })
+          .catch(function () {})
+          .then(function () {
+            resolved += 1;
+            if (resolved === cards.length && totalStars > 0 && totalStarsEl) {
+              totalStarsEl.textContent = totalStars;
+            }
+          });
+      });
 
       // Theme toggle (sun ↔ moon). Pre-paint script in <head> sets the
       // attribute before first render; this just handles user clicks.
