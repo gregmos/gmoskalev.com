@@ -17,14 +17,17 @@
 
   <link rel="canonical" href="https://gmoskalev.com/" />
 
-  <!-- Restore theme preference before paint to avoid flash. Default = dark. -->
+  <!-- Restore theme preference before paint to avoid flash. Default = light. -->
   <script>
     (function () {
       try {
-        if (localStorage.getItem('theme') === 'light') {
+        if (localStorage.getItem('theme') !== 'dark') {
           document.documentElement.setAttribute('data-theme', 'light');
         }
-      } catch (e) { /* localStorage may be blocked — fall back to dark default */ }
+      } catch (e) {
+        /* localStorage may be blocked — apply light default explicitly */
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
     })();
   </script>
 

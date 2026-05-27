@@ -97,14 +97,16 @@
     })();
   </script>
 
-  <!-- Restore theme preference before paint to avoid flash. Default = dark. -->
+  <!-- Restore theme preference before paint to avoid flash. Default = light. -->
   <script>
     (function () {
       try {
-        if (localStorage.getItem('theme') === 'light') {
+        if (localStorage.getItem('theme') !== 'dark') {
           document.documentElement.setAttribute('data-theme', 'light');
         }
-      } catch (e) {}
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
     })();
   </script>
 
