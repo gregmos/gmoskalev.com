@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" data-audience="lawyer">
+<html lang="en" data-audience="lawyer" data-surface="mcp">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PII Shield — Anonymize documents before Claude sees them</title>
-  <meta name="description" content="MCP server for Claude Desktop that reads documents locally, replaces personal data with placeholders, and restores it after analysis. PII never enters the API." />
+  <meta name="description" content="MCP plugin for Claude Desktop and CLI for any LLM. Reads documents locally, replaces personal data with placeholders, restores it after analysis. PII never enters the API." />
 
   <link rel="canonical" href="https://gmoskalev.com/pii-shield" />
+  <link rel="next" href="https://gmoskalev.com/pii-shield-docs" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="PII Shield — Anonymize documents before Claude sees them" />
-  <meta property="og:description" content="Open-source MCP server for Claude Desktop. Anonymizes documents locally, sends only placeholders to the API, restores PII into the final output. Built by Grigorii Moskalev." />
+  <meta property="og:description" content="Open-source MCP plugin for Claude Desktop and CLI for any LLM. Anonymizes documents locally, sends only placeholders, restores PII into the final output. Built by Grigorii Moskalev." />
   <meta property="og:url" content="https://gmoskalev.com/pii-shield" />
   <meta property="og:site_name" content="gmoskalev.com" />
 
@@ -23,7 +24,7 @@
         "@id": "https://gmoskalev.com/pii-shield#software",
         "name": "PII Shield",
         "url": "https://gmoskalev.com/pii-shield",
-        "softwareVersion": "2.0.4",
+        "softwareVersion": "2.1.0",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Windows, macOS, Linux",
         "description": "Node.js MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (<PERSON_1>, <ORG_1>, etc.), and sends only the anonymized text to Claude. After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.",
@@ -35,6 +36,7 @@
         "author": { "@id": "https://gmoskalev.com/#person" },
         "creator": { "@id": "https://gmoskalev.com/#person" },
         "featureList": [
+          "MCP plugin for Claude Desktop and standalone CLI (`npm install -g pii-shield`)",
           "Anonymize PDF, DOCX, TXT, MD, CSV documents locally",
           "GLiNER-based NER for person, org, location",
           "17 jurisdiction-specific pattern recognizers (UK, DE, FR, IT, ES, CY, EU)",
@@ -42,7 +44,8 @@
           "Encrypted session export with AES-GCM + scrypt-derived key",
           "Multi-document session pooling — identical entities share placeholders across files",
           "Human-in-the-loop review for false positives / negatives",
-          "On-device audit log at ~/.pii_shield/audit/mcp_audit.log"
+          "On-device audit log at ~/.pii_shield/audit/mcp_audit.log",
+          "Compliance-gate command (verify) for CI / CD"
         ]
       },
       {
@@ -78,15 +81,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- Restore audience preference before paint to avoid flash -->
+  <!-- Restore audience + surface preferences before paint to avoid flash -->
   <script>
     (function () {
       try {
-        var saved = localStorage.getItem('pii-shield-audience');
-        if (saved === 'developer') {
+        var savedAudience = localStorage.getItem('pii-shield-audience');
+        if (savedAudience === 'developer') {
           document.documentElement.setAttribute('data-audience', 'developer');
         }
-      } catch (e) { /* localStorage may be blocked — fall back to lawyer default */ }
+        var savedSurface = localStorage.getItem('pii-shield-surface');
+        if (savedSurface === 'cli') {
+          document.documentElement.setAttribute('data-surface', 'cli');
+        }
+      } catch (e) { /* localStorage may be blocked — fall back to defaults */ }
     })();
   </script>
 
@@ -159,6 +166,15 @@
     [data-show-when="developer"] { display: none !important; }
     html[data-audience="developer"] [data-show-when="developer"] { display: revert !important; }
     html[data-audience="developer"] [data-show-when="lawyer"] { display: none !important; }
+
+    /* ════════════════════════════════════════════════════════════════
+       SURFACE-DRIVEN VISIBILITY (independent from audience)
+       html[data-surface="mcp"] is the default.
+       Surface toggle only renders for developer audience (gated below).
+       ════════════════════════════════════════════════════════════════ */
+    [data-show-when-surface="mcp"], [data-show-when-surface="cli"] { display: none !important; }
+    html[data-surface="mcp"] [data-show-when-surface="mcp"] { display: revert !important; }
+    html[data-surface="cli"] [data-show-when-surface="cli"] { display: revert !important; }
 
     /* ════════════════════════════════════════════════════════════════
        REDUCED MOTION GATE
@@ -365,10 +381,215 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
+    /* Surface descriptor inside audience-toggle button — visually de-emphasized */
+    .audience-toggle__sub {
+      color: var(--fg-faint);
+      font-size: 10.5px;
+      margin-left: 4px;
+      letter-spacing: 0;
+    }
+    .audience-toggle__opt:hover .audience-toggle__sub { color: var(--fg-dimmer); }
+    .audience-toggle__opt.is-active .audience-toggle__sub {
+      color: color-mix(in oklab, var(--accent) 60%, var(--fg-faint));
+    }
     @media (max-width: 560px) {
       .audience-toggle__hint { display: none; }
       .audience-toggle__opt { padding: 7px 12px; font-size: 11.5px; }
+      .audience-toggle__sub { font-size: 10px; margin-left: 3px; }
     }
+    @media (max-width: 380px) {
+      .audience-toggle__sub { display: none; }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       SURFACE TOGGLE (clones audience-toggle visually; independent state)
+       ════════════════════════════════════════════════════════════════ */
+    .surface-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      padding: 3px;
+      background: rgb(var(--ink) / 0.03);
+      border: 1px solid var(--hair);
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      position: relative;
+    }
+    .surface-toggle__hint {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--fg-dimmer);
+      margin: 0 12px 0 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .surface-toggle__opt {
+      padding: 8px 16px;
+      font-size: 12px;
+      color: var(--fg-dim);
+      border-radius: 100px;
+      position: relative;
+      z-index: 1;
+      transition: color 200ms ease, background 200ms ease;
+      letter-spacing: -0.005em;
+      white-space: nowrap;
+      min-height: 32px;
+    }
+    .surface-toggle__opt:hover { color: var(--fg); }
+    .surface-toggle__opt:focus-visible { outline-offset: 2px; }
+    .surface-toggle__opt.is-active {
+      color: var(--accent);
+      background: color-mix(in oklab, var(--accent) 12%, transparent);
+    }
+    @media (max-width: 560px) {
+      .surface-toggle__hint { display: none; }
+      .surface-toggle__opt { padding: 7px 12px; font-size: 11.5px; }
+    }
+    /* Surface heading swap inside #install */
+    [data-surface-heading] { display: none; }
+    html[data-surface="mcp"] [data-surface-heading="mcp"] { display: block; }
+    html[data-surface="cli"] [data-surface-heading="cli"] { display: block; }
+
+    /* ════════════════════════════════════════════════════════════════
+       DECISION CARDS (When MCP, when CLI)
+       ════════════════════════════════════════════════════════════════ */
+    .decision {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 880px) { .decision { grid-template-columns: 1fr; } }
+    .decision__card {
+      padding: 24px 24px 26px;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgb(var(--ink) / 0.015), transparent 60%);
+      transition: border-color 220ms ease, background 220ms ease;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .decision__card::after {
+      content: "";
+      position: absolute;
+      left: 0; top: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      opacity: 0;
+      transition: width 280ms var(--ease-out-cubic), opacity 220ms;
+    }
+    .decision__card:hover { border-color: var(--hair-2); background: linear-gradient(180deg, rgb(var(--ink) / 0.025), transparent 60%); }
+    .decision__card:hover::after { width: 100%; opacity: 0.4; }
+    .decision__head {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      font-weight: 500;
+    }
+    .decision__when {
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--fg);
+    }
+    .decision__example {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--fg-dim);
+      padding-left: 14px;
+      border-left: 2px solid var(--hair);
+      line-height: 1.55;
+    }
+    .decision__example::before {
+      content: "›";
+      color: var(--fg-faint);
+      margin-right: 8px;
+    }
+    .decision__example code {
+      font-family: var(--font-mono);
+      color: var(--fg);
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: color-mix(in oklab, var(--accent) 8%, transparent);
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       FULL DOCS CTA BANNER
+       ════════════════════════════════════════════════════════════════ */
+    .docs-cta {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: clamp(40px, 6vh, 60px) var(--gutter) clamp(24px, 4vh, 40px);
+      text-align: center;
+    }
+    .docs-cta__lede {
+      font-size: 17px;
+      color: var(--fg-dim);
+      margin: 0 auto 24px;
+      max-width: 56ch;
+      line-height: 1.55;
+    }
+    .docs-cta__buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .docs-cta__jumps {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .docs-cta__jump {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--fg-dim);
+      padding: 5px 11px;
+      border: 1px solid var(--hair);
+      border-radius: 100px;
+      background: rgb(var(--ink) / 0.02);
+      transition: color 160ms ease, border-color 160ms ease;
+    }
+    .docs-cta__jump:hover { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
+    .docs-cta__jump-arrow { color: var(--fg-faint); margin-left: 4px; }
+
+    /* Inline cross-reference pill */
+    .xref {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--fg-dim);
+      padding: 4px 10px;
+      border: 1px solid var(--hair);
+      border-radius: 100px;
+      background: rgb(var(--ink) / 0.02);
+      transition: color 160ms ease, border-color 160ms ease;
+    }
+    .xref:hover { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
+
+    /* npm install chip in subhero (developer-only) */
+    .npm-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--fg);
+      padding: 8px 14px;
+      border: 1px dashed var(--hair-2);
+      border-radius: 8px;
+      background: var(--bg-deep);
+      margin-top: 4px;
+    }
+    .npm-chip__prompt { color: var(--fg-faint); }
+    .npm-chip__cmd { color: var(--accent); }
 
     /* ════════════════════════════════════════════════════════════════
        SUBHERO
@@ -1901,12 +2122,10 @@
     <a href="#pipeline" class="toc__item" data-toc="pipeline"><span class="toc__num">01</span>How it flows</a>
     <a href="#why" class="toc__item" data-toc="why"><span class="toc__num">02</span>Why this exists</a>
     <a href="#modes" class="toc__item" data-toc="modes"><span class="toc__num">03</span>Skill modes</a>
-    <a href="#detect" class="toc__item" data-toc="detect"><span class="toc__num">04</span>What it detects</a>
-    <a href="#install" class="toc__item" data-toc="install"><span class="toc__num">05</span>Quick start</a>
-    <a href="#audit" class="toc__item" data-toc="audit"><span class="toc__num">06</span>Compliance</a>
-    <a href="#features" class="toc__item" data-toc="features"><span class="toc__num">07</span>Features</a>
-    <a href="#tools" class="toc__item" data-toc="tools" data-show-when="developer"><span class="toc__num">08</span>MCP tools</a>
-    <a href="#stack" class="toc__item" data-toc="stack" data-show-when="developer"><span class="toc__num">09</span>Stack</a>
+    <a href="#install" class="toc__item" data-toc="install"><span class="toc__num">04</span>Quick start</a>
+    <a href="#choose" class="toc__item" data-toc="choose"><span class="toc__num">05</span>MCP or CLI</a>
+    <a href="#features" class="toc__item" data-toc="features"><span class="toc__num">06</span>Features</a>
+    <a href="#full-docs" class="toc__item" data-toc="full-docs"><span class="toc__num">07</span>Full docs</a>
   </aside>
 
   <nav class="subnav">
@@ -1947,23 +2166,30 @@
         </span>
         <div class="audience-toggle" role="tablist" aria-label="Audience">
           <span class="audience-toggle__hint">view</span>
-          <button type="button" class="audience-toggle__opt is-active" data-audience-set="lawyer" role="tab" aria-selected="true">For lawyers</button>
-          <button type="button" class="audience-toggle__opt" data-audience-set="developer" role="tab" aria-selected="false">For developers</button>
+          <button type="button" class="audience-toggle__opt is-active" data-audience-set="lawyer" role="tab" aria-selected="true">For lawyers <span class="audience-toggle__sub">(MCP)</span></button>
+          <button type="button" class="audience-toggle__opt" data-audience-set="developer" role="tab" aria-selected="false">For developers <span class="audience-toggle__sub">(MCP + CLI)</span></button>
         </div>
       </div>
 
       <h1 class="subhero__title">
         PII Shield<span class="caret" aria-hidden="true"></span>
       </h1>
-      <p class="subhero__tagline">Anonymize documents before Claude sees them. Restore real data after analysis.</p>
-      <p class="subhero__friendly">
+      <p class="subhero__tagline" data-show-when="lawyer">Anonymize documents before Claude sees them. Restore real data after analysis.</p>
+      <p class="subhero__tagline" data-show-when="developer">Anonymize documents before any LLM sees them. Restore real data after analysis.</p>
+      <p class="subhero__friendly" data-show-when="lawyer">
         <strong>Built for Claude Desktop.</strong> No coding required.
       </p>
 
+      <div class="prose__rewrite" data-show-when="developer" style="margin-top: 0; margin-bottom: 28px;">
+        <div class="prose__rewrite-label">surfaces</div>
+        <p><strong class="strong--fg">MCP plugin for Claude Desktop. CLI for any other LLM.</strong> Same engine, same session, same disk. Anonymize on one surface, deanonymize on the other — sessions are portable.</p>
+      </div>
+
       <div class="subhero__meta">
-        <span class="pill pill--live"><span class="pill__dot" aria-hidden="true"></span>v2.0.4 · Live</span>
+        <span class="pill pill--live"><span class="pill__dot" aria-hidden="true"></span>v2.1.0 · Live</span>
         <span class="pill">MCP server</span>
-        <span class="pill">Node.js 18+</span>
+        <span class="pill">CLI</span>
+        <span class="pill">Node.js 22+</span>
         <span class="pill">Windows · macOS · Linux</span>
         <span class="pill">MIT</span>
       </div>
@@ -1973,9 +2199,17 @@
           <span>Install from GitHub</span>
           <span aria-hidden="true">↗</span>
         </a>
-        <a href="#pipeline" class="btn btn--ghost">
+        <a href="/pii-shield-docs" class="btn btn--ghost">
+          <span>Documentation</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#pipeline" class="btn btn--ghost" data-show-when="lawyer">
           <span>See how it works</span>
         </a>
+      </div>
+
+      <div data-show-when="developer" style="margin-top: 14px;">
+        <span class="npm-chip"><span class="npm-chip__prompt">$</span> <span class="npm-chip__cmd">npm install -g pii-shield</span></span>
       </div>
     </header>
 
@@ -1991,7 +2225,8 @@
       </div>
       <h2 class="section__h" data-reveal="settle" data-show-when="lawyer">Your data stays on your computer. Claude only sees placeholders.</h2>
       <h2 class="section__h" data-reveal="settle" data-show-when="developer">Pipeline: <span class="accent">local → API → local</span></h2>
-      <p class="section__lede">The document is anonymized locally; only placeholder text reaches Claude. When the model is done, PII is stitched back in — without ever leaving your disk.</p>
+      <p class="section__lede" data-show-when="lawyer">The document is anonymized locally; only placeholder text reaches Claude. When the model is done, PII is stitched back in — without ever leaving your disk.</p>
+      <p class="section__lede" data-show-when="developer">The document is anonymized locally; only placeholder text reaches the LLM (Claude via the MCP plugin, or any other model via the CLI — ChatGPT, Gemini, local Llama, internal gateway). When the model is done, PII is stitched back in — without ever leaving your disk.</p>
 
       <div class="pipeline" data-reveal="pipeline">
         <div class="pipeline__arrows" aria-hidden="true">
@@ -2047,8 +2282,10 @@
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></svg>
             </div>
             <div class="stage__meta">
-              <div class="stage__label">Claude API</div>
-              <div class="stage__sub">analyze placeholders</div>
+              <div class="stage__label" data-show-when="lawyer">Claude API</div>
+              <div class="stage__label" data-show-when="developer">LLM API</div>
+              <div class="stage__sub" data-show-when="lawyer">analyze placeholders</div>
+              <div class="stage__sub" data-show-when="developer">claude · gpt · gemini · llama</div>
               <span class="stage__tag">Remote</span>
             </div>
           </div>
@@ -2100,7 +2337,8 @@
         <div class="transform__arrow" aria-hidden="true">→</div>
         <div class="transform__col transform__col--after">
           <div class="transform__col-title">
-            <span>What Claude sees</span>
+            <span data-show-when="lawyer">What Claude sees</span>
+            <span data-show-when="developer">What the LLM sees</span>
             <span class="transform__col-title-tag">over API</span>
           </div>
           <div class="transform__lines">
@@ -2151,15 +2389,16 @@
       <h2 class="section__h" data-reveal="settle">The problem with "just use a model"</h2>
       <div class="prose">
         <p>Pasting client material into a consumer LLM is both a privacy and a privilege problem.</p>
-        <p>A federal court has already confirmed the privilege side directly: in <span class="case" data-case="heppner">United States v. Heppner (SDNY, February 2026)</span>, documents a defendant created with consumer Claude were ruled outside attorney-client privilege. An AI tool is not an attorney and owes no duty of confidentiality.</p>
-        <p>PII Shield runs the redaction step before the model sees anything. It's an MCP server for Claude Desktop — drop a file, Claude receives placeholders like <code>&lt;PERSON_1&gt;</code> and <code>&lt;ORG_2&gt;</code>, and the real values are stitched back into the output on your machine. The original text never leaves your disk.</p>
+        <p>A federal court has already confirmed the privilege side directly: in <span class="case" data-case="heppner">United States v. Heppner (SDNY, February 2026)</span>, documents a defendant created with consumer Claude were ruled outside attorney-client privilege. An AI tool is not an attorney and owes no duty of confidentiality. The same principle generalizes to ChatGPT, Gemini, and every other consumer LLM.</p>
+        <p data-show-when="lawyer">PII Shield runs the redaction step before the model sees anything. It's an MCP plugin for Claude Desktop — drop a file, Claude receives placeholders like <code>&lt;PERSON_1&gt;</code> and <code>&lt;ORG_2&gt;</code>, and the real values are stitched back into the output on your machine. The original text never leaves your disk.</p>
+        <p data-show-when="developer">PII Shield runs the redaction step before any model sees anything. Two surfaces: an <strong>MCP plugin for Claude Desktop</strong> (drop a file, Claude receives placeholders like <code>&lt;PERSON_1&gt;</code>, real values stitched back on save) and a <strong>CLI for any other LLM</strong> (anonymize → paste into ChatGPT, Gemini, local Llama, internal gateway → deanonymize on return). Same engine, same on-disk session format. The original text never leaves your disk.</p>
 
         <!-- Developer technical story -->
         <div class="prose__rewrite" data-show-when="developer">
           <div class="prose__rewrite-label">v1 → v2 · the rewrite</div>
-          <p>v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2.0.4 is a <strong class="strong--fg">complete Node.js rewrite</strong> over <code>onnxruntime-node</code> + <code>@xenova/transformers</code>: same detection coverage, no Python.</p>
-          <p>Plugin: <strong class="strong--fg">700 KB on Windows/Linux</strong> (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB <code>gliner-pii-base-v1.0</code> model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 18/20.</p>
-          <p>Both v1.0.0 and v2.0.4 release tags live in <code>gregmos/PII-Shield</code> — the v1 Python build remains downloadable for legacy installs.</p>
+          <p>v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2.1.0 is a <strong class="strong--fg">complete Node.js rewrite</strong> over <code>onnxruntime-node</code> + <code>@xenova/transformers</code>: same detection coverage, no Python.</p>
+          <p>Plugin: <strong class="strong--fg">700 KB on Windows/Linux</strong> (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB <code>gliner-pii-base-v1.0</code> model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 22/24.</p>
+          <p>Both v1.0.0 and v2.1.0 release tags live in <code>gregmos/PII-Shield</code> — the v1 Python build remains downloadable for legacy installs.</p>
         </div>
       </div>
     </section>
@@ -2223,137 +2462,65 @@
       </div>
     </section>
 
-    <div class="divider"><span class="divider__num">04</span><span class="divider__txt">what it detects</span></div>
+    <div class="divider"><span class="divider__num">04</span><span class="divider__txt">quick start</span></div>
 
-    <!-- ═════════════════════════════════ 04 WHAT IT DETECTS ═════════════════════════════════ -->
-    <section id="detect" class="section" data-toc-target>
+    <!-- ═════════════════════════════════ 04 QUICK START ═════════════════════════════════ -->
+    <section id="install" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">04</span>
         <span class="section-label__slash">/</span>
-        <span class="section-label__title">What it detects</span>
-      </div>
-      <h2 class="section__h" data-reveal="settle">National IDs, tax numbers, passports — and the obvious stuff too</h2>
-      <p class="section__lede">17 country-specific patterns on top of generic entity detection. The fields a "find all emails" regex would never catch.</p>
-
-      <!-- Unified dense coverage block — country chips with hover/tap detail + generic types inline -->
-      <div class="coverage" data-reveal="settle">
-        <div class="coverage__row">
-          <span class="coverage__label" data-show-when="lawyer">Jurisdictions</span>
-          <span class="coverage__label" data-show-when="developer">EU + UK patterns</span>
-          <ul class="coverage__list" role="list">
-            <li class="cov" tabindex="0" aria-label="United Kingdom: 5 patterns — NIN, NHS, Passport, CRN, Driving licence">
-              <span class="cov__code">UK</span><span class="cov__n">5</span>
-              <span class="cov__detail">NIN · NHS · Passport · CRN · Driving licence</span>
-            </li>
-            <li class="cov" tabindex="0" aria-label="Germany: 2 patterns — Tax ID, Social security">
-              <span class="cov__code">DE</span><span class="cov__n">2</span>
-              <span class="cov__detail">Tax ID · Social security</span>
-            </li>
-            <li class="cov" tabindex="0" aria-label="France: 2 patterns — NIR, CNI">
-              <span class="cov__code">FR</span><span class="cov__n">2</span>
-              <span class="cov__detail">NIR · CNI</span>
-            </li>
-            <li class="cov" tabindex="0" aria-label="Italy: 2 patterns — Fiscal code, VAT">
-              <span class="cov__code">IT</span><span class="cov__n">2</span>
-              <span class="cov__detail">Fiscal code · VAT</span>
-            </li>
-            <li class="cov" tabindex="0" aria-label="Spain: 2 patterns — DNI, NIE">
-              <span class="cov__code">ES</span><span class="cov__n">2</span>
-              <span class="cov__detail">DNI · NIE</span>
-            </li>
-            <li class="cov" tabindex="0" aria-label="Cyprus: 2 patterns — TIC, National ID">
-              <span class="cov__code">CY</span><span class="cov__n">2</span>
-              <span class="cov__detail">TIC · National ID</span>
-            </li>
-            <li class="cov" tabindex="0" aria-label="EU-wide: 2 patterns — VAT, Passport">
-              <span class="cov__code">EU</span><span class="cov__n">2</span>
-              <span class="cov__detail">VAT · Passport</span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="coverage__row coverage__row--generic">
-          <span class="coverage__label">Generic</span>
-          <ul class="coverage__list coverage__list--generic" role="list">
-            <li class="cov cov--generic">person</li>
-            <li class="cov cov--generic">org</li>
-            <li class="cov cov--generic">location</li>
-            <li class="cov cov--generic">email</li>
-            <li class="cov cov--generic">phone</li>
-            <li class="cov cov--generic">IBAN</li>
-            <li class="cov cov--generic">credit card</li>
-            <li class="cov cov--generic">crypto wallet</li>
-            <li class="cov cov--generic">US SSN</li>
-            <li class="cov cov--generic">US EIN</li>
-            <li class="cov cov--generic">medical licence</li>
-            <li class="cov cov--generic">money</li>
-            <li class="cov cov--generic">date</li>
-          </ul>
-        </div>
-
-        <div class="coverage__row coverage__row--generic" data-show-when="developer">
-          <span class="coverage__label">Detection · NER</span>
-          <ul class="coverage__list coverage__list--generic" role="list">
-            <li class="cov cov--generic">GLiNER zero-shot</li>
-            <li class="cov cov--generic">person</li>
-            <li class="cov cov--generic">org</li>
-            <li class="cov cov--generic">location</li>
-          </ul>
-        </div>
-
-        <div class="coverage__row coverage__row--generic" data-show-when="developer">
-          <span class="coverage__label">Detection · pattern</span>
-          <ul class="coverage__list coverage__list--generic" role="list">
-            <li class="cov cov--generic">all 17 jurisdiction patterns</li>
-            <li class="cov cov--generic">email · phone</li>
-            <li class="cov cov--generic">IBAN · credit card · crypto</li>
-            <li class="cov cov--generic">SSN · EIN · licences</li>
-            <li class="cov cov--generic">money · date</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <div class="divider"><span class="divider__num">05</span><span class="divider__txt">quick start</span></div>
-
-    <!-- ═════════════════════════════════ 05 QUICK START ═════════════════════════════════ -->
-    <section id="install" class="section" data-toc-target>
-      <div class="section-label">
-        <span class="section-label__sigil">§</span>
-        <span class="section-label__num">05</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Quick start</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Four steps. No terminal.</h2>
-      <p class="section__lede">Download two files, drop them into Claude Desktop, connect a folder. The 634 MB GLiNER model installs itself in-chat on the first anonymization — no PowerShell, no bash, no scripts.</p>
 
+      <!-- MCP heading (default for everyone) -->
+      <h2 class="section__h" data-reveal="settle" data-surface-heading="mcp">Four steps. No terminal.</h2>
+      <p class="section__lede" data-surface-heading="mcp">Download two files, drop them into Claude Desktop, connect a folder. The 634 MB GLiNER model installs itself in-chat on the first anonymization — no PowerShell, no bash, no scripts.</p>
+
+      <!-- CLI heading (developer + cli surface) -->
+      <h2 class="section__h" data-reveal="settle" data-surface-heading="cli">Three commands. Same engine.</h2>
+      <p class="section__lede" data-surface-heading="cli">For terminal users, scripting, CI gates, and round-trips through any LLM. Sessions, mappings, and the model live in <code>~/.pii_shield/</code> — shared with the MCP plugin.</p>
+
+      <!-- Surface toggle — dev-only -->
+      <div data-show-when="developer" style="margin-bottom: 28px;">
+        <div class="surface-toggle" role="tablist" aria-label="Install surface">
+          <span class="surface-toggle__hint">surface</span>
+          <button type="button" class="surface-toggle__opt is-active" data-surface-set="mcp" role="tab" aria-selected="true">Claude Desktop (MCP)</button>
+          <button type="button" class="surface-toggle__opt" data-surface-set="cli" role="tab" aria-selected="false">Terminal (CLI)</button>
+        </div>
+        <p style="margin: 14px 0 0; font-size: 13px; color: var(--fg-dim);">
+          Not sure? <a href="#choose" class="xref" style="margin-left: 4px;">→ MCP, CLI, or both?</a>
+        </p>
+      </div>
+
+      <!-- ─────────── MCP STEPS ─────────── -->
+      <div data-show-when-surface="mcp">
       <div class="steps" data-reveal="stagger">
         <div class="step">
           <div class="step__n">1</div>
           <div class="step__body">
             <div class="step__title">Download the artefacts</div>
-            <div class="step__desc">Pick the <code>.mcpb</code> for your OS plus the contract-analyze skill. Direct links to the <a href="https://github.com/gregmos/PII-Shield/releases/tag/v2.0.4" target="_blank" rel="noopener" class="release-link">v2.0.4 release ↗</a>.</div>
+            <div class="step__desc">Pick the <code>.mcpb</code> for your OS plus the contract-analyze skill. Direct links to the <a href="https://github.com/gregmos/PII-Shield/releases/tag/v2.1.0" target="_blank" rel="noopener" class="release-link">v2.1.0 release ↗</a>.</div>
             <div class="downloads">
-              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.4/pii-shield-v2.0.4-windows-linux.mcpb" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.1.0/pii-shield-v2.1.0-windows-linux.mcpb" target="_blank" rel="noopener">
                 <div class="download__os-tag">WIN · LINUX</div>
-                <div class="download__file">pii-shield-v2.0.4-windows-linux.mcpb</div>
+                <div class="download__file">pii-shield-v2.1.0-windows-linux.mcpb</div>
                 <div class="download__meta">
                   <span class="download__size">700 KB</span>
                   <span class="download__note">host Node</span>
                 </div>
                 <span class="download__icon" aria-hidden="true">↓</span>
               </a>
-              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.4/pii-shield-v2.0.4-macos.mcpb" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.1.0/pii-shield-v2.1.0-macos.mcpb" target="_blank" rel="noopener">
                 <div class="download__os-tag">MACOS</div>
-                <div class="download__file">pii-shield-v2.0.4-macos.mcpb</div>
+                <div class="download__file">pii-shield-v2.1.0-macos.mcpb</div>
                 <div class="download__meta">
                   <span class="download__size">83 MB</span>
                   <span class="download__note">bundled Node 24</span>
                 </div>
                 <span class="download__icon" aria-hidden="true">↓</span>
               </a>
-              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.0.4/pii-contract-analyze.skill" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.1.0/pii-contract-analyze.skill" target="_blank" rel="noopener">
                 <div class="download__os-tag">SKILL · ANY OS</div>
                 <div class="download__file">pii-contract-analyze.skill</div>
                 <div class="download__meta">
@@ -2424,70 +2591,121 @@
           </div>
         </div>
       </div>
+      </div><!-- /surface=mcp -->
 
+      <!-- ─────────── CLI STEPS (developer + surface=cli) ─────────── -->
+      <div data-show-when-surface="cli">
+        <div class="steps" data-reveal="stagger">
+          <div class="step">
+            <div class="step__n">1</div>
+            <div class="step__body">
+              <div class="step__title">Install the npm package</div>
+              <div class="step__desc">Node.js 22 or newer required (<code>node -v</code>).</div>
+              <code class="code"><span class="accent">npm install -g pii-shield</span>
+pii-shield --version</code>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step__n">2</div>
+            <div class="step__body">
+              <div class="step__title">Download the GLiNER model</div>
+              <div class="step__desc">One-off, ~634 MB. Survives <code>npm uninstall</code>; lives at <code>~/.pii_shield/models/</code>.</div>
+              <code class="code"><span class="accent">pii-shield install-model</span>
+<span class="comment"># add --yes for non-interactive (CI)</span></code>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step__n">3</div>
+            <div class="step__body">
+              <div class="step__title">Health-check, then run</div>
+              <div class="step__desc">First <code>anonymize</code> or <code>scan</code> takes ~1–2 min while the engine deps install (deterministic, cached). Subsequent runs are instant.</div>
+              <code class="code"><span class="accent">pii-shield doctor</span>          <span class="comment"># green checks across the board</span>
+<span class="accent">pii-shield anonymize</span> contract.pdf --no-review
+<span class="comment"># → contract_anonymized.txt with &lt;PERSON_1&gt;, &lt;ORG_1&gt;, …</span>
+<span class="comment"># → Session: 2026-04-29_120000_ab12</span></code>
+            </div>
+          </div>
+        </div>
+
+        <div class="first-run" data-reveal="fade">
+          <div class="first-run__icon" aria-hidden="true">↻</div>
+          <div>
+            <div class="first-run__title">First-run engine deps</div>
+            <div class="first-run__body">
+              On the first <code>anonymize</code> or <code>scan</code> call, the engine installs <strong>onnxruntime-node</strong>, <strong>@xenova/transformers</strong>, and <strong>gliner</strong> at pinned versions into <code>~/.pii_shield/deps/installs/&lt;hash&gt;/</code>. About 300 MB, 1–2 min, deterministic. Everything (model, deps, mappings, audit logs) survives <code>npm uninstall -g pii-shield</code>.
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top: 18px; font-size: 14px; color: var(--fg-dim);">
+          Full reference for every flag, env var, and exit code: <a href="/pii-shield-docs#commands" class="xref">→ CLI command reference</a>
+        </p>
+      </div><!-- /surface=cli -->
+
+      <!-- Source-build instructions (dev-only, surface-agnostic) -->
       <div class="first-run" data-show-when="developer" data-reveal="fade">
         <div class="first-run__icon" aria-hidden="true">&lt;/&gt;</div>
         <div>
-          <div class="first-run__title">Build &amp; verify locally</div>
+          <div class="first-run__title">Build &amp; verify locally (from source)</div>
           <div class="first-run__body">
             <code class="code">npm ci --ignore-scripts --legacy-peer-deps
-npm run build              <span class="comment"># esbuild bundle</span>
+npm run build              <span class="comment"># MCP server (esbuild bundle)</span>
+npm run build:cli          <span class="comment"># CLI binary</span>
 npm run smoke              <span class="comment"># node scripts/smoke-protocol.mjs</span>
 npm test                   <span class="comment"># 8 suites, incl. multi-doc HITL &amp; session archival</span></code>
-            CI runs the same matrix on Ubuntu / Windows / macOS × Node 18 / 20.
+            CI runs the same matrix on Ubuntu / Windows / macOS × Node 22 / 24.
           </div>
         </div>
       </div>
+
+      <p style="margin-top: 24px; font-size: 14px; color: var(--fg-dim);">
+        <a href="/pii-shield-docs#install" class="xref">→ Full install reference (configuration, paths, advanced flags)</a>
+      </p>
     </section>
 
-    <div class="divider"><span class="divider__num">06</span><span class="divider__txt">compliance &amp; audit</span></div>
+    <div class="divider"><span class="divider__num">05</span><span class="divider__txt">mcp, cli, or both?</span></div>
 
-    <!-- ═════════════════════════════════ 06 AUDIT ═════════════════════════════════ -->
-    <section id="audit" class="section" data-toc-target>
+    <!-- ═════════════════════════════════ 05 DECISION CARDS ═════════════════════════════════ -->
+    <section id="choose" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
-        <span class="section-label__num">06</span>
+        <span class="section-label__num">05</span>
         <span class="section-label__slash">/</span>
-        <span class="section-label__title">Compliance &amp; audit</span>
+        <span class="section-label__title">MCP, CLI, or both?</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Three logs, all on-disk</h2>
-      <p class="section__lede">Everything PII Shield does is recorded locally. No telemetry, no remote logging endpoint. If your DPO asks "what did the tool do with that file at 14:02 UTC," the answer is on your filesystem.</p>
+      <h2 class="section__h" data-reveal="settle">One engine. Two front-ends.</h2>
+      <p class="section__lede">Same 33 entity types, same session format on disk, same <code>~/.pii_shield/</code>. Pick the front-end that matches how you work — sessions exported from one open in the other.</p>
 
-      <div class="logs" data-reveal="stagger">
-        <div class="log">
-          <div class="log__name">mcp_audit.log</div>
-          <div class="log__what">Every tool call and response. Session lifecycle (create / extend / expire). The compliance trail your auditor will read first.</div>
-          <div class="log__path">~/.pii_shield/audit/mcp_audit.log</div>
+      <div class="decision" data-reveal="stagger">
+        <div class="decision__card">
+          <div class="decision__head">Use MCP</div>
+          <div class="decision__when">You work in Claude Desktop and want a natural-language flow. The skill picks the right tool calls; you stay in the chat.</div>
+          <div class="decision__example">"Drop a contract. Ask Claude to find the indemnity clauses. Restore on save."</div>
         </div>
-        <div class="log">
-          <div class="log__name">ner_init.log</div>
-          <div class="log__what">NER bootstrap and model-load events. Useful for first-run debugging and confirming which checkpoint version is active.</div>
-          <div class="log__path">~/.pii_shield/logs/ner_init.log</div>
+        <div class="decision__card">
+          <div class="decision__head">Use CLI</div>
+          <div class="decision__when">Scripting, CI/CD, non-Claude LLMs (ChatGPT / Gemini / local models), batch jobs across many files, headless servers.</div>
+          <div class="decision__example"><code>pii-shield verify ./out</code> as a compliance gate; round-trip via terminal.</div>
         </div>
-        <div class="log">
-          <div class="log__name">pii_shield_server.log</div>
-          <div class="log__what">MCP server lifecycle plus dropped stderr from the Node runtime. The catch-all when something feels off.</div>
-          <div class="log__path">~/.pii_shield/logs/pii_shield_server.log</div>
+        <div class="decision__card">
+          <div class="decision__head">Use both</div>
+          <div class="decision__when">Mixed teams; portable sessions across machines. Anonymize on a partner's laptop, review on yours — the same encrypted archive.</div>
+          <div class="decision__example">CLI <code>sessions export</code> → transfer → MCP <code>import_session</code>.</div>
         </div>
       </div>
 
-      <!-- Lawyer-friendly footer -->
-      <div class="logs-footer" data-show-when="lawyer">
-        Encrypted hand-off to colleagues with a passphrase. Sessions auto-expire after 7 days (configurable). <span class="accent">Nothing ever leaves your network.</span>
-      </div>
-      <!-- Developer technical footer -->
-      <div class="logs-footer" data-show-when="developer">
-        Encrypted handoff: <code>export_session(passphrase)</code> → <code>.pii-session</code> archive (<span class="accent">AES-GCM + scrypt</span>-derived key). Mappings live at <code>~/.pii_shield/mappings/</code>, models at <code>~/.pii_shield/models/</code>, audit trail appendable at <code>~/.pii_shield/audit/mcp_audit.log</code>. Session TTL 7 days, configurable. All inputs validated with Zod (TypeScript strict). <span class="accent">Off-network by design</span> — no telemetry endpoint to disable.
-      </div>
+      <p style="margin-top: 24px; font-size: 14px; color: var(--fg-dim);">
+        <a href="/pii-shield-docs" class="xref">→ Full reference for both surfaces</a>
+      </p>
     </section>
 
-    <div class="divider"><span class="divider__num">07</span><span class="divider__txt">features</span></div>
+    <div class="divider"><span class="divider__num">06</span><span class="divider__txt">features</span></div>
 
-    <!-- ═════════════════════════════════ 07 FEATURES ═════════════════════════════════ -->
+    <!-- ═════════════════════════════════ 06 FEATURES ═════════════════════════════════ -->
     <section id="features" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
-        <span class="section-label__num">07</span>
+        <span class="section-label__num">06</span>
         <span class="section-label__slash">/</span>
         <span class="section-label__title">Features</span>
       </div>
@@ -2536,116 +2754,29 @@ npm test                   <span class="comment"># 8 suites, incl. multi-doc HIT
       </div>
     </section>
 
-    <!-- ═════════════════════════════════ 08 MCP TOOLS (developer-only) ═════════════════════════════════ -->
-    <div class="divider" data-show-when="developer"><span class="divider__num">08</span><span class="divider__txt">mcp tools</span></div>
+    <!-- ═════════════════════════════════ 07 FULL DOCS CTA ═════════════════════════════════ -->
+    <div class="divider"><span class="divider__num">07</span><span class="divider__txt">full documentation</span></div>
 
-    <section id="tools" class="section" data-toc-target data-show-when="developer">
-      <div class="section-label">
-        <span class="section-label__sigil">§</span>
-        <span class="section-label__num">08</span>
-        <span class="section-label__slash">/</span>
-        <span class="section-label__title">MCP tools reference</span>
+    <section id="full-docs" class="section docs-cta" data-toc-target>
+      <h2 class="section__h" data-reveal="settle" style="text-align: center; margin: 0 auto 12px; max-width: 28ch;">Every flag. Every command. Every env var.</h2>
+      <p class="docs-cta__lede">Configuration, full command reference for both surfaces, workflows, HITL walkthrough, Python integration, troubleshooting — on a separate docs page so this one stays readable.</p>
+      <div class="docs-cta__buttons">
+        <a href="/pii-shield-docs" class="btn btn--primary">
+          <span>Open full documentation</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="https://github.com/gregmos/PII-Shield" class="btn btn--ghost" target="_blank" rel="noopener">
+          <span>GitHub repo</span>
+          <span aria-hidden="true">↗</span>
+        </a>
       </div>
-      <h2 class="section__h" data-reveal="settle">17 tools, four groups</h2>
-      <p class="section__lede">Hover any tool name for a one-line description. Group by purpose; each tool is a single MCP function callable from Claude Desktop.</p>
-
-      <div class="tools" data-reveal="stagger">
-        <div class="tool-group">
-          <div class="tool-group__title"><span>Anonymize</span><span class="tool-group__count">4</span></div>
-          <div class="tool-list">
-            <div class="tool" title="Read a file from disk and produce an anonymized copy. Returns a path + session id — file content never leaves the machine."><span class="tool__name">anonymize_file</span><span class="tool__hint">core</span></div>
-            <div class="tool" title="Anonymize a string in memory. Useful for chat-pasted snippets or testing."><span class="tool__name">anonymize_text</span></div>
-            <div class="tool" title="Anonymize a .docx while preserving formatting and tracked changes. Embeds session_id in Word custom properties."><span class="tool__name">anonymize_docx</span></div>
-            <div class="tool" title="Continue a chunked anonymization for very large documents. Maintains placeholder consistency across chunks."><span class="tool__name">anonymize_next_chunk</span></div>
-          </div>
-        </div>
-
-        <div class="tool-group">
-          <div class="tool-group__title"><span>Review</span><span class="tool-group__count">5</span></div>
-          <div class="tool-list">
-            <div class="tool" title="Open the human-in-the-loop iframe inside Claude Desktop. Add/remove/edit detected entities."><span class="tool__name">start_review</span></div>
-            <div class="tool" title="Apply user edits from the review iframe — propagate across all entity occurrences in the session."><span class="tool__name">apply_review_overrides</span></div>
-            <div class="tool" title="Return the full anonymized text for the current session. Useful for piping into other tools."><span class="tool__name">get_full_anonymized_text</span></div>
-            <div class="tool" title="Restore PII placeholders → real values in a string."><span class="tool__name">deanonymize_text</span></div>
-            <div class="tool" title="Restore PII in a docx using its embedded session_id. Works across new chats and sessions."><span class="tool__name">deanonymize_docx</span></div>
-          </div>
-        </div>
-
-        <div class="tool-group">
-          <div class="tool-group__title"><span>Session</span><span class="tool-group__count">3</span></div>
-          <div class="tool-list">
-            <div class="tool" title="Pack mapping + anonymized files into an encrypted .pii-session archive (AES-GCM via scrypt). Pass a passphrase."><span class="tool__name">export_session</span></div>
-            <div class="tool" title="Unlock a .pii-session archive and load its mapping + files. PII never transits unencrypted."><span class="tool__name">import_session</span></div>
-            <div class="tool" title="Inspect the placeholder ↔ value mapping for the current session."><span class="tool__name">get_mapping</span></div>
-          </div>
-        </div>
-
-        <div class="tool-group">
-          <div class="tool-group__title"><span>Utility</span><span class="tool-group__count">5</span></div>
-          <div class="tool-list">
-            <div class="tool" title="Preview-only: detect entities without creating a session. See what would be redacted."><span class="tool__name">scan_text</span><span class="tool__hint">preview</span></div>
-            <div class="tool" title="List all detected entities in the active session, grouped by type."><span class="tool__name">list_entities</span></div>
-            <div class="tool" title="Resolve a path inside a connected folder — handles relative refs."><span class="tool__name">find_file</span></div>
-            <div class="tool" title="Resolve a relative or absolute path against the connected workspace."><span class="tool__name">resolve_path</span></div>
-            <div class="tool" title="Install the GLiNER model from a local download. Used during setup."><span class="tool__name">install_model_from_download</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tools-roundtrip">
-        <div class="tools-roundtrip__label">Round-trip example</div>
-        <code class="code"><span class="comment">// 1. anonymize a file — original stays on disk; only placeholders cross the wire</span>
-<span class="accent">→</span> anonymize_file({ file_path: "~/contracts/nda.docx" })
-<span class="remote">←</span> { status: "success",
-    session_id: "m9q8x4-7b5a91",
-    entity_count: 14,
-    output_path: ".../nda.anon.txt",
-    docx_output_path: ".../nda.anon.docx",
-    by_type: { PERSON: 4, ORG: 3, MONEY: 2, ... } }
-
-<span class="comment">// 2. Claude reads output_path and drafts a memo using placeholders only</span>
-
-<span class="comment">// 3. restore PII into the draft, locally</span>
-<span class="accent">→</span> deanonymize_text({ text: draft, session_id: "m9q8x4-7b5a91" })
-<span class="remote">←</span> { status: "success",
-    deanonymized_text: "...John Smith signed the NDA..." }</code>
-        <p class="tools-roundtrip__note">All inputs validated with Zod. Errors return MCP-protocol-shaped <code>{ isError: true, content: [...] }</code> instead of throwing.</p>
-      </div>
-    </section>
-
-    <!-- ═════════════════════════════════ 09 STACK (developer-only) ═════════════════════════════════ -->
-    <div class="divider" data-show-when="developer"><span class="divider__num">09</span><span class="divider__txt">stack</span></div>
-
-    <section id="stack" class="section" data-toc-target data-show-when="developer">
-      <div class="section-label">
-        <span class="section-label__sigil">§</span>
-        <span class="section-label__num">09</span>
-        <span class="section-label__slash">/</span>
-        <span class="section-label__title">Stack</span>
-      </div>
-      <h2 class="section__h" data-reveal="settle">Built with</h2>
-      <div class="stack-row">
-        <span class="tag">Node.js 18+</span>
-        <span class="tag">MCP (Model Context Protocol)</span>
-        <span class="tag">GLiNER</span>
-        <span class="tag">onnxruntime-node</span>
-        <span class="tag">@xenova/transformers</span>
-        <span class="tag">DOCX (pure JS)</span>
-        <span class="tag">pdf-parse</span>
-        <span class="tag">AES-GCM / scrypt</span>
-        <span class="tag">MIT license</span>
-      </div>
-
-      <div class="stack-row__label">Tested on</div>
-      <div class="stack-row">
-        <span class="tag">Ubuntu</span>
-        <span class="tag">Windows</span>
-        <span class="tag">macOS</span>
-        <span class="tag">Node 18</span>
-        <span class="tag">Node 20</span>
-        <span class="tag">8 test suites</span>
-        <span class="tag">MCP protocol smoke</span>
-        <span class="tag">Zod schema validation</span>
+      <div class="docs-cta__jumps" data-show-when="developer">
+        <a href="/pii-shield-docs#commands" class="docs-cta__jump">MCP tools<span class="docs-cta__jump-arrow">→</span></a>
+        <a href="/pii-shield-docs#commands" class="docs-cta__jump">CLI commands<span class="docs-cta__jump-arrow">→</span></a>
+        <a href="/pii-shield-docs#config" class="docs-cta__jump">Configuration<span class="docs-cta__jump-arrow">→</span></a>
+        <a href="/pii-shield-docs#workflows" class="docs-cta__jump">Workflows<span class="docs-cta__jump-arrow">→</span></a>
+        <a href="/pii-shield-docs#scripting" class="docs-cta__jump">Python integration<span class="docs-cta__jump-arrow">→</span></a>
+        <a href="/pii-shield-docs#troubleshooting" class="docs-cta__jump">Troubleshooting<span class="docs-cta__jump-arrow">→</span></a>
       </div>
     </section>
   </main>
@@ -2694,6 +2825,39 @@ npm test                   <span class="comment"># 8 suites, incl. multi-doc HIT
           syncToggleUI(audience);
         });
       });
+
+      // ─── 1·b. Surface toggle (mcp / cli) — independent state ─────
+      var surfaceBtns = document.querySelectorAll('.surface-toggle__opt');
+      function syncSurfaceUI(surface) {
+        surfaceBtns.forEach(function (b) {
+          var isActive = b.getAttribute('data-surface-set') === surface;
+          b.classList.toggle('is-active', isActive);
+          b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+      }
+      syncSurfaceUI(html.getAttribute('data-surface') || 'mcp');
+      surfaceBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var surface = btn.getAttribute('data-surface-set');
+          html.setAttribute('data-surface', surface);
+          try { localStorage.setItem('pii-shield-surface', surface); } catch (e) {}
+          syncSurfaceUI(surface);
+        });
+      });
+
+      // ─── 1·c. Redirect old anchors to /pii-shield-docs ───────────
+      // Sections #detect, #audit, #tools, #stack moved to the docs page.
+      var ANCHOR_REDIRECTS = {
+        '#detect': '/pii-shield-docs#coverage',
+        '#audit':  '/pii-shield-docs#audit',
+        '#tools':  '/pii-shield-docs#commands',
+        '#stack':  '/pii-shield-docs#stack'
+      };
+      var initialHash = window.location.hash;
+      if (initialHash && ANCHOR_REDIRECTS[initialHash]) {
+        window.location.replace(ANCHOR_REDIRECTS[initialHash]);
+        return; // stop the rest of the script — page is leaving
+      }
 
       // ─── 1a. Theme toggle (sun ↔ moon) ────────────────────────────
       var themeBtn = document.getElementById('themeToggle');
