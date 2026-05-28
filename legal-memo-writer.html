@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Legal Memo Writer — Ask a legal question. Get a finished memo.</title>
-  <meta name="description" content="Multi-agent plugin for Claude Cowork. Fifteen specialists run intake, parallel research, IRAC drafting, peer review, and polish — and ship a formatted .docx with real citations and named contrary authority." />
+  <title>memoforge — From one legal question to a finished .docx memo.</title>
+  <meta name="description" content="memoforge is a Cowork plugin that turns a research-grade legal question into a footnoted .docx memorandum. A 15-agent pipeline runs intake, parallel statutory + case-law + doctrinal research, currency check, IRAC drafting, five-reviewer peer review, mediation, up to three revision rounds, and client-readiness polish — then ships memo.docx with the full source pack and reviewer audit trail." />
 
   <link rel="canonical" href="https://gmoskalev.com/legal-memo-writer" />
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Legal Memo Writer — Ask a legal question. Get a finished memo." />
-  <meta property="og:description" content="Multi-agent plugin for Claude Cowork. Fifteen specialists run intake, parallel research, IRAC drafting, peer review, and polish — and ship a formatted .docx with real citations and named contrary authority." />
+  <meta property="og:title" content="memoforge — From one legal question to a finished .docx memo." />
+  <meta property="og:description" content="Cowork plugin that turns a research-grade legal question into a footnoted .docx memo. Multi-agent pipeline runs intake, parallel research, IRAC drafting, five-reviewer peer review, currency check, and polish — and ships the full source pack with every memo." />
   <meta property="og:url" content="https://gmoskalev.com/legal-memo-writer" />
   <meta property="og:site_name" content="gmoskalev.com" />
 
@@ -21,13 +21,14 @@
       {
         "@type": "SoftwareApplication",
         "@id": "https://gmoskalev.com/legal-memo-writer#software",
-        "name": "Legal Memo Writer",
+        "name": "memoforge",
+        "alternateName": "Legal Memo Writer",
         "url": "https://gmoskalev.com/legal-memo-writer",
-        "softwareVersion": "0.1.0",
+        "softwareVersion": "1.0.0",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Windows, macOS, Linux",
-        "description": "Multi-agent legal-memo drafting plugin for Claude Cowork and Claude Code. Takes a free-form legal question, runs a 15-agent pipeline (intake → parallel research → IRAC drafting → peer review → polish), and ships a formatted .docx memo with real statute and case citations, named contrary authority, and concrete risk scores.",
-        "codeRepository": "https://github.com/gregmos/legal-memo-writer",
+        "description": "memoforge is a Cowork plugin that turns a research-grade legal question into a structured, footnoted .docx memorandum. A multi-agent pipeline mirrors a small legal team: a triage analyst clarifies missing facts, three researchers pull statutes, case law and regulator guidance in parallel, a currency check confirms the law is still good, a writer drafts IRAC, five reviewers stress-test the draft, a mediator consolidates findings, and the writer revises up to three rounds before client-readiness polish and .docx export.",
+        "codeRepository": "https://github.com/gregmos/memoforge",
         "license": "https://opensource.org/licenses/MIT",
         "programmingLanguage": ["Python"],
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -35,13 +36,16 @@
         "creator": { "@id": "https://gmoskalev.com/#person" },
         "featureList": [
           "Multi-agent pipeline: 15 specialists plus orchestrator",
-          "Parallel statutory, case-law and doctrinal research",
+          "Parallel statutory, case-law and doctrinal research via Legal Data Hunter and CourtListener MCP servers",
           "IRAC drafting with full citations and named contrary authority",
-          "Peer review by logic, citations, style, clarity and counter-argument specialists",
+          "Five-reviewer peer review: logic, citations, style, clarity, counter-arguments",
           "Currency check on every cited statute and judgment",
-          "Brief mode (1–3 pages, 3 reviewers) and Full mode (5–15 pages, 5 reviewers, up to 3 revision rounds)",
-          "Three mandatory user checkpoints — intake, mode, plan approval",
-          "Formatted .docx export plus full research and review audit trail"
+          "Brief mode (2–3 pages, 3 reviewers, 1 revision) and Full mode (5–8 pages, 5 reviewers, up to 3 revision rounds, polish)",
+          "Four mandatory user checkpoints — intake, mode pick, plan approval, source review",
+          "Honest verdict: approved, forced_exit_on_v3, or manual_review_required",
+          "Style Studio — turn example memos into a saved house-style profile",
+          "Formatted .docx export plus full research and review audit trail",
+          "Runs locally — no shared backend, no telemetry"
         ]
       },
       {
@@ -61,7 +65,7 @@
         "@type": "WebPage",
         "@id": "https://gmoskalev.com/legal-memo-writer#webpage",
         "url": "https://gmoskalev.com/legal-memo-writer",
-        "name": "Legal Memo Writer — Ask a legal question. Get a finished memo.",
+        "name": "memoforge — From one legal question to a finished .docx memo.",
         "about": { "@id": "https://gmoskalev.com/legal-memo-writer#software" },
         "inLanguage": "en"
       }
@@ -1289,7 +1293,7 @@
         <span>Back</span>
       </a>
       <div class="subnav__crumb">
-        gmoskalev.com<span class="subnav__crumb-sep">/</span>projects<span class="subnav__crumb-sep">/</span><span class="accent">legal-memo-writer</span>
+        gmoskalev.com<span class="subnav__crumb-sep">/</span>projects<span class="subnav__crumb-sep">/</span><span class="accent">memoforge</span>
       </div>
       <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
         <svg class="theme-toggle__icon theme-toggle__icon--sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -1300,7 +1304,7 @@
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
       </button>
-      <a href="https://github.com/gregmos/legal-memo-writer" class="subnav__gh" target="_blank" rel="noopener">
+      <a href="https://github.com/gregmos/memoforge" class="subnav__gh" target="_blank" rel="noopener">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.79 8.21 11.38.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.09 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.61-.01 2.91-.01 3.3 0 .32.22.7.83.58C20.56 22.29 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/></svg>
         <span>GitHub</span>
         <span aria-hidden="true">↗</span>
@@ -1323,23 +1327,23 @@
       </div>
 
       <h1 class="subhero__title">
-        Legal Memo Writer<span class="caret" aria-hidden="true"></span>
+        memoforge<span class="caret" aria-hidden="true"></span>
       </h1>
-      <p class="subhero__tagline">Ask a legal question. Get a finished memo.</p>
+      <p class="subhero__tagline">From one legal question to a finished <code>.docx</code> memo.</p>
       <p class="subhero__friendly">
-        Multi-agent plugin for Claude Cowork. <strong>Fifteen specialists</strong> run intake, parallel research, IRAC drafting, peer review, and polish — and ship a formatted <code>.docx</code> with real citations and named contrary authority.
+        Cowork plugin that mirrors a small legal team. <strong>Fifteen specialists</strong> run intake, parallel statutory + case-law + doctrinal research, currency check, IRAC drafting, five-reviewer peer review, mediation, up to three revision rounds, and client-readiness polish — then ship <code>memo.docx</code> with the full source pack and a per-reviewer audit trail. You ask. The plugin works. You read.
       </p>
 
       <div class="subhero__meta">
-        <span class="pill pill--new"><span class="pill__dot" aria-hidden="true"></span>v0.1.0 · New</span>
-        <span class="pill">Claude Cowork plugin</span>
-        <span class="pill">Python</span>
-        <span class="pill">MCP-backed citations</span>
+        <span class="pill pill--new"><span class="pill__dot" aria-hidden="true"></span>v1.0.0 · New</span>
+        <span class="pill">Cowork plugin</span>
+        <span class="pill">Legal Data Hunter + CourtListener</span>
+        <span class="pill">Style Studio</span>
         <span class="pill">MIT</span>
       </div>
 
       <div class="subhero__cta">
-        <a href="https://github.com/gregmos/legal-memo-writer" class="btn btn--primary" target="_blank" rel="noopener">
+        <a href="https://github.com/gregmos/memoforge" class="btn btn--primary" target="_blank" rel="noopener">
           <span>Install from GitHub</span>
           <span aria-hidden="true">↗</span>
         </a>
@@ -1360,8 +1364,8 @@
         <span class="section-label__slash">/</span>
         <span class="section-label__title">How it flows</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">From a free-form question to a court-citable memo.</h2>
-      <p class="section__lede">A four-stage flow runs underneath: intake gathers facts and scope; three researchers go out in parallel; the writer drafts IRAC; up to five reviewers stress-test the draft before polish and export. Nine phases, three mandatory human checkpoints.</p>
+      <h2 class="section__h" data-reveal="settle">From a research-grade question to a court-citable memo.</h2>
+      <p class="section__lede">A four-stage flow runs underneath: intake gathers facts and scope; three researchers go out in parallel; the writer drafts IRAC; five reviewers stress-test the draft, a mediator consolidates findings, the writer revises up to three rounds, and a client-readiness polish ships <code>memo.docx</code>. Nine phases, four mandatory human checkpoints.</p>
 
       <div class="pipeline" data-reveal="pipeline">
         <div class="pipeline__arrows" aria-hidden="true">
@@ -1420,7 +1424,7 @@
 
         <div class="pipeline__bracket">
           <div class="pipeline__bracket-inner">
-            <b>Three mandatory user checkpoints.</b> Intake answers, mode choice, plan approval — you stay in control of scope.
+            <b>Four mandatory user checkpoints.</b> Intake answers, mode pick, plan approval, source review — you stay in control of scope. Everything between pauses runs autonomously.
           </div>
         </div>
       </div>
@@ -1460,14 +1464,14 @@
               <span class="phases__num">03</span>
               <div>
                 <span class="phases__name">Parallel research</span>
-                <span class="phases__desc">Statutes, case law, regulatory guidance — concurrent.</span>
+                <span class="phases__desc">Statutes, case law, regulatory guidance — concurrent, MCP-routed.</span>
               </div>
             </div>
             <div class="phases__item">
               <span class="phases__num">04</span>
               <div>
-                <span class="phases__name">Quality gates</span>
-                <span class="phases__desc">Sufficiency and currency verified before drafting.</span>
+                <span class="phases__name">Source pack</span>
+                <span class="phases__desc">Sufficiency + currency verified; evidence table assembled. <span class="accent">You review.</span></span>
               </div>
             </div>
           </div>
@@ -1505,8 +1509,8 @@
             <div class="phases__item">
               <span class="phases__num">07</span>
               <div>
-                <span class="phases__name">Mediation</span>
-                <span class="phases__desc">Feedback consolidated; up to 3 revision rounds in Full.</span>
+                <span class="phases__name">Mediate &amp; revise</span>
+                <span class="phases__desc">Reviewer JSONs consolidated; writer revises — up to 3 rounds in Full.</span>
               </div>
             </div>
             <div class="phases__item">
@@ -1546,7 +1550,7 @@
 
         <div class="prose__rewrite">
           <div class="prose__rewrite-label">the fix</div>
-          <p>Legal Memo Writer runs specialists that <strong>disagree with each other</strong> before the memo ever reaches you.</p>
+          <p>memoforge runs specialists that <strong>disagree with each other</strong> before the memo ever reaches you.</p>
           <p>A statutory researcher pulls primary acts. A citation auditor checks that every claim traces to a source. A currency checker verifies cited judgments still represent current law. A counter-argument reviewer drafts the opposing read. A mediator consolidates the disagreements into one revision list, and a client-readiness reviewer makes the final call.</p>
           <p>The output isn't generic disclaimers — it's a memo with <strong>named contrary authority</strong>, concrete risk scores, and recommendations a partner can actually sign off on.</p>
         </div>
@@ -1563,36 +1567,39 @@
         <span class="section-label__slash">/</span>
         <span class="section-label__title">Two modes</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Brief or Full — pick the depth at intake.</h2>
-      <p class="section__lede">Both modes run the same agents and the same checkpoints. Full takes longer because more reviewers weigh in and the mediator runs multiple revision rounds. You choose at the second checkpoint.</p>
+      <h2 class="section__h" data-reveal="settle">Brief or Full — pick the depth at the second checkpoint.</h2>
+      <p class="section__lede">Both modes run the same orchestrator and the same gates. Brief stays narrow: statutory research only, three reviewers, one revision, no final polish. Full goes wide: statutes + case law + doctrine, all five reviewers, up to three revisions, and a client-readiness pass at the end.</p>
 
       <div class="decision" data-reveal="stagger">
         <div class="decision__card">
           <div class="decision__head">
             <span>Brief</span>
-            <span class="decision__head-tag">quick read</span>
+            <span class="decision__head-tag">quick check</span>
           </div>
           <dl class="decision__specs">
-            <dt>Length</dt><dd>1–3 pages</dd>
-            <dt>Runtime</dt><dd>3–6 min</dd>
+            <dt>Length</dt><dd>2–3 pages</dd>
+            <dt>Research</dt><dd>statutory only</dd>
             <dt>Reviewers</dt><dd>3 of 5</dd>
             <dt>Revisions</dt><dd>1 round</dd>
+            <dt>Polish</dt><dd>no</dd>
           </dl>
-          <p class="decision__when">Use when you need a <strong>quick risk read</strong> on a single question — a deal term that just landed, a vendor's privacy claim, a fast partner check.</p>
+          <p class="decision__when">Use for a <strong>low-stakes question</strong> — a deal term that just landed, a vendor's privacy claim, a fast read for an internal Slack thread.</p>
         </div>
 
         <div class="decision__card">
           <div class="decision__head">
             <span>Full</span>
-            <span class="decision__head-tag">deep cut</span>
+            <span class="decision__head-tag">client-facing</span>
           </div>
           <dl class="decision__specs">
-            <dt>Length</dt><dd>5–15 pages</dd>
-            <dt>Runtime</dt><dd>10–25 min</dd>
+            <dt>Length</dt><dd>5–8 pages</dd>
+            <dt>Research</dt><dd>statutes + case law + doctrine</dd>
             <dt>Reviewers</dt><dd>all 5</dd>
             <dt>Revisions</dt><dd>up to 3 rounds</dd>
+            <dt>Polish</dt><dd>client-readiness pass</dd>
+            <dt>Runtime</dt><dd>~60–90 min wall-clock</dd>
           </dl>
-          <p class="decision__when">Use when the memo is <strong>going outside the legal team</strong> — pre-launch sign-off, regulatory response, board paper, anything where a counter-argument review matters.</p>
+          <p class="decision__when">Use when the memo is <strong>going outside the legal team</strong> — pre-launch sign-off, regulatory response, board paper, contested or novel issue where a counter-argument review matters.</p>
         </div>
       </div>
     </section>
@@ -1761,14 +1768,14 @@
         <span class="section-label__title">What you get</span>
       </div>
       <h2 class="section__h" data-reveal="settle">Not just a memo — the whole audit trail.</h2>
-      <p class="section__lede">Every memo ships with the research it was built on, every draft revision, and a per-reviewer record of what was flagged and how it was resolved. If a partner asks <em>"where did this citation come from?"</em>, the answer is one folder away.</p>
+      <p class="section__lede">Every memo ships with the source pack it was built on, every draft revision, a per-reviewer record of what was flagged and how it was resolved, and an honest verdict. If a partner asks <em>"where did this citation come from?"</em>, the answer is one folder away.</p>
 
       <div class="bundle" data-reveal="fade">
         <div class="bundle__inner">
-          <span class="bundle__root">~/Documents/legal-memos/&lt;task_id&gt;/</span>
+          <span class="bundle__root">~/Documents/memoforge/&lt;task_id&gt;/</span>
           <div class="bundle__row">
             <span class="bundle__name bundle__name--accent">memo.docx</span>
-            <span class="bundle__desc">Formatted final memo — Arial 12pt, IRAC structure, full citations.</span>
+            <span class="bundle__desc">Formatted final memo — Arial 12pt, 1″ margins, numbered sections, IRAC per issue, footnoted citations.</span>
           </div>
           <div class="bundle__row">
             <span class="bundle__name">drafts/v*.md</span>
@@ -1776,15 +1783,15 @@
           </div>
           <div class="bundle__row">
             <span class="bundle__name bundle__name--remote">research/</span>
-            <span class="bundle__desc">Cited statutes, judgments and guidance — raw sources, grouped by issue.</span>
+            <span class="bundle__desc">Every statute, case and regulator doc the analysis relies on, with verbatim quotes and current-as-of dates.</span>
           </div>
           <div class="bundle__row">
             <span class="bundle__name bundle__name--warn">reviews/</span>
-            <span class="bundle__desc">Per-reviewer JSON findings: what was flagged, severity, suggested fix.</span>
+            <span class="bundle__desc">Per-reviewer JSON findings; mediator's consolidated revision list; writer's changelog response.</span>
           </div>
           <div class="bundle__row">
             <span class="bundle__name">state.json</span>
-            <span class="bundle__desc">Full pipeline state — phases, decisions, mode, checkpoints.</span>
+            <span class="bundle__desc">Full pipeline state — phases, decisions, mode, checkpoints, verdict.</span>
           </div>
           <div class="bundle__row">
             <span class="bundle__name">events.jsonl</span>
@@ -1794,29 +1801,71 @@
       </div>
 
       <div class="bundle__note">
-        <strong>Every claim in <code>memo.docx</code> is grounded in something inside <code>research/</code>.</strong> The citation auditor enforces it — if a sentence in the draft doesn't trace to a source in the pack, it gets flagged in <code>reviews/</code> and revised before export.
+        <strong>Every claim in <code>memo.docx</code> is grounded in something inside <code>research/</code>.</strong> The citation auditor enforces it — if a sentence in the draft doesn't trace to a source in the pack, it gets flagged in <code>reviews/</code> and revised before export. And the verdict is honest: <code>approved</code>, <code>forced_exit_on_v3</code> (revision budget reached with unresolved issues), or <code>manual_review_required</code>. No false confidence.
       </div>
     </section>
 
-    <div class="divider"><span class="divider__num">06</span><span class="divider__txt">quick start</span></div>
+    <div class="divider"><span class="divider__num">06</span><span class="divider__txt">make it sound like you</span></div>
 
-    <!-- ═════════════════════════════════ 06 INSTALL ═════════════════════════════════ -->
-    <section id="install" class="section">
+    <!-- ═════════════════════════════════ 06 STYLE STUDIO ═════════════════════════════════ -->
+    <section id="style" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">06</span>
         <span class="section-label__slash">/</span>
+        <span class="section-label__title">Style Studio</span>
+      </div>
+      <h2 class="section__h" data-reveal="settle">Make every memo sound like your firm wrote it.</h2>
+      <p class="section__lede">By default the writer follows a built-in house style — concise, no em-dashes, OSCOLA-flavoured citations. Style Studio turns a folder of your own example memos (or a written style guide) into a saved profile that all reviewers defer to. Substantive checks — citation accuracy, IRAC structure, contrary authority — stay uniform.</p>
+
+      <div class="install-steps" data-reveal="stagger">
+        <div class="install-step">
+          <div class="install-step__num">Step 01</div>
+          <div class="install-step__title">Extract your style</div>
+          <div class="install-step__body">
+            Point Style Studio at a folder of past memos. It produces a plain-markdown profile under <code>~/.claude/plugin-data/memoforge/profiles/&lt;name&gt;/</code>. Open and tweak by hand any time.
+          </div>
+          <span class="install-step__cmd">
+            <span class="install-step__cmd-prompt">›</span>/memoforge:style new my-firm --examples ~/memos/2025-q4/ --mode full
+          </span>
+        </div>
+
+        <div class="install-step">
+          <div class="install-step__num">Step 02</div>
+          <div class="install-step__title">Activate it</div>
+          <div class="install-step__body">
+            Switch profile per task, per matter, or globally. When a profile is active the writer, style reviewer, and clarity reviewer all read from your rules — em-dash policy, citation order, footnote style, voice, headings — instead of the defaults.
+          </div>
+          <span class="install-step__cmd">
+            <span class="install-step__cmd-prompt">›</span>/memoforge:style use my-firm
+          </span>
+        </div>
+      </div>
+
+      <div class="bundle__note">
+        Skip Style Studio entirely and memoforge runs identically to its defaults — no extra prompts, no behavioural change. Profiles are opt-in.
+      </div>
+    </section>
+
+    <div class="divider"><span class="divider__num">07</span><span class="divider__txt">quick start</span></div>
+
+    <!-- ═════════════════════════════════ 07 INSTALL ═════════════════════════════════ -->
+    <section id="install" class="section">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">07</span>
+        <span class="section-label__slash">/</span>
         <span class="section-label__title">Quick start</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Install in Cowork. Run one command.</h2>
-      <p class="section__lede">Bundled MCP servers (Legal Data Hunter, CourtListener) auto-register on first run. The first call may trigger an OAuth prompt; after that, citations come back without you doing anything.</p>
+      <h2 class="section__h" data-reveal="settle">Install in Cowork. Connect two databases. Ask.</h2>
+      <p class="section__lede">memoforge bundles two MCP servers: <strong>Legal Data Hunter</strong> for multi-jurisdictional law and <strong>CourtListener</strong> for US case law. Connect them once from the plugin panel — the first call may trigger an OAuth sign-in. If you skip this step, the pipeline still runs against official portals via WebFetch, and the final memo carries a banner asking you to verify each citation by hand.</p>
 
       <div class="install-steps" data-reveal="stagger">
         <div class="install-step">
           <div class="install-step__num">Step 01</div>
           <div class="install-step__title">Install the plugin</div>
           <div class="install-step__body">
-            Open Cowork → <strong>Settings → Plugins</strong>. Drag the <code>.zip</code> from <a href="https://github.com/gregmos/legal-memo-writer/releases" target="_blank" rel="noopener">Releases</a>, or install via the Cowork marketplace.
+            Open Cowork → <strong>Settings → Plugins</strong>. Drag <code>memoforge-1.0.0.zip</code> from <a href="https://github.com/gregmos/memoforge/releases" target="_blank" rel="noopener">Releases</a>. The plugin auto-registers its two bundled MCP servers via <code>.mcp.json</code>.
           </div>
         </div>
 
@@ -1824,38 +1873,70 @@
           <div class="install-step__num">Step 02</div>
           <div class="install-step__title">Ask a question</div>
           <div class="install-step__body">
-            Open a new Cowork chat and run the <code>/memo</code> command with your legal question:
+            Open a new Cowork chat and run <code>/memoforge:memo</code> with your legal question. memoforge handles multi-part questions in a single memo — each part becomes its own analysed issue with separate citations.
           </div>
           <span class="install-step__cmd">
-            <span class="install-step__cmd-prompt">›</span>/legal-memo-writer:memo "&lt;your legal question&gt;"
+            <span class="install-step__cmd-prompt">›</span>/memoforge:memo "&lt;your legal question&gt;"
           </span>
         </div>
       </div>
 
       <div class="checkpoints">
-        <div class="checkpoints__head">Three mandatory checkpoints</div>
-        <p class="checkpoints__lede">The orchestrator pauses three times for your input. Two more pauses (heartbeat, pre-polish) are optional and can be skipped.</p>
+        <div class="checkpoints__head">Four mandatory checkpoints</div>
+        <p class="checkpoints__lede">The orchestrator pauses four times for your input. Everything between pauses runs autonomously with a live dashboard in the sidebar.</p>
         <dl class="checkpoints__list">
           <dt>Intake</dt>
-          <dd class="checkpoints__phase">Up to 5 fact questions before research starts.</dd>
+          <dd class="checkpoints__phase">Up to 10 questions about facts the triage analyst flagged as missing. Type <code>proceed</code> to accept conservative defaults.</dd>
           <dd class="checkpoints__reply">answer: &lt;facts&gt;</dd>
 
           <dt>Mode</dt>
-          <dd class="checkpoints__phase">Pick Brief or Full once research scope is known.</dd>
+          <dd class="checkpoints__phase">Pick Brief or Full. Once per task.</dd>
           <dd class="checkpoints__reply">mode: brief</dd>
 
           <dt>Plan</dt>
-          <dd class="checkpoints__phase">Approve the research plan before parallel calls fire.</dd>
+          <dd class="checkpoints__phase">Approve, edit, or cancel the proposed research plan — jurisdictions, issues, source types.</dd>
           <dd class="checkpoints__reply">approve</dd>
+
+          <dt>Source review</dt>
+          <dd class="checkpoints__phase">After research and source-pack assembly, inspect what was found before drafting begins.</dd>
+          <dd class="checkpoints__reply">continue</dd>
         </dl>
       </div>
 
       <div class="examples">
         <div class="examples__lede">Example queries that already work</div>
         <div class="examples__list">
-          <div class="examples__item">GDPR biometric processing for minors — Art. 9 and Art. 22 implications.</div>
-          <div class="examples__item">CCPA notice requirements for a B2B SaaS that processes employee data.</div>
-          <div class="examples__item">UK consumer arbitration clause enforceability post-2024 reforms.</div>
+          <div class="examples__item">Does our US SaaS need a CCPA notice at collection for B2B-only users?</div>
+          <div class="examples__item">Is a click-wrap arbitration clause enforceable against UK consumers under the Consumer Rights Act 2015?</div>
+          <div class="examples__item">Risk analysis for using AI to classify employee emails under the EU AI Act.</div>
+          <div class="examples__item">Can we process biometric data for minors in the EU under GDPR Art. 9 and Art. 22?</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"><span class="divider__num">08</span><span class="divider__txt">honest about limits</span></div>
+
+    <!-- ═════════════════════════════════ 08 LIMITS ═════════════════════════════════ -->
+    <section id="limits" class="section">
+      <div class="section-label">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__num">08</span>
+        <span class="section-label__slash">/</span>
+        <span class="section-label__title">Honest about limits</span>
+      </div>
+      <h2 class="section__h" data-reveal="settle">What memoforge won't do — and where your data goes.</h2>
+      <p class="section__lede">memoforge is built around domains it handles well: EU data protection (GDPR, AI Act, NIS2, DSA), US privacy (CCPA, HIPAA, sectoral), UK consumer law, cross-border compliance. The pipeline classifies the query and picks researchers accordingly — it does not assume a specific jurisdiction. The honest caveats are below.</p>
+
+      <div class="prose">
+        <p><em>Not a substitute for a lawyer.</em> The memo is a research-grade draft. A qualified lawyer must review before any client use, especially for regulated advice. The verdict at the end of the run (<code>approved</code>, <code>forced_exit_on_v3</code>, <code>manual_review_required</code>) is a signal, not a sign-off.</p>
+        <p><em>English on the output.</em> You can ask in other languages but the memo is written in English.</p>
+        <p><em>No client interview.</em> The intake step asks about facts you already know; it does not ask follow-up questions about the underlying business.</p>
+        <p><em>Currency is best-effort.</em> The currency check verifies cross-references and the status of cited judgments against the connected databases. For litigation-sensitive citations, verify each judgment is still good law before relying on the memo.</p>
+
+        <div class="prose__rewrite">
+          <div class="prose__rewrite-label">privacy &amp; data</div>
+          <p>Everything memoforge writes lives <strong>on your machine</strong>, inside the output folder you chose. Default is <code>~/Documents/memoforge/</code>; override via <code>$CLAUDE_PLUGIN_OPTION_OUTPUT_FOLDER</code> or <code>$MEMOFORGE_OUTPUT_FOLDER</code>. No shared backend, no server, no telemetry.</p>
+          <p>MCP calls reach Legal Data Hunter, CourtListener, and any official portals you allow via WebFetch using <strong>your credentials</strong>, authenticated in Cowork. The plugin never proxies or stores those credentials itself. The audit trail (<code>events.jsonl</code>, draft versions, reviewer outputs) stays in the task folder until you delete it.</p>
         </div>
       </div>
     </section>
@@ -1870,10 +1951,10 @@
     </div>
     <div class="footer__col footer__col--right">
       <div>
-        <a href="https://github.com/gregmos/legal-memo-writer" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://github.com/gregmos/memoforge" target="_blank" rel="noopener">GitHub ↗</a>
       </div>
       <div>
-        <a href="https://github.com/gregmos/legal-memo-writer/releases" target="_blank" rel="noopener">Releases ↗</a>
+        <a href="https://github.com/gregmos/memoforge/releases" target="_blank" rel="noopener">Releases ↗</a>
       </div>
     </div>
   </footer>
