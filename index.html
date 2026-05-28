@@ -768,7 +768,9 @@
       line-height: 1.6;
       color: var(--fg-dim);
       text-wrap: pretty;
+      max-width: 68ch;
     }
+    .project__desc + .project__desc { margin-top: 10px; }
 
     .project__stack { display: flex; flex-wrap: wrap; gap: 6px; }
 
@@ -1185,7 +1187,8 @@
           </div>
         </header>
         <p class="project__tagline">Anonymize documents before Claude sees them. Restore real data after analysis.</p>
-        <p class="project__desc">MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (<code>&lt;PERSON_1&gt;</code>, <code>&lt;ORG_1&gt;</code>, etc.), and sends only the anonymized text to Claude. After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.</p>
+        <p class="project__desc">MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (<code>&lt;PERSON_1&gt;</code>, <code>&lt;ORG_1&gt;</code>, etc.), and sends only the anonymized text to Claude.</p>
+        <p class="project__desc">After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.</p>
         <ul class="project__stack">
           <li class="tag tag--mono">Node.js</li>
           <li class="tag tag--mono">MCP</li>
@@ -1223,7 +1226,9 @@
           </div>
         </header>
         <p class="project__tagline">From one legal question to a finished <code>.docx</code> memo.</p>
-        <p class="project__desc">Cowork plugin that mirrors how a small legal team produces a memo. A triage analyst clarifies missing facts; three researchers pull statutes, case law, and regulator guidance in parallel; a currency check confirms the law is still good; a writer drafts IRAC; five reviewers stress-test the draft (logic, citations, style, clarity, counter-arguments); a mediator consolidates findings; the writer revises — up to three rounds — before client-readiness polish and <code>.docx</code> export. Ships with the full source pack, reviewer findings, and an honest verdict — <code>approved</code>, <code>forced_exit_on_v3</code>, or <code>manual_review_required</code>. Optional Style Studio turns your firm's example memos into a saved house-style profile.</p>
+        <p class="project__desc">Cowork plugin that mirrors how a small legal team produces a memo. A triage analyst clarifies missing facts. Three researchers pull statutes, case law, and regulator guidance in parallel. A writer drafts IRAC. Five reviewers stress-test it. A mediator consolidates findings. The writer revises — up to three rounds — before polish and <code>.docx</code> export.</p>
+        <p class="project__desc">Ships with the full source pack, per-reviewer findings, and an honest verdict — <code>approved</code>, <code>forced_exit_on_v3</code>, or <code>manual_review_required</code>. No false confidence.</p>
+        <p class="project__desc">Optional Style Studio turns your firm's example memos into a saved house-style profile.</p></p>
         <ul class="project__stack">
           <li class="tag tag--mono">Cowork plugin</li>
           <li class="tag tag--mono">15 agents</li>
@@ -1257,7 +1262,8 @@
           </div>
         </header>
         <p class="project__tagline">Find the apps stealing your name and the sites cracking your build — every week, on autopilot.</p>
-        <p class="project__desc">Skill that scans the App Store and the open web for knockoffs and cracked APKs of your app. iTunes Search across countries plus fuzzy-matching narrows ~1,000 listings to ~50 real candidates; icon vision and WHOIS-backed evidence packages confirm the rest. An LLM layer scores risk, recommends action, and ships a prioritized Excel report. The whole thing is a single <code>SKILL.md</code> — drop it into Claude or OpenClaw, tell it your trademark and target countries, and it runs itself. Hours of manual work → ~20 minutes of review.</p>
+        <p class="project__desc">Skill that scans the App Store and the open web for knockoffs and cracked APKs of your app. iTunes Search across countries plus fuzzy-matching narrows ~1,000 listings to ~50 real candidates. Icon vision and WHOIS-backed evidence packages confirm the rest. An LLM layer scores risk, recommends action, and ships a prioritized Excel report.</p>
+        <p class="project__desc">The whole thing is a single <code>SKILL.md</code> — drop it into Claude or OpenClaw, tell it your trademark and target countries, and it runs itself. Hours of manual work → ~20 minutes of review.</p>
         <ul class="project__stack">
           <li class="tag tag--mono">SKILL.md</li>
           <li class="tag tag--mono">iTunes API</li>
