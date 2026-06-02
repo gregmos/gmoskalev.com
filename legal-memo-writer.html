@@ -24,7 +24,7 @@
         "name": "memoforge",
         "alternateName": "Legal Memo Writer",
         "url": "https://gmoskalev.com/legal-memo-writer",
-        "softwareVersion": "1.0.0",
+        "softwareVersion": "1.1.1",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Windows, macOS, Linux",
         "description": "memoforge is a Cowork plugin that turns a research-grade legal question into a structured, footnoted .docx memorandum. A multi-agent pipeline mirrors a small legal team: a triage analyst clarifies missing facts, three researchers pull statutes, case law and regulator guidance in parallel, a currency check confirms the law is still good, a writer drafts IRAC, five reviewers stress-test the draft, a mediator consolidates findings, and the writer revises up to three rounds before client-readiness polish and .docx export.",
@@ -1221,6 +1221,35 @@
     }
 
     /* ════════════════════════════════════════════════════════════════
+       DEMO VIDEO
+       ════════════════════════════════════════════════════════════════ */
+    .demo-video {
+      margin: 40px 0 0;
+      position: relative;
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--bg-deep);
+      box-shadow: 0 24px 56px rgba(0, 0, 0, 0.4);
+    }
+    .demo-video__el {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: var(--bg-deep);
+    }
+    .demo-video__cap {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--fg-dimmer);
+      text-align: center;
+      padding: 10px 12px;
+      border-top: 1px solid var(--hair);
+      background: rgb(var(--ink) / 0.015);
+      letter-spacing: 0.02em;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
        REVEAL ANIMATIONS
        ════════════════════════════════════════════════════════════════ */
     [data-reveal="fade"] {
@@ -1335,7 +1364,7 @@
       </p>
 
       <div class="subhero__meta">
-        <span class="pill pill--new"><span class="pill__dot" aria-hidden="true"></span>v1.0.0 · New</span>
+        <span class="pill pill--new"><span class="pill__dot" aria-hidden="true"></span>v1.1.1 · New</span>
         <span class="pill">Cowork plugin</span>
         <span class="pill">Legal Data Hunter + CourtListener</span>
         <span class="pill">Style Studio</span>
@@ -1530,6 +1559,21 @@
           </div>
         </div>
       </div>
+      <figure class="demo-video" data-reveal="fade">
+        <video
+          class="demo-video__el"
+          src="/videos/memoforge-promo.mp4"
+          muted
+          playsinline
+          controls
+          controlslist="nodownload"
+          preload="metadata"
+          aria-label="memoforge walkthrough: from a legal question to a finished .docx memo"
+        >
+          Your browser doesn't support HTML5 video. <a href="/videos/memoforge-promo.mp4">Download the walkthrough</a>.
+        </video>
+        <figcaption class="demo-video__cap">Walkthrough · 1:03 · auto-plays muted when in view</figcaption>
+      </figure>
     </section>
 
     <div class="divider"><span class="divider__num">02</span><span class="divider__txt">why this exists</span></div>
@@ -1865,7 +1909,7 @@
           <div class="install-step__num">Step 01</div>
           <div class="install-step__title">Install the plugin</div>
           <div class="install-step__body">
-            Open Cowork → <strong>Settings → Plugins</strong>. Drag <code>memoforge-1.0.0.zip</code> from <a href="https://github.com/gregmos/memoforge/releases" target="_blank" rel="noopener">Releases</a>. The plugin auto-registers its two bundled MCP servers via <code>.mcp.json</code>.
+            Open Cowork → <strong>Settings → Plugins</strong>. Drag <code>memoforge-1.1.1.zip</code> from <a href="https://github.com/gregmos/memoforge/releases" target="_blank" rel="noopener">Releases</a>. The plugin auto-registers its two bundled MCP servers via <code>.mcp.json</code>.
           </div>
         </div>
 
@@ -1996,6 +2040,26 @@
         revealEls.forEach(function (el) { revealIo.observe(el); });
       } else {
         revealEls.forEach(function (el) { el.classList.add('reveal--in'); });
+      }
+
+      // ─── Demo video — lazy autoplay (muted) on first viewport entry ──
+      // Don't use the HTML autoplay attribute: that eagerly downloads ~22MB
+      // even if visitors never reach the video. IntersectionObserver triggers
+      // play() only once the element actually enters view; preload="metadata"
+      // means we only fetch the first ~200KB up front for first-frame display.
+      var demoVid = document.querySelector('.demo-video__el');
+      if (demoVid && !prefersReduced) {
+        var demoStarted = false;
+        var demoIo = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting && !demoStarted) {
+              demoVid.play().catch(function () { /* autoplay denied — user can press play */ });
+              demoStarted = true;
+              demoIo.disconnect();
+            }
+          });
+        }, { threshold: 0.5 });
+        demoIo.observe(demoVid);
       }
 
       // ─── Year ──────────────────────────────────────────────────────
