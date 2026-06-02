@@ -44,6 +44,16 @@ I teach a course and run a Telegram channel for lawyers learning to work with LL
 
 MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (`<PERSON_1>`, `<ORG_1>`, etc.), and sends only the anonymized text to Claude. After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.
 
+## memoforge
+
+- **Tagline:** From one legal question to a finished .docx memo.
+- **Status:** Live, v1.1.1
+- **Repo:** https://github.com/gregmos/memoforge
+- **License:** MIT
+- **Stack:** Cowork plugin, 15 agents, IRAC, MCP citations, python-docx
+
+Cowork plugin that mirrors a small legal team. A triage analyst clarifies missing facts; three researchers pull statutes, case law, and regulator guidance in parallel; a currency check confirms the law is still good; a writer drafts in IRAC; five reviewers stress-test the draft on logic, citations, style, clarity, and contrary authority; a mediator consolidates the findings; and the writer revises up to three rounds before a client-readiness polish and `.docx` export. Two modes — Brief (2–3 pages, statutory research, 3 reviewers, 1 revision) and Full (5–8 pages, statutes + case law + doctrine, all 5 reviewers, up to 3 revisions, polish). Bundles two MCP servers — Legal Data Hunter for multi-jurisdictional law and CourtListener for US case law — with a WebFetch fallback to official portals. Every memo ships with the full source pack, per-reviewer findings, and an honest verdict (`approved`, `forced_exit_on_v3`, or `manual_review_required`). Optional Style Studio turns a folder of example memos into a saved house-style profile. Runs locally — no shared backend, no telemetry.
+
 ## Brand monitor
 
 - **Tagline:** Find the apps stealing your name and the sites cracking your build — every week, on autopilot.
