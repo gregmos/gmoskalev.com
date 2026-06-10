@@ -24,7 +24,7 @@
         "@id": "https://gmoskalev.com/pii-shield#software",
         "name": "PII Shield",
         "url": "https://gmoskalev.com/pii-shield",
-        "softwareVersion": "2.2.0",
+        "softwareVersion": "2.1.0",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Windows, macOS, Linux",
         "description": "Node.js MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (<PERSON_1>, <ORG_1>, etc.), and sends only the anonymized text to Claude. After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.",
@@ -39,7 +39,7 @@
           "MCP plugin for Claude Desktop and standalone CLI (`npm install -g pii-shield`)",
           "Anonymize PDF, DOCX, TXT, MD, CSV documents locally",
           "GLiNER-based NER for person, org, location",
-          "19 jurisdiction-specific pattern recognizers (UK, DE, FR, IT, ES, CY, FI, EU)",
+          "17 jurisdiction-specific pattern recognizers (UK, DE, FR, IT, ES, CY, EU)",
           "Generic detection: email, phone, IBAN, credit card, crypto wallet, SSN, EIN, money, date",
           "Encrypted session export with AES-GCM + scrypt-derived key",
           "Multi-document session pooling — identical entities share placeholders across files",
@@ -2114,36 +2114,6 @@
     .prose__rewrite strong.strong--fg {
       color: var(--fg);
     }
-
-    /* WORK WITH ME BANNER */
-    .work-banner-wrap {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 0 var(--gutter) clamp(72px, 10vh, 120px);
-    }
-    .work-banner {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 26px 30px;
-      border: 1px dashed var(--hair-2);
-      border-radius: 10px;
-      transition: border-color 180ms ease, background 180ms ease, transform 240ms ease;
-    }
-    .work-banner:hover,
-    .work-banner:focus-visible {
-      border-color: var(--accent);
-      background: color-mix(in oklab, var(--accent) 4%, transparent);
-      transform: translateY(-2px);
-    }
-    .work-banner__plus { font-family: var(--font-mono); font-size: 22px; color: var(--accent); flex: none; }
-    .work-banner__body { flex: 1; min-width: 0; }
-    .work-banner__title { display: block; font-family: var(--font-mono); font-size: 16px; font-weight: 500; letter-spacing: -0.01em; color: var(--fg); margin-bottom: 4px; }
-    .work-banner__sub { display: block; font-size: 14px; line-height: 1.5; color: var(--fg-dim); }
-    .work-banner__arrow { font-family: var(--font-mono); font-size: 16px; color: var(--fg-dimmer); flex: none; transition: color 160ms ease, transform 160ms ease; }
-    .work-banner:hover .work-banner__arrow,
-    .work-banner:focus-visible .work-banner__arrow { color: var(--accent); transform: translateX(2px); }
-    @media (max-width: 560px) { .work-banner { flex-direction: column; align-items: flex-start; gap: 12px; } }
   </style>
 </head>
 <body>
@@ -2218,7 +2188,7 @@
       </div>
 
       <div class="subhero__meta">
-        <span class="pill pill--live"><span class="pill__dot" aria-hidden="true"></span>v2.2.0 · Live</span>
+        <span class="pill pill--live"><span class="pill__dot" aria-hidden="true"></span>v2.1.0 · Live</span>
         <span class="pill">MCP server</span>
         <span class="pill">CLI</span>
         <span class="pill">Node.js 22+</span>
@@ -2428,9 +2398,9 @@
         <!-- Developer technical story -->
         <div class="prose__rewrite" data-show-when="developer">
           <div class="prose__rewrite-label">v1 → v2 · the rewrite</div>
-          <p>v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2 is a <strong class="strong--fg">complete Node.js rewrite</strong> over <code>onnxruntime-node</code> + <code>@xenova/transformers</code>: same detection coverage, no Python.</p>
+          <p>v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2.1.0 is a <strong class="strong--fg">complete Node.js rewrite</strong> over <code>onnxruntime-node</code> + <code>@xenova/transformers</code>: same detection coverage, no Python.</p>
           <p>Plugin: <strong class="strong--fg">700 KB on Windows/Linux</strong> (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB <code>gliner-pii-base-v1.0</code> model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 22/24.</p>
-          <p>Both the v1.0.0 and current v2 release tags live in <code>gregmos/PII-Shield</code> — the v1 Python build remains downloadable for legacy installs.</p>
+          <p>Both v1.0.0 and v2.1.0 release tags live in <code>gregmos/PII-Shield</code> — the v1 Python build remains downloadable for legacy installs.</p>
         </div>
       </div>
     </section>
@@ -2532,27 +2502,27 @@
           <div class="step__n">1</div>
           <div class="step__body">
             <div class="step__title">Download the artefacts</div>
-            <div class="step__desc">Pick the <code>.mcpb</code> for your OS plus the contract-analyze skill. Direct links to the <a href="https://github.com/gregmos/PII-Shield/releases/tag/v2.2.0" target="_blank" rel="noopener" class="release-link">v2.2.0 release ↗</a>.</div>
+            <div class="step__desc">Pick the <code>.mcpb</code> for your OS plus the contract-analyze skill. Direct links to the <a href="https://github.com/gregmos/PII-Shield/releases/tag/v2.1.0" target="_blank" rel="noopener" class="release-link">v2.1.0 release ↗</a>.</div>
             <div class="downloads">
-              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.2.0/pii-shield-v2.2.0-windows-linux.mcpb" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.1.0/pii-shield-v2.1.0-windows-linux.mcpb" target="_blank" rel="noopener">
                 <div class="download__os-tag">WIN · LINUX</div>
-                <div class="download__file">pii-shield-v2.2.0-windows-linux.mcpb</div>
+                <div class="download__file">pii-shield-v2.1.0-windows-linux.mcpb</div>
                 <div class="download__meta">
                   <span class="download__size">700 KB</span>
                   <span class="download__note">host Node</span>
                 </div>
                 <span class="download__icon" aria-hidden="true">↓</span>
               </a>
-              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.2.0/pii-shield-v2.2.0-macos.mcpb" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.1.0/pii-shield-v2.1.0-macos.mcpb" target="_blank" rel="noopener">
                 <div class="download__os-tag">MACOS</div>
-                <div class="download__file">pii-shield-v2.2.0-macos.mcpb</div>
+                <div class="download__file">pii-shield-v2.1.0-macos.mcpb</div>
                 <div class="download__meta">
                   <span class="download__size">83 MB</span>
                   <span class="download__note">bundled Node 24</span>
                 </div>
                 <span class="download__icon" aria-hidden="true">↓</span>
               </a>
-              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.2.0/pii-contract-analyze.skill" target="_blank" rel="noopener">
+              <a class="download" href="https://github.com/gregmos/PII-Shield/releases/download/v2.1.0/pii-contract-analyze.skill" target="_blank" rel="noopener">
                 <div class="download__os-tag">SKILL · ANY OS</div>
                 <div class="download__file">pii-contract-analyze.skill</div>
                 <div class="download__meta">
@@ -2706,7 +2676,7 @@ npm test                   <span class="comment"># 8 suites, incl. multi-doc HIT
         <span class="section-label__title">MCP, CLI, or both?</span>
       </div>
       <h2 class="section__h" data-reveal="settle">One engine. Two front-ends.</h2>
-      <p class="section__lede">Same 35 entity types, same session format on disk, same <code>~/.pii_shield/</code>. Pick the front-end that matches how you work — sessions exported from one open in the other.</p>
+      <p class="section__lede">Same 33 entity types, same session format on disk, same <code>~/.pii_shield/</code>. Pick the front-end that matches how you work — sessions exported from one open in the other.</p>
 
       <div class="decision" data-reveal="stagger">
         <div class="decision__card">
@@ -2811,17 +2781,6 @@ npm test                   <span class="comment"># 8 suites, incl. multi-doc HIT
         <a href="/pii-shield-docs#troubleshooting" class="docs-cta__jump">Troubleshooting<span class="docs-cta__jump-arrow">→</span></a>
       </div>
     </section>
-
-    <div class="work-banner-wrap">
-      <a href="/work" class="work-banner" data-cta="banner-work">
-        <span class="work-banner__plus" aria-hidden="true">+</span>
-        <span class="work-banner__body">
-          <span class="work-banner__title">Need something like this built for your team?</span>
-          <span class="work-banner__sub">Consulting, training and custom builds for legal teams — without client data leaving the building.</span>
-        </span>
-        <span class="work-banner__arrow" aria-hidden="true">→</span>
-      </a>
-    </div>
   </main>
 
   <footer class="footer">
@@ -2829,9 +2788,6 @@ npm test                   <span class="comment"># 8 suites, incl. multi-doc HIT
       <div class="footer__copy">© <span id="year">2026</span> Grigorii Moskalev</div>
       <div>
         <a href="/">← Back to home</a>
-      </div>
-      <div>
-        <a href="/work">Work with me →</a>
       </div>
     </div>
     <div class="footer__col footer__col--right">
