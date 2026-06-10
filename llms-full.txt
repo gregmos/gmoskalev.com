@@ -32,12 +32,52 @@ I teach a course and run a Telegram channel for lawyers learning to work with LL
 - Legal function lead at FaceApp
 - Languages: EN · RU · GR
 
+# Work with me
+
+Consulting and custom engineering for lawyers and legal teams. Live page: https://gmoskalev.com/work
+
+Four ways to work together. Every engagement is scoped and fixed-price upfront; it starts with a free 20-minute intro call.
+
+## Solo Consultation (90 minutes, one-off session)
+
+One focused session for a single lawyer who wants to use AI well. Covers the tools that fit the practice, how to prompt them, how to keep client data confidential, and what to fix in the current setup. Deliverables: a recording, an action list, and a recommended stack.
+
+## Company Consultation (fixed engagement, scoped to the team)
+
+For an in-house team or firm. Maps how the team works today, finds the use cases with the highest payoff, delivers a prioritized roadmap with a privacy-safe stack. Then working sessions on real contracts, research and memos, plus a prompt library, guardrails and a confidentiality policy the team will follow.
+
+## Engineering (fixed-scope build, client owns everything)
+
+One tool, built end to end and handed over: a RAG assistant over the team's corpus, contract analytics, an MCP server that keeps data local, or a memo-drafting workflow. When confidentiality is critical, deployed so data never reaches a hosted API. The client owns the code, prompts and docs.
+
+## Fractional Legal Engineer (monthly retainer)
+
+Ongoing engineering capacity for a legal team without a full-time hire. A few days a month: building, maintaining and improving tools, advising on adoption.
+
+## Process
+
+1. Intro call — free 20-minute call to see if it's a fit. No pitch.
+2. Scope and quote — fixed scope, fixed price, clear deliverables.
+3. The work — sessions or build, with weekly updates.
+4. Handover — the client owns all of it: prompts, docs, code, and the know-how to run it.
+
+## Confidentiality stance
+
+Every engagement is designed so confidential data stays under the client's control: local models when data shouldn't touch a hosted API at all, anonymization when it can, private deployments when needed. Based in the EU (Cyprus), NDA by default. Relevant frameworks: GDPR, CCPA, the AI Act, DSA, DMA.
+
+## Contact for engagements
+
+- Book a free 20-minute intro call: https://cal.com/grigorii-moskalev/20min
+- Email: grigory.moskalyov@gmail.com (subject "Intro call")
+- Telegram: https://t.me/gregms
+- Remote worldwide, on-site possible in the EU. Working languages: English and Russian.
+
 # Projects
 
 ## PII Shield
 
 - **Tagline:** Anonymize documents before Claude sees them. Restore real data after analysis.
-- **Status:** Live, v2.0.2
+- **Status:** Live, v2.2.0
 - **Repo:** https://github.com/gregmos/PII-Shield
 - **License:** MIT
 - **Stack:** Node.js, MCP, GLiNER, ONNX, DOCX
@@ -166,11 +206,11 @@ PII Shield runs the redaction step before the model sees anything. It's an MCP s
 
 ### v1 → v2 · the rewrite (developer view)
 
-v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2.0.2 is a complete Node.js rewrite over `onnxruntime-node` + `@xenova/transformers`: same detection coverage, no Python.
+v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2 is a complete Node.js rewrite over `onnxruntime-node` + `@xenova/transformers`: same detection coverage, no Python.
 
 Plugin: 700 KB on Windows/Linux (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB `gliner-pii-base-v1.0` model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 18/20.
 
-Both v1.0.0 and v2.0.2 release tags live in `gregmos/PII-Shield` — the v1 Python build remains downloadable for legacy installs.
+Both the v1.0.0 and current v2 release tags live in `gregmos/PII-Shield` — the v1 Python build remains downloadable for legacy installs.
 
 ## Skill modes (six task-shaped workflows)
 
@@ -204,13 +244,13 @@ person · org · location · email · phone · IBAN · credit card · crypto wal
 ### Detection method (developer view)
 
 - **NER (zero-shot)** via GLiNER: person, org, location
-- **Regex / pattern**: all 17 jurisdiction patterns + email · phone · IBAN · credit card · crypto · SSN · EIN · licences · money · date
+- **Regex / pattern**: all 19 jurisdiction patterns (UK, DE, FR, IT, ES, CY, FI, EU) + email · phone · IBAN · credit card · crypto · SSN · EIN · licences · money · date
 
 ## Quick start
 
 Four steps. No terminal.
 
-1. **Download the artefacts** — pick the `.mcpb` for your OS plus the contract-analyze skill. Direct links to the v2.0.2 release: https://github.com/gregmos/PII-Shield/releases/tag/v2.0.2
+1. **Download the artefacts** — pick the `.mcpb` for your OS plus the contract-analyze skill. Direct link to the latest release: https://github.com/gregmos/PII-Shield/releases/latest
 2. **Install in Claude Desktop** — Settings → Extensions → Advanced Settings → Install extension. On first call, PII Shield runs `npm ci --ignore-scripts` to install pinned runtime deps (`onnxruntime-node`, `@xenova/transformers`, `gliner`) into `~/.pii_shield/deps/` — 2-3 minutes once per machine, instant thereafter.
 3. **Connect a folder** with your documents — Claude Desktop → Settings → Connected folders. (Don't drag-attach files into the chat — the raw document hits the API before PII Shield can intercept.)
 4. **Use it from a chat** — pick the `pii-contract-analyze` skill, tell Claude what you need.

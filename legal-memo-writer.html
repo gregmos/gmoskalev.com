@@ -1311,9 +1311,94 @@
       .footer { flex-direction: column; }
       .footer__col--right { text-align: left; align-items: flex-start; }
     }
+
+    /* WORK WITH ME BANNER */
+    .work-banner-wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 var(--gutter) clamp(72px, 10vh, 120px);
+    }
+    .work-banner {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 26px 30px;
+      border: 1px dashed var(--hair-2);
+      border-radius: 10px;
+      transition: border-color 180ms ease, background 180ms ease, transform 240ms ease;
+    }
+    .work-banner:hover,
+    .work-banner:focus-visible {
+      border-color: var(--accent);
+      background: color-mix(in oklab, var(--accent) 4%, transparent);
+      transform: translateY(-2px);
+    }
+    .work-banner__plus { font-family: var(--font-mono); font-size: 22px; color: var(--accent); flex: none; }
+    .work-banner__body { flex: 1; min-width: 0; }
+    .work-banner__title { display: block; font-family: var(--font-mono); font-size: 16px; font-weight: 500; letter-spacing: -0.01em; color: var(--fg); margin-bottom: 4px; }
+    .work-banner__sub { display: block; font-size: 14px; line-height: 1.5; color: var(--fg-dim); }
+    .work-banner__arrow { font-family: var(--font-mono); font-size: 16px; color: var(--fg-dimmer); flex: none; transition: color 160ms ease, transform 160ms ease; }
+    .work-banner:hover .work-banner__arrow,
+    .work-banner:focus-visible .work-banner__arrow { color: var(--accent); transform: translateX(2px); }
+    @media (max-width: 560px) { .work-banner { flex-direction: column; align-items: flex-start; gap: 12px; } }
+
+    /* TABLE OF CONTENTS — sticky right rail (desktop only) */
+    .toc {
+      position: fixed;
+      top: 50%;
+      right: 28px;
+      transform: translateY(-50%);
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      padding: 8px 0 8px 14px;
+      border-left: 1px solid var(--hair);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      pointer-events: auto;
+    }
+    @media (max-width: 1280px) { .toc { display: none; } }
+    .toc__item {
+      padding: 6px 8px;
+      color: var(--fg-dim);
+      transition: color 200ms ease;
+      position: relative;
+      white-space: nowrap;
+      letter-spacing: -0.005em;
+    }
+    .toc__item:hover { color: var(--fg); }
+    .toc__item:focus-visible { color: var(--fg); outline-offset: 2px; }
+    .toc__item.is-active { color: var(--accent); }
+    .toc__item.is-active::before {
+      content: '';
+      position: absolute;
+      left: -15px;
+      top: 5px;
+      bottom: 5px;
+      width: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 8px color-mix(in oklab, var(--accent) 60%, transparent);
+    }
+    .toc__num { color: var(--fg-faint); margin-right: 6px; }
+    .toc__item.is-active .toc__num { color: color-mix(in oklab, var(--accent) 70%, var(--fg-faint)); }
   </style>
 </head>
 <body>
+  <!-- ═══════════════════════════════════════════════════════════════
+       TABLE OF CONTENTS / SCROLLSPY (desktop only)
+       ═══════════════════════════════════════════════════════════════ -->
+  <aside class="toc" aria-label="Table of contents">
+    <a href="#pipeline" class="toc__item" data-toc="pipeline"><span class="toc__num">01</span>How it flows</a>
+    <a href="#why" class="toc__item" data-toc="why"><span class="toc__num">02</span>Why this exists</a>
+    <a href="#modes" class="toc__item" data-toc="modes"><span class="toc__num">03</span>Two modes</a>
+    <a href="#agents" class="toc__item" data-toc="agents"><span class="toc__num">04</span>The specialists</a>
+    <a href="#output" class="toc__item" data-toc="output"><span class="toc__num">05</span>What you get</a>
+    <a href="#style" class="toc__item" data-toc="style"><span class="toc__num">06</span>Style Studio</a>
+    <a href="#install" class="toc__item" data-toc="install"><span class="toc__num">07</span>Quick start</a>
+    <a href="#limits" class="toc__item" data-toc="limits"><span class="toc__num">08</span>Limits</a>
+  </aside>
+
   <!-- ═════════════════════════════════ SUBNAV ═════════════════════════════════ -->
   <nav class="subnav">
     <div class="subnav__inner">
@@ -1360,7 +1445,7 @@
       </h1>
       <p class="subhero__tagline">From one legal question to a finished <code>.docx</code> memo.</p>
       <p class="subhero__friendly">
-        Cowork plugin that mirrors a small legal team. <strong>Fifteen specialists</strong> run intake, parallel statutory + case-law + doctrinal research, currency check, IRAC drafting, five-reviewer peer review, mediation, up to three revision rounds, and client-readiness polish — then ship <code>memo.docx</code> with the full source pack and a per-reviewer audit trail. You ask. The plugin works. You read.
+        Cowork plugin that works like a small legal team. <strong>Fifteen specialists</strong>: researchers pull statutes, case law and guidance in parallel, a writer drafts in IRAC, five reviewers stress-test the draft, and the writer revises until it ships — <code>memo.docx</code> plus the full source pack and a per-reviewer audit trail. You ask. The plugin works. You read.
       </p>
 
       <div class="subhero__meta">
@@ -1386,15 +1471,15 @@
     <div class="divider"><span class="divider__num">01</span><span class="divider__txt">how it flows</span></div>
 
     <!-- ═════════════════════════════════ 01 PIPELINE ═════════════════════════════════ -->
-    <section id="pipeline" class="section">
+    <section id="pipeline" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">01</span>
         <span class="section-label__slash">/</span>
         <span class="section-label__title">How it flows</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">From a research-grade question to a court-citable memo.</h2>
-      <p class="section__lede">A four-stage flow runs underneath: intake gathers facts and scope; three researchers go out in parallel; the writer drafts IRAC; five reviewers stress-test the draft, a mediator consolidates findings, the writer revises up to three rounds, and a client-readiness polish ships <code>memo.docx</code>. Nine phases, four mandatory human checkpoints.</p>
+      <h2 class="section__h" data-reveal="settle">From a research-grade question to a reviewed, footnoted memo.</h2>
+      <p class="section__lede">Four stages run underneath: intake gathers facts and scope, researchers go out in parallel, the writer drafts in IRAC, and review ships the final <code>.docx</code>. Nine phases, four mandatory human checkpoints — the full breakdown is below.</p>
 
       <div class="pipeline" data-reveal="pipeline">
         <div class="pipeline__arrows" aria-hidden="true">
@@ -1579,7 +1664,7 @@
     <div class="divider"><span class="divider__num">02</span><span class="divider__txt">why this exists</span></div>
 
     <!-- ═════════════════════════════════ 02 WHY ═════════════════════════════════ -->
-    <section id="why" class="section">
+    <section id="why" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">02</span>
@@ -1604,7 +1689,7 @@
     <div class="divider"><span class="divider__num">03</span><span class="divider__txt">two modes</span></div>
 
     <!-- ═════════════════════════════════ 03 MODES ═════════════════════════════════ -->
-    <section id="modes" class="section">
+    <section id="modes" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">03</span>
@@ -1651,7 +1736,7 @@
     <div class="divider"><span class="divider__num">04</span><span class="divider__txt">the specialists</span></div>
 
     <!-- ═════════════════════════════════ 04 AGENTS ═════════════════════════════════ -->
-    <section id="agents" class="section">
+    <section id="agents" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">04</span>
@@ -1804,7 +1889,7 @@
     <div class="divider"><span class="divider__num">05</span><span class="divider__txt">what you get</span></div>
 
     <!-- ═════════════════════════════════ 05 OUTPUT ═════════════════════════════════ -->
-    <section id="output" class="section">
+    <section id="output" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">05</span>
@@ -1852,7 +1937,7 @@
     <div class="divider"><span class="divider__num">06</span><span class="divider__txt">make it sound like you</span></div>
 
     <!-- ═════════════════════════════════ 06 STYLE STUDIO ═════════════════════════════════ -->
-    <section id="style" class="section">
+    <section id="style" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">06</span>
@@ -1894,7 +1979,7 @@
     <div class="divider"><span class="divider__num">07</span><span class="divider__txt">quick start</span></div>
 
     <!-- ═════════════════════════════════ 07 INSTALL ═════════════════════════════════ -->
-    <section id="install" class="section">
+    <section id="install" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">07</span>
@@ -1961,7 +2046,7 @@
     <div class="divider"><span class="divider__num">08</span><span class="divider__txt">honest about limits</span></div>
 
     <!-- ═════════════════════════════════ 08 LIMITS ═════════════════════════════════ -->
-    <section id="limits" class="section">
+    <section id="limits" class="section" data-toc-target>
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">08</span>
@@ -1984,6 +2069,17 @@
         </div>
       </div>
     </section>
+
+    <div class="work-banner-wrap">
+      <a href="/work" class="work-banner" data-cta="banner-work">
+        <span class="work-banner__plus" aria-hidden="true">+</span>
+        <span class="work-banner__body">
+          <span class="work-banner__title">Need something like this built for your team?</span>
+          <span class="work-banner__sub">Consulting, training and custom builds for legal teams — without client data leaving the building.</span>
+        </span>
+        <span class="work-banner__arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
   </main>
 
   <footer class="footer">
@@ -1991,6 +2087,9 @@
       <div class="footer__copy">© <span id="year">2026</span> Grigorii Moskalev</div>
       <div>
         <a href="/">← Back to home</a>
+      </div>
+      <div>
+        <a href="/work">Work with me →</a>
       </div>
     </div>
     <div class="footer__col footer__col--right">
@@ -2060,6 +2159,26 @@
           });
         }, { threshold: 0.5 });
         demoIo.observe(demoVid);
+      }
+
+      // ─── Scrollspy — sticky right-rail TOC ─────────────────────────
+      var tocItems = document.querySelectorAll('.toc__item');
+      var spyTargets = document.querySelectorAll('[data-toc-target]');
+      if (tocItems.length && spyTargets.length) {
+        var spyIo = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              var id = e.target.id;
+              tocItems.forEach(function (t) {
+                var isActive = t.getAttribute('data-toc') === id;
+                t.classList.toggle('is-active', isActive);
+                if (isActive) t.setAttribute('aria-current', 'location');
+                else t.removeAttribute('aria-current');
+              });
+            }
+          });
+        }, { rootMargin: '-30% 0px -60% 0px' });
+        spyTargets.forEach(function (s) { spyIo.observe(s); });
       }
 
       // ─── Year ──────────────────────────────────────────────────────

@@ -976,9 +976,9 @@
         </div>
       </div>
       <h1 class="docshero__title">PII Shield Docs</h1>
-      <p class="docshero__lede">Full reference for both surfaces. The MCP plugin runs inside Claude Desktop; the CLI runs anywhere Node 22 does. Same engine, same 33 entity types, same on-disk session format. Switch the toggle above and the command reference swaps; everything else applies to both.</p>
+      <p class="docshero__lede">Full reference for both surfaces. The MCP plugin runs inside Claude Desktop; the CLI runs anywhere Node 22 does. Same engine, same 35 entity types, same on-disk session format. Switch the toggle above and the command reference swaps; everything else applies to both.</p>
       <div class="docshero__meta">
-        <span class="pill pill--live"><span class="pill__dot" aria-hidden="true"></span>v2.1.0 · Live</span>
+        <span class="pill pill--live"><span class="pill__dot" aria-hidden="true"></span>v2.2.0 · Live</span>
         <span class="pill">MCP server</span>
         <span class="pill">CLI</span>
         <span class="pill">Node.js 22+</span>
@@ -1001,7 +1001,7 @@
       <p class="section__lede">Both surfaces share <code>~/.pii_shield/</code>: install one or both. Sessions, mappings, audit logs, and the GLiNER model are interchangeable.</p>
 
       <h3 class="subhead">MCP plugin (Claude Desktop)</h3>
-      <code class="code"><span class="comment"># 1. Download pii-shield-v2.1.0-&lt;platform&gt;.mcpb from GitHub releases</span>
+      <code class="code"><span class="comment"># 1. Download pii-shield-v2.2.0-&lt;platform&gt;.mcpb from GitHub releases</span>
 <span class="comment">#    https://github.com/gregmos/PII-Shield/releases</span>
 
 <span class="comment"># 2. In Claude Desktop:</span>
@@ -1191,7 +1191,7 @@ pii-shield --version
         <div class="coverage__row">
           <span class="coverage__label">Detection · pattern</span>
           <ul class="coverage__list" role="list">
-            <li class="cov cov--generic">all 17 jurisdiction patterns</li>
+            <li class="cov cov--generic">all 19 jurisdiction patterns</li>
             <li class="cov cov--generic">email · phone · URL · IP</li>
             <li class="cov cov--generic">IBAN · credit card · crypto wallet</li>
             <li class="cov cov--generic">US SSN · US passport · US driver licence</li>
@@ -1200,7 +1200,7 @@ pii-shield --version
         </div>
       </div>
 
-      <p style="margin-top: 14px; font-size: 13.5px; color: var(--fg-dim);">Full enumerated list of 33 types in <a href="#entities" class="accent">§10 Entity types</a>.</p>
+      <p style="margin-top: 14px; font-size: 13.5px; color: var(--fg-dim);">Full enumerated list of 35 types in <a href="#entities" class="accent">§10 Entity types</a>.</p>
     </section>
 
     <div class="divider"><span class="divider__num">04</span><span class="divider__txt">command reference</span></div>
@@ -1959,7 +1959,7 @@ result = shield.anonymize(file)</code>
         <span class="section-label__slash">/</span>
         <span class="section-label__title">Detected entity types</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">33 types, grouped by source.</h2>
+      <h2 class="section__h" data-reveal="settle">35 types, grouped by source.</h2>
       <p class="section__lede">Authoritative list lives in <code>nodejs-v2/src/engine/entity-types.ts</code> (<code>SUPPORTED_ENTITIES</code>). NER detections come from GLiNER zero-shot; the rest are pattern recognizers.</p>
 
       <h3 class="subhead">NER-based (4)</h3>
@@ -1977,8 +1977,8 @@ result = shield.anonymize(file)</code>
       <h3 class="subhead">EU-wide (2)</h3>
       <div class="stack-row"><span class="tag">EU_VAT</span><span class="tag">EU_PASSPORT</span></div>
 
-      <h3 class="subhead">Country-specific (10)</h3>
-      <div class="stack-row"><span class="tag">DE_TAX_ID</span><span class="tag">DE_SOCIAL_SECURITY</span><span class="tag">FR_NIR</span><span class="tag">FR_CNI</span><span class="tag">IT_FISCAL_CODE</span><span class="tag">IT_VAT</span><span class="tag">ES_DNI</span><span class="tag">ES_NIE</span><span class="tag">CY_TIC</span><span class="tag">CY_ID_CARD</span></div>
+      <h3 class="subhead">Country-specific (12)</h3>
+      <div class="stack-row"><span class="tag">DE_TAX_ID</span><span class="tag">DE_SOCIAL_SECURITY</span><span class="tag">FR_NIR</span><span class="tag">FR_CNI</span><span class="tag">IT_FISCAL_CODE</span><span class="tag">IT_VAT</span><span class="tag">ES_DNI</span><span class="tag">ES_NIE</span><span class="tag">CY_TIC</span><span class="tag">CY_ID_CARD</span><span class="tag">FI_HETU</span><span class="tag">FI_BUSINESS_ID</span></div>
 
       <p class="prose" style="margin-top: 24px;">List at runtime in JSON: <code>pii-shield scan small.txt --json | jq '.entities[].type' | sort -u</code> (assuming the sample file has at least one of each type you want to confirm).</p>
     </section>
@@ -2025,7 +2025,7 @@ result = shield.anonymize(file)</code>
 
       <div class="stack-row__label">Versioning</div>
       <div class="prose">
-        <p>Current release: <strong>v2.1.0</strong> (production). v1 was Python + Presidio + spaCy and remains downloadable in <code>gregmos/PII-Shield</code> for legacy installs. v2.1.0 is a complete Node.js rewrite — same detection coverage, no Python.</p>
+        <p>Current release: <strong>v2.2.0</strong> (production). v1 was Python + Presidio + spaCy and remains downloadable in <code>gregmos/PII-Shield</code> for legacy installs. v2 is a complete Node.js rewrite — same detection coverage, no Python.</p>
         <p>The CLI ships from the same monorepo as the MCP server (<code>nodejs-v2/cli/</code>). Both surfaces share the engine in <code>src/engine/</code>, so version numbers stay aligned.</p>
       </div>
     </section>
