@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Grigorii Moskalev — Legal counsel and legal engineer.</title>
-  <meta name="description" content="Greg Moskalev — Legal Counsel at FaceApp, author of PII Shield, teacher to 100+ lawyers. 11 years of law, 3 years of Python. Building legal-AI tools from Limassol, Cyprus." />
+  <meta name="description" content="Greg Moskalev — legal counsel, legal engineer, and author of PII Shield. 11 years of law, 3 years of Python. Building legal-AI tools from Limassol, Cyprus." />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Grigorii Moskalev" />
-  <meta property="og:description" content="Legal counsel and legal engineer. 11 years of law · 3 years of Python · Legal Counsel at FaceApp." />
+  <meta property="og:description" content="Legal counsel and legal engineer. 11 years of law · 3 years of Python." />
   <meta property="og:url" content="https://gmoskalev.com" />
   <meta property="og:site_name" content="gmoskalev.com" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -42,17 +42,12 @@
         "alternateName": ["Greg Moskalev", "Grigory Moskalyov"],
         "url": "https://gmoskalev.com/",
         "jobTitle": "Legal Counsel",
-        "description": "Grigorii Moskalev is a legal counsel at FaceApp who builds AI tools for legal teams. 11 years practicing law, 3 years writing Python. Author of PII Shield (open-source MCP server that anonymizes documents before LLM analysis) and Brand monitor (trademark-infringement scanner). Teaches a course on LLM use for lawyers — 100+ students.",
+        "description": "Grigorii Moskalev is a legal counsel who builds AI tools for legal teams. 11 years practicing law, 3 years writing Python. Author of PII Shield (open-source MCP server that anonymizes documents before LLM analysis) and Brand monitor (trademark-infringement scanner).",
         "email": "mailto:grigory.moskalyov@gmail.com",
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Limassol",
           "addressCountry": "CY"
-        },
-        "worksFor": {
-          "@type": "Organization",
-          "name": "FaceApp",
-          "url": "https://www.faceapp.com/"
         },
         "alumniOf": [
           { "@type": "Organization", "name": "KPMG" }
@@ -870,6 +865,8 @@
 
     /* CONTACT */
     .section--contact { padding-bottom: clamp(120px, 16vh, 180px); }
+    /* No headline in this section — keep the label on its own line. */
+    .section--contact .section-label { display: flex; width: fit-content; }
 
     .contact__headline {
       font-size: clamp(28px, 4.5vw, 48px);
@@ -1084,10 +1081,6 @@
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
           </svg>
         </button>
-        <a href="#contact" class="nav__cta">
-          <span>Get in touch</span>
-          <span aria-hidden="true">→</span>
-        </a>
       </div>
     </div>
     <div class="nav__menu" id="navMenu" aria-hidden="true">
@@ -1103,7 +1096,7 @@
       <div class="hero__glow" aria-hidden="true"></div>
 
       <dl class="hero__meta" aria-label="Profile summary">
-        <div class="hero__meta-row"><dt class="hero__meta-k">role</dt><dd class="hero__meta-v">Legal Counsel @ FaceApp</dd></div>
+        <div class="hero__meta-row"><dt class="hero__meta-k">role</dt><dd class="hero__meta-v">Legal Counsel</dd></div>
         <div class="hero__meta-row"><dt class="hero__meta-k">based</dt><dd class="hero__meta-v">Limassol, Cyprus</dd></div>
         <div class="hero__meta-row"><dt class="hero__meta-k">stack</dt><dd class="hero__meta-v">Law · Python · LLMs</dd></div>
       </dl>
@@ -1116,12 +1109,9 @@
       <p class="hero__tagline">Legal counsel and legal engineer.</p>
 
       <div class="hero__cta-row">
-        <a href="#contact" class="btn btn--primary">
-          <span>Get in touch</span>
-          <span aria-hidden="true">→</span>
-        </a>
-        <a href="#projects" class="btn btn--ghost">
+        <a href="#projects" class="btn btn--primary">
           <span>View projects</span>
+          <span aria-hidden="true">→</span>
         </a>
       </div>
     </header>
@@ -1135,17 +1125,14 @@
       </div>
       <div class="about__grid">
         <div class="about__prose">
-          <p class="about__paragraph">11 years practicing law, 3 years writing Python, and a growing overlap between the two. I run the legal function at FaceApp, a consumer product used by hundreds of millions, across IP, privacy, corporate, and app-store disputes. Before that, KPMG and senior in-house roles at international tech companies across Cyprus, the EU, and beyond.</p>
+          <p class="about__paragraph">11 years practicing law, 3 years writing Python, and a growing overlap between the two. I run the legal function at a consumer tech product used by hundreds of millions, across IP, privacy, corporate, and app-store disputes. Before that, KPMG and senior in-house roles at international tech companies across Cyprus, the EU, and beyond.</p>
           <p class="about__paragraph">Legal engineering is what I genuinely love. I've built RAG pipelines over our internal corpus, contract analytics, MCP servers that keep client data off the API. I work with prompt engineering and fine-tuning, and I deploy local models when client data shouldn't reach a hosted one in the first place.</p>
           <p class="about__paragraph">I've also shipped legal-tech projects as a product owner, taking ideas from zero to launch and owning the spec, the flows, and the API.</p>
-          <p class="about__paragraph">I teach a course and run a Telegram channel for lawyers learning to work with LLMs — 100+ students so far.</p>
         </div>
         <div class="about__facts">
           <div class="fact"><div class="fact__v">11</div><div class="fact__k">Years practicing</div></div>
           <div class="fact"><div class="fact__v" id="ghStars">104</div><div class="fact__k">★ GitHub project stars</div></div>
           <div class="fact"><div class="fact__v fact__v--small">IP · Privacy · Corporate</div><div class="fact__k">Practice areas</div></div>
-          <div class="fact"><div class="fact__v">100+</div><div class="fact__k">Students taught</div></div>
-          <div class="fact"><div class="fact__v">FaceApp</div><div class="fact__k">Legal function at</div></div>
           <div class="fact"><div class="fact__v">EN · RU · GR</div><div class="fact__k">Languages</div></div>
         </div>
       </div>
@@ -1331,8 +1318,6 @@
         <span class="section-label__slash">/</span>
         <span class="section-label__title">Contact</span>
       </div>
-      <h2 class="contact__headline">Working on something at the edge of <span class="accent">law and AI</span>? Let's talk.</h2>
-
       <a href="https://www.linkedin.com/in/grigorii-moskalev" class="contact__primary" target="_blank" rel="noopener">
         <span class="contact__primary-k" aria-hidden="true">linkedin</span>
         <span class="contact__primary-sep" aria-hidden="true">::</span>

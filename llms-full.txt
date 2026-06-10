@@ -1,6 +1,6 @@
 # Grigorii Moskalev — Legal counsel and legal engineer
 
-> Grigorii Moskalev is a legal counsel at FaceApp who builds AI tools for legal teams. 11 years practicing law, 3 years writing Python. Author of PII Shield (open-source MCP server that anonymizes documents before LLM analysis) and Brand monitor (trademark-infringement scanner). Teaches a course on LLM use for lawyers — 100+ students. Based in Limassol, Cyprus.
+> Grigorii Moskalev is a legal counsel who builds AI tools for legal teams. 11 years practicing law, 3 years writing Python. Author of PII Shield (open-source MCP server that anonymizes documents before LLM analysis) and Brand monitor (trademark-infringement scanner). Based in Limassol, Cyprus.
 
 This file is the long-form Markdown export of gmoskalev.com for LLM ingestion. The slim index is at [llms.txt](https://gmoskalev.com/llms.txt).
 
@@ -9,27 +9,23 @@ This file is the long-form Markdown export of gmoskalev.com for LLM ingestion. T
 # Profile
 
 - **Name:** Grigorii Moskalev (also Greg Moskalev / Grigory Moskalyov)
-- **Role:** Legal Counsel @ FaceApp
+- **Role:** Legal Counsel
 - **Based:** Limassol, Cyprus
 - **Stack:** Law · Python · LLMs
 - **Languages:** English, Russian, Greek
 
 # About
 
-11 years practicing law, 3 years writing Python, and a growing overlap between the two. I run the legal function at FaceApp, a consumer product used by hundreds of millions, across IP, privacy, corporate, and app-store disputes. Before that, KPMG and senior in-house roles at international tech companies across Cyprus, the EU, and beyond.
+11 years practicing law, 3 years writing Python, and a growing overlap between the two. I run the legal function at a consumer tech product used by hundreds of millions, across IP, privacy, corporate, and app-store disputes. Before that, KPMG and senior in-house roles at international tech companies across Cyprus, the EU, and beyond.
 
 Legal engineering is what I genuinely love. I've built RAG pipelines over our internal corpus, contract analytics, MCP servers that keep client data off the API. I work with prompt engineering and fine-tuning, and I deploy local models when client data shouldn't reach a hosted one in the first place.
 
 I've also shipped legal-tech projects as a product owner, taking ideas from zero to launch and owning the spec, the flows, and the API.
 
-I teach a course and run a Telegram channel for lawyers learning to work with LLMs — 100+ students so far.
-
 ## Quick facts
 
 - 11 years practicing law
 - Practice areas: IP · Privacy · Corporate
-- 100+ students taught
-- Legal function lead at FaceApp
 - Languages: EN · RU · GR
 
 # Projects

@@ -1,6 +1,6 @@
 # Grigorii Moskalev — Legal counsel and legal engineer
 
-> Grigorii Moskalev is a legal counsel at FaceApp who builds AI tools for legal teams. 11 years practicing law, 3 years writing Python. Author of PII Shield (open-source MCP server that anonymizes documents before LLM analysis) and Brand monitor (trademark-infringement scanner). Teaches a course on LLM use for lawyers — 100+ students. Based in Limassol, Cyprus.
+> Grigorii Moskalev is a legal counsel who builds AI tools for legal teams. 11 years practicing law, 3 years writing Python. Author of PII Shield (open-source MCP server that anonymizes documents before LLM analysis) and Brand monitor (trademark-infringement scanner). Based in Limassol, Cyprus.
 
 ## Pages
 
