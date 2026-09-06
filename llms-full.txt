@@ -56,6 +56,7 @@ Cowork plugin that mirrors a small legal team. A triage analyst clarifies missin
 - **Status:** New, v0.2.1 (released 6 September 2026)
 - **Page:** https://gmoskalev.com/plain
 - **Repo:** https://github.com/gregmos/plain
+- **License:** MIT
 - **Downloads:** Windows 11 zip (single plain.exe, 7.5 MB, code-signed) — https://github.com/gregmos/plain/releases/download/v0.2.1/Plain-0.2.1-win-x64.zip; macOS 13+ universal dmg (14.7 MB, Developer ID signed and notarised) — https://github.com/gregmos/plain/releases/download/v0.2.1/Plain_0.2.1_universal.dmg
 - **Stack:** Tauri 2, Rust, React 19, TypeScript, CodeMirror 6, unified (remark/rehype), Shiki, KaTeX, Mermaid
 
@@ -71,7 +72,7 @@ Interface: IBM Plex Mono everywhere, one accent colour, no icons, light and dark
 
 Data lives in `%APPDATA%\Plain` (Windows) or `~/Library/Application Support/Plain` (macOS): `settings.json`, `drafts/`, `state.json`, `history/`. A `data` folder next to `plain.exe` enables portable mode on Windows.
 
-Limits by design: no plugins, sync, cloud, AI, telemetry, auto-update, database or index; no localisation or custom keymaps yet; renaming a file does not update links. Memory is WebView2/WKWebView-sized (around 180 MB private with a file open). Personal project built in the evenings; the macOS build comes from CI and has had less time on real hardware. No license file in the repository as of v0.2.1.
+Limits by design: no plugins, sync, cloud, AI, telemetry, auto-update, database or index; no localisation or custom keymaps yet; renaming a file does not update links. Memory is WebView2/WKWebView-sized (around 180 MB private with a file open). Personal project built in the evenings; the macOS build comes from CI and has had less time on real hardware.
 
 ## Brand monitor
 
