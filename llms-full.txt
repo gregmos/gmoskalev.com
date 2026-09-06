@@ -1,6 +1,6 @@
 # Grigorii Moskalev — Legal counsel and legal engineer
 
-> Grigorii Moskalev is a legal counsel who builds AI tools for legal teams. 11 years practicing law, 3 years writing Python. Author of PII Shield (open-source MCP server that anonymizes documents before LLM analysis) and Brand monitor (trademark-infringement scanner). Based in Limassol, Cyprus.
+> Grigorii Moskalev is a legal counsel who builds AI tools for legal teams. 11 years practicing law, 3 years writing Python. Author of PII Shield (open-source MCP server that anonymizes documents before LLM analysis), memoforge (Cowork plugin that drafts footnoted legal memos), Brand monitor (trademark-infringement scanner), and Plain (lightweight Markdown reader and editor for Windows and macOS). Based in Limassol, Cyprus.
 
 This file is the long-form Markdown export of gmoskalev.com for LLM ingestion. The slim index is at [llms.txt](https://gmoskalev.com/llms.txt).
 
@@ -49,6 +49,29 @@ MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, an
 - **Stack:** Cowork plugin, 15 agents, IRAC, MCP citations, python-docx
 
 Cowork plugin that mirrors a small legal team. A triage analyst clarifies missing facts; three researchers pull statutes, case law, and regulator guidance in parallel; a currency check confirms the law is still good; a writer drafts in IRAC; five reviewers stress-test the draft on logic, citations, style, clarity, and contrary authority; a mediator consolidates the findings; and the writer revises up to three rounds before a client-readiness polish and `.docx` export. Two modes — Brief (2–3 pages, statutory research, 3 reviewers, 1 revision) and Full (5–8 pages, statutes + case law + doctrine, all 5 reviewers, up to 3 revisions, polish). Bundles two MCP servers — Legal Data Hunter for multi-jurisdictional law and CourtListener for US case law — with a WebFetch fallback to official portals. Every memo ships with the full source pack, per-reviewer findings, and an honest verdict (`approved`, `forced_exit_on_v3`, or `manual_review_required`). Optional Style Studio turns a folder of example memos into a saved house-style profile. Runs locally — no shared backend, no telemetry.
+
+## Plain
+
+- **Tagline:** Double-click a .md file and you are reading.
+- **Status:** New, v0.2.1 (released 6 September 2026)
+- **Page:** https://gmoskalev.com/plain
+- **Repo:** https://github.com/gregmos/plain
+- **Downloads:** Windows 11 zip (single plain.exe, 7.5 MB, code-signed) — https://github.com/gregmos/plain/releases/download/v0.2.1/Plain-0.2.1-win-x64.zip; macOS 13+ universal dmg (14.7 MB, Developer ID signed and notarised) — https://github.com/gregmos/plain/releases/download/v0.2.1/Plain_0.2.1_universal.dmg
+- **Stack:** Tauri 2, Rust, React 19, TypeScript, CodeMirror 6, unified (remark/rehype), Shiki, KaTeX, Mermaid
+
+A lightweight Markdown reader and editor for Windows 11 and macOS. Three views of one document: `read` renders it, `edit` shows the source with syntax highlighting, `rich` shows the source with the markup hidden (Typora-style); `split` puts edit and read side by side. Switch with `Ctrl+/` or the mode bar; caret and scroll position survive the switch.
+
+Markdown support: CommonMark + GFM (tables, task lists, footnotes, strikethrough), callouts (`> [!note]`, tip, warning, important, caution), KaTeX math, Mermaid diagrams, Shiki-highlighted code, `==highlights==`, `[[wikilinks]]`, YAML front matter, images from the folder (paste or drop saves into `assets/`), `#tags`, sanitised inline HTML. Every construct has a command: `edit → insert`, the command palette, `Ctrl+Alt` shortcuts, and an optional one-row formatting toolbar.
+
+A folder is the library: file tree (create, rename, delete to Recycle Bin/Trash), quick open `Ctrl+K`, full-text search `Ctrl+Shift+F` (Rust, parallel, case and regex toggles), library screen `Ctrl+Alt+L` with dates, word counts and `#tag` filter, tags and backlinks in the sidebar, version history (a snapshot of every save kept 30 days, restore and compare). No index, no cache, no service files in the user's folders.
+
+Careful saving: bytes the user did not touch do not change (list markers, indentation, trailing spaces, BOM, final newline); CRLF/LF preserved (mixed files normalised to the dominant style with a status-bar message); UTF-8, UTF-8 BOM and UTF-16 written back as read; legacy cp1251 converted to UTF-8 only after confirmation; atomic writes via temp file + replace with a hash check against the file on disk; external changes reloaded quietly when there are no local edits, otherwise a banner with reload / save my copy as / compare; recovery drafts within 2 seconds of every change; `Ctrl+S` on an untouched buffer writes nothing; optional autosave (off by default).
+
+Interface: IBM Plex Mono everywhere, one accent colour, no icons, light and dark themes following the system. Shortcuts bind to physical keys (work in Cyrillic layouts); on macOS ⌘ replaces Ctrl with a few remaps. Settings (`Ctrl+,`, one small `settings.json`): theme, font size, content width, line numbers, toolbar, indent unit, code wrap, autosave, new-file EOL, library extensions, tags.
+
+Data lives in `%APPDATA%\Plain` (Windows) or `~/Library/Application Support/Plain` (macOS): `settings.json`, `drafts/`, `state.json`, `history/`. A `data` folder next to `plain.exe` enables portable mode on Windows.
+
+Limits by design: no plugins, sync, cloud, AI, telemetry, auto-update, database or index; no localisation or custom keymaps yet; renaming a file does not update links. Memory is WebView2/WKWebView-sized (around 180 MB private with a file open). Personal project built in the evenings; the macOS build comes from CI and has had less time on real hardware. No license file in the repository as of v0.2.1.
 
 ## Brand monitor
 
