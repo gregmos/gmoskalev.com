@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-header-style="§ / slash" data-density="comfortable">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,17 +17,14 @@
 
   <link rel="canonical" href="https://gmoskalev.com/" />
 
-  <!-- Restore theme preference before paint to avoid flash. Default = light. -->
+  <!-- Light by default. Apply a saved dark preference before first paint. -->
   <script>
     (function () {
       try {
-        if (localStorage.getItem('theme') !== 'dark') {
-          document.documentElement.setAttribute('data-theme', 'light');
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
         }
-      } catch (e) {
-        /* localStorage may be blocked — apply light default explicitly */
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
+      } catch (e) { /* storage blocked: stay light */ }
     })();
   </script>
 
@@ -105,975 +102,23 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="alternate icon" href="/favicon.svg" />
 
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-
-  <style>
-    :root {
-      /* Theme: dark by default. Light overrides at the [data-theme="light"]
-         block below. --ink is the surface-tint base color (255/255/255 on
-         dark, 0/0/0 on light) — flipped automatically by the theme switch. */
-      --ink: 255 255 255;
-      --bg: #0A0A0A;
-      --bg-elev: #101114;
-      --bg-elev-2: #15171B;
-      --fg: #EDEDED;
-      --fg-dim: #A0A0A6;
-      --fg-dimmer: #6E6E76;
-      --fg-faint: #3F3F46;
-      --hair: rgb(var(--ink) / 0.07);
-      --hair-2: rgb(var(--ink) / 0.12);
-      --hair-strong: rgb(var(--ink) / 0.22);
-      --accent: #00E27A;
-      --danger: #FF4D4D;
-      --warn: #FFB020;
-      --nav-bg-scrolled: rgba(10, 10, 10, 0.72);
-      --font-sans: "Inter", system-ui, sans-serif;
-      --font-mono: "JetBrains Mono", ui-monospace, monospace;
-      --max: 1200px;
-      --gutter: clamp(20px, 4vw, 56px);
-      --glow-opacity: 1;
-      color-scheme: dark;
-    }
-
-    [data-theme="light"] {
-      --ink: 0 0 0;
-      --bg: #FAFAF7;
-      --bg-elev: #FFFFFF;
-      --bg-elev-2: #F4F1EB;
-      --fg: #18181B;
-      --fg-dim: #4C4C56;
-      --fg-dimmer: #7A7A86;
-      --fg-faint: #B8B8C0;
-      --accent: #008C4D;
-      --danger: #C92626;
-      --warn: #B36900;
-      --nav-bg-scrolled: rgba(250, 250, 247, 0.78);
-      color-scheme: light;
-    }
-
-    /* Cross-document View Transitions: cross-fade between pages of the
-       same origin (e.g. / → /pii-shield → /writing). Browser auto-skips
-       the animation when prefers-reduced-motion is set. */
-    @view-transition { navigation: auto; }
-
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: var(--font-sans);
-      font-size: 16px;
-      line-height: 1.55;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      font-feature-settings: "ss01", "cv11";
-      overflow-x: hidden;
-    }
-    a { color: inherit; text-decoration: none; }
-    button { font: inherit; background: none; border: 0; color: inherit; cursor: pointer; padding: 0; }
-    h1, h2, h3, h4, p, ul { margin: 0; padding: 0; }
-    ul { list-style: none; }
-    em { font-style: italic; color: var(--fg); }
-
-    ::selection { background: var(--accent); color: #000; }
-
-    :focus-visible {
-      outline: 1.5px solid var(--accent);
-      outline-offset: 3px;
-      border-radius: 2px;
-    }
-
-    /* REDUCED MOTION GATE
-       Neutralizes animations/transitions and snaps hover/focus translates
-       to zero for users who prefer reduced motion. Reveal observer is
-       gated separately in JS via matchMedia('no-preference'). */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-      }
-      .btn:hover, .btn:focus-visible,
-      .project:hover, .project:focus-visible,
-      .project--soon:hover, .project--soon:focus-visible,
-      .contact__link:hover, .contact__link:focus-visible {
-        transform: none !important;
-      }
-      .caret { animation: none !important; }
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(to right, rgb(var(--ink) / 0.025) 1px, transparent 1px),
-        linear-gradient(to bottom, rgb(var(--ink) / 0.025) 1px, transparent 1px);
-      background-size: 64px 64px;
-      mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 80%);
-      z-index: 0;
-    }
-
-    main { position: relative; z-index: 1; }
-
-    /* NAV */
-    .nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 50;
-      padding: 14px var(--gutter);
-      transition: background 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease;
-      border-bottom: 1px solid transparent;
-    }
-    .nav--scrolled {
-      background: var(--nav-bg-scrolled);
-      backdrop-filter: saturate(140%) blur(14px);
-      -webkit-backdrop-filter: saturate(140%) blur(14px);
-      border-bottom-color: var(--hair);
-    }
-    .nav__inner {
-      max-width: var(--max);
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 32px;
-    }
-    .nav__brand {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 2px;
-      font-family: var(--font-mono);
-      font-size: 14px;
-      letter-spacing: -0.01em;
-    }
-    .nav__brand-name { color: var(--fg); font-weight: 500; }
-    .nav__links {
-      display: flex;
-      gap: 2px;
-      justify-content: center;
-    }
-    .nav__link {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 6px;
-      padding: 8px 12px;
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-      color: var(--fg-dim);
-      border-radius: 6px;
-      transition: color 120ms ease, background 120ms ease;
-      white-space: nowrap;
-    }
-    .nav__link:hover,
-    .nav__link:focus-visible { color: var(--fg); background: rgb(var(--ink) / 0.04); }
-    .nav__link.is-active { color: var(--fg); }
-    .nav__link.is-active .nav__link-num { color: var(--accent); }
-    .nav__link-num { color: var(--fg-dimmer); font-size: 10.5px; }
-
-    .nav__cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border: 1px solid var(--hair-2);
-      border-radius: 6px;
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-      transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
-      white-space: nowrap;
-    }
-    .nav__cta:hover,
-    .nav__cta:focus-visible {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* Right cluster wraps burger + theme-toggle + CTA so they share one
-       grid cell (preserves the existing auto/1fr/auto layout). */
-    .nav__right {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Theme toggle (sun ↔ moon) */
-    .theme-toggle {
-      display: grid;
-      place-items: center;
-      position: relative;
-      width: 32px;
-      height: 32px;
-      border: 1px solid var(--hair-2);
-      border-radius: 6px;
-      color: var(--fg-dim);
-      cursor: pointer;
-      transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
-      flex: none;
-    }
-    .theme-toggle:hover,
-    .theme-toggle:focus-visible {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .theme-toggle__icon {
-      grid-area: 1 / 1;
-      display: block;
-      transition: opacity 200ms ease, transform 200ms ease;
-    }
-    .theme-toggle__icon--sun { opacity: 1; transform: rotate(0); }
-    .theme-toggle__icon--moon { opacity: 0; transform: rotate(-90deg); }
-    [data-theme="light"] .theme-toggle__icon--sun { opacity: 0; transform: rotate(90deg); }
-    [data-theme="light"] .theme-toggle__icon--moon { opacity: 1; transform: rotate(0); }
-
-    /* Mobile burger menu */
-    .nav__burger {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--hair-2);
-      border-radius: 6px;
-      color: var(--fg);
-      transition: border-color 150ms ease, color 150ms ease;
-      flex: none;
-    }
-    .nav__burger:hover,
-    .nav__burger:focus-visible { border-color: var(--accent); color: var(--accent); }
-    .nav__burger-icon { display: block; pointer-events: none; }
-    .nav__burger-icon line {
-      stroke: currentColor;
-      stroke-width: 1.5;
-      stroke-linecap: round;
-      transition: transform 200ms ease, opacity 150ms ease;
-      transform-origin: center;
-    }
-    .nav__burger.is-open .nav__burger-icon line:nth-child(1) { transform: translateY(4px) rotate(45deg); }
-    .nav__burger.is-open .nav__burger-icon line:nth-child(2) { opacity: 0; }
-    .nav__burger.is-open .nav__burger-icon line:nth-child(3) { transform: translateY(-4px) rotate(-45deg); }
-
-    .nav__menu {
-      position: fixed;
-      top: 64px;
-      right: var(--gutter);
-      left: var(--gutter);
-      max-width: 320px;
-      margin-left: auto;
-      background: var(--bg-elev-2);
-      backdrop-filter: saturate(140%) blur(14px);
-      -webkit-backdrop-filter: saturate(140%) blur(14px);
-      border: 1px solid var(--hair-2);
-      border-radius: 10px;
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      z-index: 49;
-      opacity: 0;
-      transform: translateY(-8px);
-      pointer-events: none;
-      transition: opacity 180ms ease, transform 180ms ease;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-    }
-    .nav__menu.is-open { opacity: 1; transform: translateY(0); pointer-events: auto; }
-    .nav__menu .nav__link {
-      width: 100%;
-      padding: 12px 14px;
-      font-size: 13.5px;
-      border-radius: 6px;
-    }
-
-    @media (max-width: 480px) {
-      .nav { padding: 12px var(--gutter); }
-      .nav__cta { padding: 8px 12px; font-size: 12px; }
-    }
-
-    @media (max-width: 860px) {
-      .nav__links { display: none; }
-      .nav__inner { grid-template-columns: auto 1fr auto auto; gap: 12px; }
-      .nav__burger { display: inline-flex; }
-    }
-
-    /* HERO */
-    .hero {
-      position: relative;
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: clamp(120px, 18vh, 200px) var(--gutter) clamp(80px, 12vh, 140px);
-      isolation: isolate;
-      min-height: 92vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .hero__glow {
-      position: absolute;
-      inset: -20% -10% auto -10%;
-      height: 120%;
-      background:
-        radial-gradient(ellipse 60% 45% at 22% 30%, color-mix(in oklab, var(--accent) 18%, transparent) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 85% 20%, rgba(120, 120, 255, 0.08) 0%, transparent 60%);
-      filter: blur(20px);
-      opacity: var(--glow-opacity);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    .hero__meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 28px;
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      color: var(--fg-dimmer);
-      margin: 0 0 32px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--hair);
-      max-width: 720px;
-      letter-spacing: 0.01em;
-    }
-    .hero__meta-row { display: inline-flex; gap: 8px; align-items: baseline; }
-    .hero__meta-row dt,
-    .hero__meta-row dd { margin: 0; }
-    .hero__meta-k { color: var(--fg-faint); text-transform: lowercase; }
-    .hero__meta-k::after { content: " ::"; color: var(--fg-faint); }
-    .hero__meta-v { color: var(--fg-dim); }
-    @media (max-width: 560px) {
-      .hero__meta { gap: 8px 20px; font-size: 11px; }
-    }
-
-    .hero__name {
-      font-family: var(--font-mono);
-      font-weight: 600;
-      font-size: clamp(48px, 9vw, 128px);
-      line-height: 0.95;
-      letter-spacing: -0.045em;
-      color: var(--fg);
-      margin-bottom: 24px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-    }
-    .hero__name-first { color: var(--fg-dim); font-weight: 400; }
-    .hero__name-last { color: var(--fg); }
-
-    .caret {
-      display: inline-block;
-      width: 0.44em;
-      height: 0.9em;
-      background: var(--accent);
-      margin-left: 0.08em;
-      transform: translateY(0.08em);
-      animation: blink 1.05s steps(2, end) infinite;
-      box-shadow: 0 0 24px color-mix(in oklab, var(--accent) 50%, transparent);
-    }
-    @keyframes blink { 50% { opacity: 0; } }
-
-    .hero__tagline {
-      font-size: clamp(20px, 2.4vw, 28px);
-      line-height: 1.35;
-      color: var(--fg);
-      max-width: 640px;
-      letter-spacing: -0.01em;
-      margin-bottom: 40px;
-      text-wrap: balance;
-    }
-    .hero__sub {
-      font-family: var(--font-sans);
-      font-size: 15px;
-      font-style: italic;
-      line-height: 1.5;
-      color: var(--fg-dim);
-      margin-bottom: 40px;
-      max-width: 56ch;
-      letter-spacing: -0.005em;
-      text-wrap: pretty;
-    }
-
-    .hero__cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 56px; }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 18px;
-      border-radius: 8px;
-      font-family: var(--font-mono);
-      font-size: 13px;
-      letter-spacing: -0.005em;
-      transition: transform 140ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
-      border: 1px solid transparent;
-      will-change: transform;
-    }
-    .btn:hover,
-    .btn:focus-visible { transform: translateY(-1px); }
-    .btn:focus-visible { outline-offset: 4px; }
-    .btn--primary {
-      background: var(--accent);
-      color: #00110A;
-      font-weight: 600;
-      box-shadow:
-        0 0 0 1px color-mix(in oklab, var(--accent) 30%, transparent),
-        0 12px 40px -12px color-mix(in oklab, var(--accent) 80%, transparent);
-    }
-    .btn--primary:hover,
-    .btn--primary:focus-visible { background: color-mix(in oklab, var(--accent) 85%, white); }
-    .btn--ghost {
-      border-color: var(--hair-2);
-      color: var(--fg);
-    }
-    .btn--ghost:hover,
-    .btn--ghost:focus-visible { border-color: var(--fg-dim); background: rgb(var(--ink) / 0.03); }
-
-    @media (max-width: 560px) {
-      .hero { min-height: auto; padding-top: 120px; }
-      .hero__name { letter-spacing: -0.04em; margin-bottom: 20px; }
-      .hero__tagline { font-size: 22px; margin-bottom: 32px; }
-      .hero__cta-row { margin-bottom: 40px; gap: 12px; flex-direction: column; align-items: stretch; }
-      .hero__cta-row .btn { justify-content: center; padding: 14px 18px; }
-    }
-    @media (max-width: 360px) {
-      .hero__meta { gap: 6px 16px; padding-bottom: 12px; margin-bottom: 24px; }
-      .hero__name { letter-spacing: -0.035em; }
-    }
-
-    /* SECTIONS */
-    .section {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: clamp(80px, 12vh, 140px) var(--gutter);
-      position: relative;
-    }
-    .section + .section { border-top: 1px solid var(--hair); }
-
-    .section-label {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 8px;
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-      color: var(--fg-dim);
-      margin-bottom: 36px;
-      padding: 8px 12px;
-      border: 1px solid var(--hair);
-      border-radius: 6px;
-      background: rgb(var(--ink) / 0.02);
-    }
-    .section-label__sigil { color: var(--accent); }
-    .section-label__num { color: var(--fg); }
-    .section-label__slash { color: var(--fg-faint); }
-    .section-label__title { color: var(--fg-dim); }
-
-    [data-density="compact"] .section { padding-block: clamp(64px, 9vh, 96px); }
-
-    .section__lede {
-      font-size: 19px;
-      line-height: 1.5;
-      color: var(--fg-dim);
-      max-width: 60ch;
-      margin-bottom: 48px;
-      text-wrap: pretty;
-    }
-    .section__lede em { color: var(--fg); font-style: italic; }
-
-    .accent { color: var(--accent); }
-
-    /* ABOUT */
-    .about__grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-      gap: clamp(40px, 6vw, 80px);
-      align-items: start;
-    }
-    .about__paragraph {
-      font-size: 19px;
-      line-height: 1.6;
-      color: var(--fg);
-      margin-bottom: 20px;
-      text-wrap: pretty;
-      max-width: 62ch;
-    }
-    .about__paragraph + .about__paragraph { color: var(--fg-dim); }
-    .about__paragraph:first-of-type { color: var(--fg); }
-    .about__facts {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0;
-      border: 1px solid var(--hair);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .fact {
-      padding: 20px 24px;
-      border-right: 1px solid var(--hair);
-      border-bottom: 1px solid var(--hair);
-    }
-    .fact:nth-child(2n) { border-right: 0; }
-    .fact:nth-last-child(-n+2) { border-bottom: 0; }
-    .fact__v {
-      font-family: var(--font-mono);
-      font-size: 28px;
-      font-weight: 500;
-      letter-spacing: -0.02em;
-      color: var(--fg);
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    .fact__k {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--fg-dimmer);
-      text-transform: lowercase;
-      letter-spacing: 0.02em;
-    }
-
-    @media (max-width: 860px) {
-      .about__grid { grid-template-columns: 1fr; }
-    }
-
-    /* PROJECTS */
-    .project {
-      position: relative;
-      padding: 28px;
-      border: 1px solid var(--hair);
-      border-radius: 10px;
-      background: linear-gradient(180deg, rgb(var(--ink) / 0.015), transparent 60%);
-      transition: border-color 180ms ease, transform 240ms ease, background 180ms ease;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .project:hover,
-    .project:focus-visible {
-      border-color: var(--hair-2);
-      transform: translateY(-2px);
-    }
-    .project:focus-visible { outline-offset: 4px; }
-
-    .project--pinned {
-      padding: 36px 40px;
-      border-color: var(--hair-2);
-      background:
-        linear-gradient(180deg, rgb(var(--ink) / 0.025), transparent 60%),
-        radial-gradient(ellipse 80% 60% at 0% 0%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 60%);
-    }
-    .project--pinned::before {
-      content: "";
-      position: absolute;
-      left: -1px; top: -1px; bottom: -1px;
-      width: 3px;
-      background: linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 40%, transparent));
-      border-radius: 10px 0 0 10px;
-    }
-    .project--pinned .project__name { font-size: 28px; }
-
-    .project__head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .project__head-left { display: flex; flex-direction: column; gap: 6px; }
-    .project__pin {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      color: var(--accent);
-      text-transform: lowercase;
-      letter-spacing: 0.04em;
-    }
-    .project__name {
-      font-family: var(--font-mono);
-      font-size: 22px;
-      font-weight: 500;
-      letter-spacing: -0.02em;
-      color: var(--fg);
-      text-wrap: balance;
-    }
-    .project__status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      border: 1px solid var(--hair-2);
-      border-radius: 100px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--fg-dim);
-      white-space: nowrap;
-    }
-    .project__status-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: currentColor;
-    }
-    .project__status--live { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
-    .project__status--live .project__status-dot { box-shadow: 0 0 8px var(--accent); }
-    .project__status--new { color: var(--warn); border-color: color-mix(in oklab, var(--warn) 40%, transparent); }
-    .project__status--new .project__status-dot { box-shadow: 0 0 8px var(--warn); }
-
-    /* Right-side meta cluster: stars + forks + status pill */
-    .project__meta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-    .project__stats {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .project__stat {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border: 1px solid var(--hair);
-      border-radius: 100px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--fg-dim);
-      background: rgb(var(--ink) / 0.02);
-      white-space: nowrap;
-      transition: color 160ms ease, border-color 160ms ease;
-    }
-    .project--link:hover .project__stat { border-color: var(--hair-2); }
-    .project__stat svg { display: block; width: 11px; height: 11px; color: var(--fg-faint); }
-    .project__stat--star:hover svg,
-    .project--link:hover .project__stat--star svg { color: var(--warn); }
-    .project__stat-n { color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums; }
-
-    .project__tagline {
-      font-size: 16px;
-      line-height: 1.5;
-      color: var(--fg);
-      text-wrap: pretty;
-    }
-    .project--pinned .project__tagline { font-size: 18px; }
-    .project__desc {
-      font-size: 14.5px;
-      line-height: 1.6;
-      color: var(--fg-dim);
-      text-wrap: pretty;
-      max-width: 68ch;
-    }
-    .project__desc + .project__desc { margin-top: 10px; }
-
-    .project__stack { display: flex; flex-wrap: wrap; gap: 6px; }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 8px;
-      border: 1px solid var(--hair);
-      border-radius: 4px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--fg-dim);
-      background: rgb(var(--ink) / 0.02);
-    }
-    .tag--mono { letter-spacing: -0.01em; }
-
-    .project--link { text-decoration: none; }
-    .project__open {
-      margin-top: auto;
-      padding-top: 8px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--fg-dimmer);
-      transition: color 160ms ease;
-    }
-    .project--link:hover .project__open { color: var(--accent); }
-
-    /* WRITING */
-    .posts {
-      display: flex;
-      flex-direction: column;
-      border-top: 1px solid var(--hair);
-      margin-top: 8px;
-    }
-    .post {
-      display: block;
-      padding: 22px 4px;
-      border-bottom: 1px solid var(--hair);
-      transition: background 160ms ease, padding 160ms ease;
-    }
-    .post:hover,
-    .post:focus-visible { background: rgb(var(--ink) / 0.018); padding-left: 14px; padding-right: 14px; outline: none; }
-    .post__head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 6px;
-    }
-    .post__title {
-      font-family: var(--font-mono);
-      font-size: 16px;
-      font-weight: 500;
-      color: var(--fg);
-      letter-spacing: -0.01em;
-      transition: color 160ms ease;
-      text-wrap: balance;
-    }
-    .post:hover .post__title,
-    .post:focus-visible .post__title { color: var(--accent); }
-    .post__meta {
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      color: var(--fg-dimmer);
-      white-space: nowrap;
-      flex: none;
-      transition: color 160ms ease;
-    }
-    .post:hover .post__meta,
-    .post:focus-visible .post__meta { color: var(--fg-dim); }
-    .post__excerpt {
-      font-size: 15px;
-      line-height: 1.55;
-      color: var(--fg-dim);
-      max-width: 70ch;
-      text-wrap: pretty;
-    }
-    .posts__more {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 24px;
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-      color: var(--fg-dim);
-      padding: 8px 0;
-      border-bottom: 1px dashed var(--hair-2);
-      transition: color 160ms ease, border-color 160ms ease;
-    }
-    .posts__more:hover,
-    .posts__more:focus-visible { color: var(--accent); border-bottom-color: var(--accent); }
-    @media (max-width: 560px) {
-      .post__head { flex-direction: column; gap: 4px; }
-      .post__meta { font-size: 11px; }
-      .post:hover, .post:focus-visible { padding-left: 4px; padding-right: 4px; }
-    }
-
-    /* CONTACT */
-    .section--contact { padding-bottom: clamp(120px, 16vh, 180px); }
-    /* No headline in this section — keep the label on its own line. */
-    .section--contact .section-label { display: flex; width: fit-content; }
-
-    .contact__headline {
-      font-size: clamp(28px, 4.5vw, 48px);
-      line-height: 1.12;
-      letter-spacing: -0.03em;
-      color: var(--fg);
-      max-width: 20ch;
-      margin-bottom: 18px;
-      text-wrap: balance;
-      font-weight: 500;
-    }
-    .contact__primary,
-    .contact__email {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 16px 20px;
-      border: 1px solid var(--hair-2);
-      border-radius: 10px;
-      font-family: var(--font-mono);
-      font-size: clamp(15px, 2vw, 20px);
-      background: rgb(var(--ink) / 0.02);
-      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
-      margin-bottom: 14px;
-      max-width: 100%;
-      flex-wrap: wrap;
-      color: var(--fg-dim);
-    }
-    .contact__email { margin-bottom: 28px; }
-    .contact__primary:hover,
-    .contact__primary:focus-visible,
-    .contact__email:hover,
-    .contact__email:focus-visible { border-color: var(--accent); background: color-mix(in oklab, var(--accent) 5%, transparent); color: var(--fg); }
-    .contact__primary:focus-visible,
-    .contact__email:focus-visible { outline-offset: 4px; }
-    .contact__primary-k,
-    .contact__email-k { color: var(--fg-faint); }
-    .contact__primary-sep,
-    .contact__email-sep { color: var(--fg-faint); }
-    .contact__primary-v,
-    .contact__email-v { color: var(--fg); }
-    .contact__primary-arrow { color: var(--fg-dim); margin-left: auto; padding-left: 12px; transition: color 160ms ease; }
-    .contact__primary:hover .contact__primary-arrow,
-    .contact__primary:focus-visible .contact__primary-arrow { color: var(--accent); }
-    .contact__email-copy {
-      margin-left: 12px;
-      padding: 4px 8px;
-      border: 1px solid var(--hair);
-      border-radius: 6px;
-      font-size: 11.5px;
-      color: var(--fg-dim);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      text-transform: lowercase;
-      transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
-    }
-    .contact__email-copy.is-copied { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); background: color-mix(in oklab, var(--accent) 10%, transparent); }
-    .contact__email:hover .contact__email-copy { color: var(--fg); border-color: var(--hair-2); }
-
-    @media (max-width: 480px) {
-      .contact__primary,
-      .contact__email { font-size: 14px; gap: 8px; padding: 12px 16px; }
-      .contact__primary-v,
-      .contact__email-v { word-break: break-all; min-width: 0; }
-    }
-
-    .contact__links { display: flex; flex-wrap: wrap; gap: 10px; }
-    .contact__link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border: 1px solid var(--hair);
-      border-radius: 8px;
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-      color: var(--fg-dim);
-      transition: color 160ms ease, border-color 160ms ease, transform 160ms ease;
-    }
-    .contact__link:hover,
-    .contact__link:focus-visible { color: var(--fg); border-color: var(--hair-2); transform: translateY(-1px); }
-    .contact__link-k { color: var(--fg-faint); text-transform: lowercase; }
-    .contact__link-v { color: var(--fg); }
-
-    /* FOOTER */
-    .footer {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 32px var(--gutter) 48px;
-      border-top: 1px solid var(--hair);
-      display: flex;
-      justify-content: space-between;
-      gap: 24px;
-      flex-wrap: wrap;
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      color: var(--fg-dimmer);
-    }
-    .footer__col { display: flex; flex-direction: column; gap: 6px; }
-    .footer__col--right { text-align: right; align-items: flex-end; }
-    .footer__copy { color: var(--fg-dim); }
-    .footer__built a { color: var(--fg-dim); border-bottom: 1px dashed var(--fg-faint); }
-    .footer__built a:hover { color: var(--accent); border-color: var(--accent); }
-    .footer__ts { display: inline-flex; gap: 8px; }
-    .footer__ts-k { color: var(--fg-faint); }
-    .footer__ts-v { font-variant-numeric: tabular-nums; }
-
-    @media (max-width: 560px) {
-      .footer { flex-direction: column; }
-      .footer__col--right { text-align: left; align-items: flex-start; }
-    }
-
-    /* REVEAL */
-    @media (prefers-reduced-motion: no-preference) {
-      .reveal {
-        opacity: 0;
-        transform: translateY(14px);
-        transition: opacity 520ms ease, transform 520ms ease;
-      }
-      .reveal--in { opacity: 1; transform: translateY(0); }
-    }
-
-    .fact__v--small { font-size: 17px; line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 16px; }
-
-    .project--soon {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-top: 20px;
-      padding: 24px 28px;
-      border: 1px dashed var(--hair-2);
-      border-radius: 10px;
-      text-decoration: none;
-      background: rgb(var(--ink) / 0.01);
-      transition: border-color 180ms ease, transform 240ms ease, background 180ms ease;
-    }
-    .project--soon:hover,
-    .project--soon:focus-visible {
-      border-color: color-mix(in oklab, var(--accent) 50%, transparent);
-      transform: translateY(-2px);
-      background: color-mix(in oklab, var(--accent) 4%, transparent);
-    }
-    .project--soon:focus-visible { outline-offset: 4px; }
-    .project--soon__plus {
-      font-family: var(--font-mono);
-      font-size: 22px;
-      color: var(--accent);
-      width: 40px;
-      height: 40px;
-      display: grid;
-      place-items: center;
-      border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
-      border-radius: 8px;
-      background: color-mix(in oklab, var(--accent) 6%, transparent);
-      flex: none;
-    }
-    .project--soon__body { flex: 1; min-width: 0; }
-    .project--soon__title {
-      font-family: var(--font-mono);
-      font-size: 16px;
-      color: var(--fg);
-      margin-bottom: 4px;
-      letter-spacing: -0.01em;
-    }
-    .project--soon__sub {
-      font-size: 13.5px;
-      line-height: 1.5;
-      color: var(--fg-dim);
-    }
-    .project--soon__arrow {
-      font-family: var(--font-mono);
-      font-size: 16px;
-      color: var(--fg-dimmer);
-      transition: color 160ms ease, transform 160ms ease;
-      flex: none;
-    }
-    .project--soon:hover .project--soon__arrow,
-    .project--soon:focus-visible .project--soon__arrow {
-      color: var(--accent);
-      transform: translate(2px, -2px);
-    }
-    .project--link:focus-visible .project__open { color: var(--accent); }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/site.css?v=20260908" />
 </head>
 <body>
   <nav class="nav" id="nav">
     <div class="nav__inner">
-      <a href="#hero" class="nav__brand">
-        <span class="nav__brand-name">gmoskalev</span>
-      </a>
+      <a href="#top" class="nav__brand">gmoskalev</a>
       <ul class="nav__links">
-        <li><a href="#about" class="nav__link" data-nav="about"><span class="nav__link-num">01</span><span>About</span></a></li>
-        <li><a href="#projects" class="nav__link" data-nav="projects"><span class="nav__link-num">02</span><span>Projects</span></a></li>
-        <li><a href="#writing" class="nav__link" data-nav="writing"><span class="nav__link-num">03</span><span>Writing</span></a></li>
-        <li><a href="#contact" class="nav__link" data-nav="contact"><span class="nav__link-num">04</span><span>Contact</span></a></li>
+        <li><a href="#about" class="nav__link" data-spy="about">About</a></li>
+        <li><a href="#projects" class="nav__link" data-spy="projects">Projects</a></li>
+        <li><a href="#writing" class="nav__link" data-spy="writing">Writing</a></li>
+        <li><a href="#contact" class="nav__link" data-spy="contact">Contact</a></li>
       </ul>
       <div class="nav__right">
-        <button class="nav__burger" id="navBurger" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navMenu">
-          <svg class="nav__burger-icon" width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-            <line x1="4" y1="7" x2="18" y2="7"></line>
-            <line x1="4" y1="11" x2="18" y2="11"></line>
-            <line x1="4" y1="15" x2="18" y2="15"></line>
-          </svg>
-        </button>
         <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
           <svg class="theme-toggle__icon theme-toggle__icon--sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
             <circle cx="12" cy="12" r="4"/>
@@ -1083,38 +128,38 @@
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
           </svg>
         </button>
+        <button class="nav__burger" id="navBurger" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navMenu">
+          <svg class="nav__burger-icon" width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+            <line x1="4" y1="7" x2="18" y2="7"></line>
+            <line x1="4" y1="11" x2="18" y2="11"></line>
+            <line x1="4" y1="15" x2="18" y2="15"></line>
+          </svg>
+        </button>
       </div>
     </div>
     <div class="nav__menu" id="navMenu" aria-hidden="true">
-      <a href="#about" class="nav__link" data-nav-mobile="about"><span class="nav__link-num">01</span><span>About</span></a>
-      <a href="#projects" class="nav__link" data-nav-mobile="projects"><span class="nav__link-num">02</span><span>Projects</span></a>
-      <a href="#writing" class="nav__link" data-nav-mobile="writing"><span class="nav__link-num">03</span><span>Writing</span></a>
-      <a href="#contact" class="nav__link" data-nav-mobile="contact"><span class="nav__link-num">04</span><span>Contact</span></a>
+      <a href="#about" class="nav__link">About</a>
+      <a href="#projects" class="nav__link">Projects</a>
+      <a href="#writing" class="nav__link">Writing</a>
+      <a href="#contact" class="nav__link">Contact</a>
     </div>
   </nav>
 
-  <main>
-    <header id="hero" class="hero">
-      <div class="hero__glow" aria-hidden="true"></div>
-
-      <dl class="hero__meta" aria-label="Profile summary">
-        <div class="hero__meta-row"><dt class="hero__meta-k">role</dt><dd class="hero__meta-v">Legal Counsel</dd></div>
-        <div class="hero__meta-row"><dt class="hero__meta-k">based</dt><dd class="hero__meta-v">Limassol, Cyprus</dd></div>
-        <div class="hero__meta-row"><dt class="hero__meta-k">stack</dt><dd class="hero__meta-v">Law · Python · LLMs</dd></div>
-      </dl>
-
+  <main id="top">
+    <header class="hero">
       <h1 class="hero__name">
         <span class="hero__name-first">Grigorii</span>
-        <span class="hero__name-last">&nbsp;Moskalev<span class="caret" aria-hidden="true"></span></span>
+        <span class="hero__name-last">Moskalev<span class="caret" aria-hidden="true"></span></span>
       </h1>
-
       <p class="hero__tagline">Legal counsel and legal engineer.</p>
-
-      <div class="hero__cta-row">
-        <a href="#projects" class="btn btn--primary">
-          <span>View projects</span>
-          <span aria-hidden="true">→</span>
-        </a>
+      <p class="meta hero__meta">
+        <span>11 years of law</span>
+        <span>3 years of Python</span>
+        <span>Limassol, Cyprus</span>
+      </p>
+      <div class="btn-row hero__cta">
+        <a href="#projects" class="btn btn--primary">View projects <span aria-hidden="true">→</span></a>
+        <a href="#contact" class="btn btn--link">Get in touch <span aria-hidden="true">→</span></a>
       </div>
     </header>
 
@@ -1122,21 +167,19 @@
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">01</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">About</span>
       </div>
       <div class="about__grid">
-        <div class="about__prose">
-          <p class="about__paragraph">11 years practicing law, 3 years writing Python, and a growing overlap between the two. I run the legal function at a consumer tech product used by hundreds of millions, across IP, privacy, corporate, and app-store disputes. Before that, KPMG and senior in-house roles at international tech companies across Cyprus, the EU, and beyond.</p>
-          <p class="about__paragraph">Legal engineering is what I genuinely love. I've built RAG pipelines over our internal corpus, contract analytics, MCP servers that keep client data off the API. I work with prompt engineering and fine-tuning, and I deploy local models when client data shouldn't reach a hosted one in the first place.</p>
-          <p class="about__paragraph">I've also shipped legal-tech projects as a product owner, taking ideas from zero to launch and owning the spec, the flows, and the API.</p>
+        <div>
+          <p class="about__p">I run the legal function at a consumer tech product used by hundreds of millions: IP, privacy, corporate, and app-store disputes. Before that, KPMG and senior in-house roles at international tech companies across Cyprus and the EU.</p>
+          <p class="about__p">Legal engineering is the part I love. I have built RAG pipelines over our internal corpus, contract analytics, and MCP servers that keep client data off the API. When client data should not reach a hosted model at all, I deploy a local one. I have also shipped legal-tech products as a product owner, from spec to launch.</p>
         </div>
-        <div class="about__facts">
-          <div class="fact"><div class="fact__v">11</div><div class="fact__k">Years practicing</div></div>
-          <div class="fact"><div class="fact__v" id="ghStars">104</div><div class="fact__k">★ GitHub project stars</div></div>
-          <div class="fact"><div class="fact__v fact__v--small">IP · Privacy · Corporate</div><div class="fact__k">Practice areas</div></div>
-          <div class="fact"><div class="fact__v">EN · RU · GR</div><div class="fact__k">Languages</div></div>
-        </div>
+        <dl class="facts">
+          <div><dt class="visually-hidden">Years practicing</dt><dd class="fact__v">11</dd><dd class="fact__k">years practicing law</dd></div>
+          <div><dt class="visually-hidden">GitHub stars</dt><dd class="fact__v" id="ghStars">165</dd><dd class="fact__k">GitHub stars across projects</dd></div>
+          <div><dt class="visually-hidden">Practice areas</dt><dd class="fact__v fact__v--sm">IP · Privacy · Corporate</dd><dd class="fact__k">practice areas</dd></div>
+          <div><dt class="visually-hidden">Languages</dt><dd class="fact__v fact__v--sm">EN · RU · GR</dd><dd class="fact__k">languages</dd></div>
+        </dl>
       </div>
     </section>
 
@@ -1144,170 +187,62 @@
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">02</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Projects</span>
       </div>
-      <p class="section__lede">Tools and workflows I build — for legal teams, in-house and law firms, and for my own desk.</p>
+      <p class="section__lede">Tools I build for legal teams, in-house and in firms, and for my own desk. All open source.</p>
 
-      <a class="project project--pinned project--link" href="/pii-shield" data-repo="gregmos/PII-Shield">
-        <header class="project__head">
-          <div class="project__head-left">
-            <span class="project__pin" aria-label="Pinned">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 3h6l-1 7 4 3H6l4-3-1-7z"/></svg>
-              <span>pinned</span>
-            </span>
+      <div class="projects">
+        <a class="project" href="/pii-shield" data-repo="gregmos/PII-Shield">
+          <div class="project__head">
             <h3 class="project__name">PII Shield</h3>
+            <span class="project__stat"><span class="accent">live</span> · ★ <span data-stat="stars">134</span></span>
           </div>
-          <div class="project__meta">
-            <span class="project__stats" aria-label="GitHub stats">
-              <span class="project__stat project__stat--star" title="Stars">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.92 6.16 6.58.62-4.9 4.62 1.42 6.6L12 17l-6.02 3.5 1.42-6.6L2.5 9.28l6.58-.62L12 2.5z"/></svg>
-                <span class="project__stat-n" data-stat="stars">100</span>
-              </span>
-              <span class="project__stat project__stat--fork" title="Forks">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="4" r="2"/><circle cx="18" cy="4" r="2"/><circle cx="12" cy="20" r="2"/><path d="M6 6v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6M12 12v6"/></svg>
-                <span class="project__stat-n" data-stat="forks">22</span>
-              </span>
-            </span>
-            <span class="project__status project__status--live">
-              <span class="project__status-dot" aria-hidden="true"></span>
-              v2.1.0 · Live
-            </span>
+          <p class="project__tagline">Anonymize documents before Claude sees them. Restore real data after analysis.</p>
+          <p class="project__desc">MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders, sends only the anonymized text to the model, and stitches the real values back into the result. PII never enters the API.</p>
+          <div class="project__foot">
+            <span class="project__stack">Node.js · MCP · GLiNER · ONNX</span>
+            <span class="project__open" aria-hidden="true">Details →</span>
           </div>
-        </header>
-        <p class="project__tagline">Anonymize documents before Claude sees them. Restore real data after analysis.</p>
-        <p class="project__desc">MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, and number for placeholders (<code>&lt;PERSON_1&gt;</code>, <code>&lt;ORG_1&gt;</code>, etc.), and sends only the anonymized text to Claude.</p>
-        <p class="project__desc">After analysis, the real values are stitched back into the final document — all on your machine. PII never enters the API.</p>
-        <ul class="project__stack">
-          <li class="tag tag--mono">Node.js</li>
-          <li class="tag tag--mono">MCP</li>
-          <li class="tag tag--mono">GLiNER</li>
-          <li class="tag tag--mono">ONNX</li>
-          <li class="tag tag--mono">DOCX</li>
-        </ul>
-        <span class="project__open" aria-hidden="true">See details →</span>
-      </a>
+        </a>
 
-      <a class="project project--pinned project--link" href="/legal-memo-writer" data-repo="gregmos/memoforge">
-        <header class="project__head">
-          <div class="project__head-left">
-            <span class="project__pin" aria-label="Pinned">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 3h6l-1 7 4 3H6l4-3-1-7z"/></svg>
-              <span>pinned</span>
-            </span>
+        <a class="project" href="/legal-memo-writer" data-repo="gregmos/memoforge">
+          <div class="project__head">
             <h3 class="project__name">memoforge</h3>
+            <span class="project__stat"><span class="warn">new</span> · ★ <span data-stat="stars">21</span></span>
           </div>
-          <div class="project__meta">
-            <span class="project__stats" aria-label="GitHub stats">
-              <span class="project__stat project__stat--star" title="Stars">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.92 6.16 6.58.62-4.9 4.62 1.42 6.6L12 17l-6.02 3.5 1.42-6.6L2.5 9.28l6.58-.62L12 2.5z"/></svg>
-                <span class="project__stat-n" data-stat="stars">3</span>
-              </span>
-              <span class="project__stat project__stat--fork" title="Forks">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="4" r="2"/><circle cx="18" cy="4" r="2"/><circle cx="12" cy="20" r="2"/><path d="M6 6v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6M12 12v6"/></svg>
-                <span class="project__stat-n" data-stat="forks">1</span>
-              </span>
-            </span>
-            <span class="project__status project__status--new">
-              <span class="project__status-dot" aria-hidden="true"></span>
-              v1.1.1 · New
-            </span>
+          <p class="project__tagline">From one legal question to a finished <code>.docx</code> memo.</p>
+          <p class="project__desc">Cowork plugin that works like a small legal team: triage, three parallel researchers, an IRAC writer, five reviewers, and up to three revision rounds. Ships the memo with its full source pack and an honest verdict.</p>
+          <div class="project__foot">
+            <span class="project__stack">Cowork plugin · 15 agents · python-docx</span>
+            <span class="project__open" aria-hidden="true">Details →</span>
           </div>
-        </header>
-        <p class="project__tagline">From one legal question to a finished <code>.docx</code> memo.</p>
-        <p class="project__desc">Cowork plugin that mirrors how a small legal team produces a memo. A triage analyst clarifies missing facts. Three researchers pull statutes, case law, and regulator guidance in parallel. A writer drafts IRAC. Five reviewers stress-test it. A mediator consolidates findings. The writer revises — up to three rounds — before polish and <code>.docx</code> export.</p>
-        <p class="project__desc">Ships with the full source pack, per-reviewer findings, and an honest verdict — <code>approved</code>, <code>forced_exit_on_v3</code>, or <code>manual_review_required</code>. No false confidence.</p>
-        <p class="project__desc">Optional Style Studio turns your firm's example memos into a saved house-style profile.</p>
-        <ul class="project__stack">
-          <li class="tag tag--mono">Cowork plugin</li>
-          <li class="tag tag--mono">15 agents</li>
-          <li class="tag tag--mono">IRAC</li>
-          <li class="tag tag--mono">MCP citations</li>
-          <li class="tag tag--mono">python-docx</li>
-        </ul>
-        <span class="project__open" aria-hidden="true">See details →</span>
-      </a>
+        </a>
 
-      <a class="project project--pinned project--link" href="/plain" data-repo="gregmos/plain">
-        <header class="project__head">
-          <div class="project__head-left">
-            <span class="project__pin" aria-label="Pinned">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 3h6l-1 7 4 3H6l4-3-1-7z"/></svg>
-              <span>pinned</span>
-            </span>
+        <a class="project" href="/plain" data-repo="gregmos/plain">
+          <div class="project__head">
             <h3 class="project__name">Plain</h3>
+            <span class="project__stat"><span class="warn">new</span> · ★ <span data-stat="stars">9</span></span>
           </div>
-          <div class="project__meta">
-            <span class="project__stats" aria-label="GitHub stats">
-              <span class="project__stat project__stat--star" title="Stars">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.92 6.16 6.58.62-4.9 4.62 1.42 6.6L12 17l-6.02 3.5 1.42-6.6L2.5 9.28l6.58-.62L12 2.5z"/></svg>
-                <span class="project__stat-n" data-stat="stars">0</span>
-              </span>
-              <span class="project__stat project__stat--fork" title="Forks">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="4" r="2"/><circle cx="18" cy="4" r="2"/><circle cx="12" cy="20" r="2"/><path d="M6 6v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6M12 12v6"/></svg>
-                <span class="project__stat-n" data-stat="forks">0</span>
-              </span>
-            </span>
-            <span class="project__status project__status--new">
-              <span class="project__status-dot" aria-hidden="true"></span>
-              v0.2.1 · New
-            </span>
+          <p class="project__tagline">Double-click a <code>.md</code> file and you are reading.</p>
+          <p class="project__desc">Lightweight Markdown reader and editor for Windows and macOS. Rendered, source, and markup-hidden views of one file, a folder as the library, full-text search. The file stays yours byte for byte: no database, no account, no network.</p>
+          <div class="project__foot">
+            <span class="project__stack">Tauri 2 · Rust · React · CodeMirror 6</span>
+            <span class="project__open" aria-hidden="true">Details →</span>
           </div>
-        </header>
-        <p class="project__tagline">Double-click a <code>.md</code> file and you are reading.</p>
-        <p class="project__desc">Lightweight Markdown reader and editor for Windows 11 and macOS. Three views of one document — rendered, source, and source with the markup hidden — plus a folder as the library, with a file tree, quick open, and full-text search.</p>
-        <p class="project__desc">The file stays yours, byte for byte: line endings, encoding, BOM, and trailing spaces preserved; atomic writes; recovery drafts; version history. No database, no account, no network.</p>
-        <ul class="project__stack">
-          <li class="tag tag--mono">Tauri 2</li>
-          <li class="tag tag--mono">Rust</li>
-          <li class="tag tag--mono">React</li>
-          <li class="tag tag--mono">CodeMirror 6</li>
-          <li class="tag tag--mono">Windows · macOS</li>
-        </ul>
-        <span class="project__open" aria-hidden="true">See details →</span>
-      </a>
+        </a>
 
-      <a class="project project--link" href="https://github.com/gregmos/Brand-monitor" target="_blank" rel="noopener" data-repo="gregmos/Brand-monitor">
-        <header class="project__head">
-          <div class="project__head-left">
+        <a class="project" href="https://github.com/gregmos/Brand-monitor" target="_blank" rel="noopener" data-repo="gregmos/Brand-monitor">
+          <div class="project__head">
             <h3 class="project__name">Brand monitor</h3>
+            <span class="project__stat"><span class="accent">live</span> · ★ <span data-stat="stars">1</span></span>
           </div>
-          <div class="project__meta">
-            <span class="project__stats" aria-label="GitHub stats">
-              <span class="project__stat project__stat--star" title="Stars">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.92 6.16 6.58.62-4.9 4.62 1.42 6.6L12 17l-6.02 3.5 1.42-6.6L2.5 9.28l6.58-.62L12 2.5z"/></svg>
-                <span class="project__stat-n" data-stat="stars">1</span>
-              </span>
-              <span class="project__stat project__stat--fork" title="Forks">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="4" r="2"/><circle cx="18" cy="4" r="2"/><circle cx="12" cy="20" r="2"/><path d="M6 6v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6M12 12v6"/></svg>
-                <span class="project__stat-n" data-stat="forks">0</span>
-              </span>
-            </span>
-            <span class="project__status project__status--live">
-              <span class="project__status-dot" aria-hidden="true"></span>
-              Live
-            </span>
+          <p class="project__tagline">Finds the apps stealing your name and the sites cracking your build, every week.</p>
+          <p class="project__desc">A single <code>SKILL.md</code> for Claude or OpenClaw. Scans the App Store across countries and the open web for knockoffs and cracked APKs, confirms candidates with icon vision and WHOIS evidence, and ships a prioritized Excel report.</p>
+          <div class="project__foot">
+            <span class="project__stack">SKILL.md · iTunes API · Vision · WHOIS</span>
+            <span class="project__open" aria-hidden="true">GitHub ↗</span>
           </div>
-        </header>
-        <p class="project__tagline">Find the apps stealing your name and the sites cracking your build — every week, on autopilot.</p>
-        <p class="project__desc">Skill that scans the App Store and the open web for knockoffs and cracked APKs of your app. iTunes Search across countries plus fuzzy-matching narrows ~1,000 listings to ~50 real candidates. Icon vision and WHOIS-backed evidence packages confirm the rest. An LLM layer scores risk, recommends action, and ships a prioritized Excel report.</p>
-        <p class="project__desc">The whole thing is a single <code>SKILL.md</code> — drop it into Claude or OpenClaw, tell it your trademark and target countries, and it runs itself. Hours of manual work → ~20 minutes of review.</p>
-        <ul class="project__stack">
-          <li class="tag tag--mono">SKILL.md</li>
-          <li class="tag tag--mono">iTunes API</li>
-          <li class="tag tag--mono">Vision</li>
-          <li class="tag tag--mono">WHOIS</li>
-          <li class="tag tag--mono">Excel</li>
-        </ul>
-        <span class="project__open" aria-hidden="true">View on GitHub →</span>
-      </a>
-
-      <div class="project project--soon">
-        <span class="project--soon__plus" aria-hidden="true">+</span>
-        <div class="project--soon__body">
-          <div class="project--soon__title">More on the way</div>
-          <div class="project--soon__sub">New tools in progress.</div>
-        </div>
+        </a>
       </div>
     </section>
 
@@ -1315,265 +250,72 @@
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">03</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Writing</span>
       </div>
-      <p class="section__lede">Notes on legal-AI, originally posted on LinkedIn.</p>
+      <p class="section__lede">Notes on legal-AI work, originally posted on LinkedIn.</p>
 
       <div class="posts">
-        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_build-your-ai-team-in-claude-activity-7460240042469330944-GkXp" target="_blank" rel="noopener">
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_i-have-a-200-claude-subscription-obviously-activity-7502624765489094656-ZIAD" target="_blank" rel="noopener">
           <div class="post__head">
-            <h3 class="post__title">Subagents vs Agent Teams in Claude</h3>
-            <span class="post__meta">May 2026 ↗</span>
+            <h3 class="post__title">Plain: a free Markdown reader and editor, because $15 was too expensive</h3>
+            <span class="post__meta">Sep 2026 ↗</span>
           </div>
-          <p class="post__excerpt">Two ways to spawn agents in your Claude subscription — Subagents (orchestrated, parallel, scored to 90+) and Agent Teams (independent, messaging each other, watched live).</p>
+          <p class="post__excerpt">Almost everything I get out of LLMs is markdown. I could have bought Typora. Instead I built a free, open-source reader and editor for Windows and macOS, and I like it better.</p>
         </a>
-
-        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_how-to-build-free-kb-for-your-team-activity-7456985032306388993-i7OA" target="_blank" rel="noopener">
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_legal-engineer-is-a-salesman-a-builder-or-activity-7501214065789337600-Hmc5" target="_blank" rel="noopener">
           <div class="post__head">
-            <h3 class="post__title">Free knowledge base your team's Claude can read</h3>
-            <span class="post__meta">May 2026 ↗</span>
+            <h3 class="post__title">Legal engineer: a salesman, a builder, or both?</h3>
+            <span class="post__meta">Sep 2026 ↗</span>
           </div>
-          <p class="post__excerpt">A free shared base for the team — Google Drive + Obsidian + Claude Desktop's Drive MCP. Per-folder indexes keep retrieval fast; add a colleague to Drive and they have the same base.</p>
+          <p class="post__excerpt">Harvey's certificate and in-house job posts describe a connector, not a builder. My take: a legal engineer is a product manager for legal work, and code is just the fastest way to test a hypothesis.</p>
         </a>
-
-        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_pii-shield-v2-ugcPost-7454803663107096576-oGbO" target="_blank" rel="noopener">
+        <a class="post" href="https://www.linkedin.com/posts/grigorii-moskalev_pii-shield-now-runs-as-a-cli-anonymize-activity-7472925841824350209-kriG" target="_blank" rel="noopener">
           <div class="post__head">
-            <h3 class="post__title">PII Shield v2 — anonymize the matter, not the document</h3>
-            <span class="post__meta">Apr 2026 ↗</span>
+            <h3 class="post__title">PII Shield now runs as a CLI</h3>
+            <span class="post__meta">Jun 2026 ↗</span>
           </div>
-          <p class="post__excerpt">v2 keeps placeholders consistent across an entire matter — 10 contracts as one session, encrypted handoff with a passphrase, in-chat entity review.</p>
+          <p class="post__excerpt">Anonymize any document locally before it reaches an LLM, then restore the real data on your machine. 35 entity types across 17 jurisdictions, on-device, open source.</p>
         </a>
       </div>
-
-      <a class="posts__more" href="/writing">
-        <span>See all writing</span>
-        <span aria-hidden="true">→</span>
-      </a>
+      <a class="posts__more" href="/writing">All writing →</a>
     </section>
 
-    <section id="contact" class="section section--contact">
+    <section id="contact" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">04</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Contact</span>
       </div>
-      <a href="https://www.linkedin.com/in/grigorii-moskalev" class="contact__primary" target="_blank" rel="noopener">
-        <span class="contact__primary-k" aria-hidden="true">linkedin</span>
-        <span class="contact__primary-sep" aria-hidden="true">::</span>
-        <span class="contact__primary-v">/in/grigorii-moskalev</span>
-        <span class="contact__primary-arrow" aria-hidden="true">↗</span>
-      </a>
-
-      <button class="contact__email" id="emailCopy" aria-label="Copy email address grigory.moskalyov@gmail.com">
-        <span class="contact__email-k" aria-hidden="true">email</span>
-        <span class="contact__email-sep" aria-hidden="true">::</span>
-        <span class="contact__email-v">grigory.moskalyov@gmail.com</span>
-        <span class="contact__email-copy" id="emailCopyState" aria-live="polite">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-          <span id="emailCopyLabel">copy</span>
-        </span>
-      </button>
-
-      <div class="contact__links">
-        <a href="https://t.me/gregms" class="contact__link" target="_blank" rel="noopener">
-          <span class="contact__link-k">telegram</span>
-          <span class="contact__link-v">@gregms</span>
-          <span aria-hidden="true">↗</span>
+      <div class="contact__list">
+        <a class="contact__row" href="https://www.linkedin.com/in/grigorii-moskalev" target="_blank" rel="noopener">
+          <span class="contact__k">linkedin</span>
+          <span class="contact__v">/in/grigorii-moskalev</span>
+          <span class="contact__a" aria-hidden="true">↗</span>
         </a>
-        <a href="https://github.com/gregmos" class="contact__link" target="_blank" rel="noopener">
-          <span class="contact__link-k">github</span>
-          <span class="contact__link-v">gregmos</span>
-          <span aria-hidden="true">↗</span>
+        <button class="contact__row" type="button" data-copy="grigory.moskalyov@gmail.com" aria-label="Copy email address grigory.moskalyov@gmail.com">
+          <span class="contact__k">email</span>
+          <span class="contact__v">grigory.moskalyov@gmail.com</span>
+          <span class="contact__a" data-copy-label aria-live="polite">copy</span>
+        </button>
+        <a class="contact__row" href="https://t.me/gregms" target="_blank" rel="noopener">
+          <span class="contact__k">telegram</span>
+          <span class="contact__v">@gregms</span>
+          <span class="contact__a" aria-hidden="true">↗</span>
+        </a>
+        <a class="contact__row" href="https://github.com/gregmos" target="_blank" rel="noopener">
+          <span class="contact__k">github</span>
+          <span class="contact__v">gregmos</span>
+          <span class="contact__a" aria-hidden="true">↗</span>
         </a>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <div class="footer__copy">© <span id="year">2026</span> Grigorii Moskalev</div>
+    <div>© <span id="year">2026</span> Grigorii Moskalev</div>
+    <div>Limassol, Cyprus</div>
   </footer>
 
-  <script>
-    (function () {
-      // Live GitHub stars + forks per project card, plus running total in the
-      // about fact. Falls back to hardcoded counts on network / rate-limit failure.
-      var cards = document.querySelectorAll('[data-repo]');
-      var totalStarsEl = document.getElementById('ghStars');
-      var totalStars = 0;
-      var resolved = 0;
-
-      cards.forEach(function (card) {
-        var repo = card.getAttribute('data-repo');
-        fetch('https://api.github.com/repos/' + repo)
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (d) {
-            if (d && typeof d.stargazers_count === 'number') {
-              var starEl = card.querySelector('[data-stat="stars"]');
-              var forkEl = card.querySelector('[data-stat="forks"]');
-              if (starEl) starEl.textContent = d.stargazers_count;
-              if (forkEl) forkEl.textContent = d.forks_count;
-              totalStars += d.stargazers_count;
-            }
-          })
-          .catch(function () {})
-          .then(function () {
-            resolved += 1;
-            if (resolved === cards.length && totalStars > 0 && totalStarsEl) {
-              totalStarsEl.textContent = totalStars;
-            }
-          });
-      });
-
-      // Theme toggle (sun ↔ moon). Pre-paint script in <head> sets the
-      // attribute before first render; this just handles user clicks.
-      var themeBtn = document.getElementById('themeToggle');
-      if (themeBtn) {
-        themeBtn.addEventListener('click', function () {
-          var html = document.documentElement;
-          var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-          if (next === 'light') html.setAttribute('data-theme', 'light');
-          else html.removeAttribute('data-theme');
-          try { localStorage.setItem('theme', next); } catch (e) {}
-        });
-      }
-
-      var nav = document.getElementById('nav');
-      var navTicking = false;
-      function applyNavScroll() {
-        nav.classList.toggle('nav--scrolled', window.scrollY > 10);
-        navTicking = false;
-      }
-      function onScroll() {
-        if (navTicking) return;
-        navTicking = true;
-        window.requestAnimationFrame(applyNavScroll);
-      }
-      applyNavScroll();
-      window.addEventListener('scroll', onScroll, { passive: true });
-
-      var navLinks = document.querySelectorAll('.nav__link');
-      var sectionIds = ['hero', 'about', 'projects', 'writing', 'contact'];
-      var sectionEls = sectionIds.map(function (id) { return document.getElementById(id); }).filter(Boolean);
-      var navObserver = new IntersectionObserver(
-        function (entries) {
-          entries.forEach(function (e) {
-            if (!e.isIntersecting) return;
-            navLinks.forEach(function (l) {
-              var key = l.getAttribute('data-nav') || l.getAttribute('data-nav-mobile');
-              var isActive = key === e.target.id;
-              l.classList.toggle('is-active', isActive);
-              if (isActive) l.setAttribute('aria-current', 'location');
-              else l.removeAttribute('aria-current');
-            });
-          });
-        },
-        { rootMargin: '-40% 0px -55% 0px' }
-      );
-      sectionEls.forEach(function (el) { navObserver.observe(el); });
-
-      // Mobile burger menu
-      var navBurger = document.getElementById('navBurger');
-      var navMenu = document.getElementById('navMenu');
-      if (navBurger && navMenu) {
-        function setMenu(open) {
-          navMenu.classList.toggle('is-open', open);
-          navBurger.classList.toggle('is-open', open);
-          navBurger.setAttribute('aria-expanded', open ? 'true' : 'false');
-          navBurger.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
-          navMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
-        }
-        navBurger.addEventListener('click', function (e) {
-          e.stopPropagation();
-          setMenu(!navMenu.classList.contains('is-open'));
-        });
-        navMenu.querySelectorAll('.nav__link').forEach(function (l) {
-          l.addEventListener('click', function () { setMenu(false); });
-        });
-        document.addEventListener('click', function (e) {
-          if (!navMenu.classList.contains('is-open')) return;
-          if (navBurger.contains(e.target) || navMenu.contains(e.target)) return;
-          setMenu(false);
-        });
-        document.addEventListener('keydown', function (e) {
-          if (e.key === 'Escape' && navMenu.classList.contains('is-open')) {
-            setMenu(false);
-            navBurger.focus();
-          }
-        });
-        // Close menu if viewport widens past mobile breakpoint
-        var navMqMobile = window.matchMedia('(max-width: 860px)');
-        var onNavMqChange = function (mq) { if (!mq.matches && navMenu.classList.contains('is-open')) setMenu(false); };
-        if (navMqMobile.addEventListener) navMqMobile.addEventListener('change', onNavMqChange);
-        else if (navMqMobile.addListener) navMqMobile.addListener(onNavMqChange);
-      }
-
-      var emailBtn = document.getElementById('emailCopy');
-      if (emailBtn) {
-        var emailState = document.getElementById('emailCopyState');
-        var emailLabel = document.getElementById('emailCopyLabel');
-        var emailSvg = emailState && emailState.querySelector('svg');
-        var iconCopy = '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>';
-        var iconCheck = '<path d="M20 6L9 17l-5-5"/>';
-        var copyTimer;
-        var setIcon = function (markup, strokeWidth) {
-          if (!emailSvg) return;
-          emailSvg.innerHTML = markup;
-          emailSvg.setAttribute('stroke-width', strokeWidth);
-        };
-        var done = function () {
-          emailState.classList.add('is-copied');
-          emailLabel.textContent = 'copied';
-          setIcon(iconCheck, '2.2');
-          clearTimeout(copyTimer);
-          copyTimer = setTimeout(function () {
-            emailState.classList.remove('is-copied');
-            emailLabel.textContent = 'copy';
-            setIcon(iconCopy, '2');
-          }, 1800);
-        };
-        var fallback = function (email) {
-          var ta = document.createElement('textarea');
-          ta.value = email;
-          ta.setAttribute('readonly', '');
-          ta.style.position = 'fixed';
-          ta.style.opacity = '0';
-          document.body.appendChild(ta);
-          ta.select();
-          try { document.execCommand('copy'); done(); } catch (e) { /* clipboard unavailable */ }
-          document.body.removeChild(ta);
-        };
-        emailBtn.addEventListener('click', function () {
-          var email = 'grigory.moskalyov@gmail.com';
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(email).then(done).catch(function () { fallback(email); });
-          } else {
-            fallback(email);
-          }
-        });
-      }
-
-      if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-        var reveals = document.querySelectorAll('.section, .project, .fact');
-        reveals.forEach(function (el) { el.classList.add('reveal'); });
-        var revealObserver = new IntersectionObserver(
-          function (entries) {
-            entries.forEach(function (e) {
-              if (e.isIntersecting) {
-                e.target.classList.add('reveal--in');
-                revealObserver.unobserve(e.target);
-              }
-            });
-          },
-          { threshold: 0.08 }
-        );
-        reveals.forEach(function (el) { revealObserver.observe(el); });
-      }
-
-      var yearEl = document.getElementById('year');
-      if (yearEl) yearEl.textContent = new Date().getFullYear();
-    })();
-  </script>
+  <script src="/assets/site.js?v=20260908"></script>
 </body>
 </html>
