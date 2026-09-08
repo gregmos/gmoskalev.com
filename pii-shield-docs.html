@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-audience="developer" data-surface="mcp">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -38,971 +38,177 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- Restore audience preference before paint to avoid flash -->
+  <!-- Light by default. Apply a saved dark preference before first paint. -->
   <script>
     (function () {
       try {
-        var audience = localStorage.getItem('pii-shield-audience');
-        if (audience === 'lawyer') {
-          document.documentElement.setAttribute('data-audience', 'lawyer');
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
         }
-        var surface = localStorage.getItem('pii-shield-surface');
-        if (surface === 'cli') {
-          document.documentElement.setAttribute('data-surface', 'cli');
-        }
-      } catch (e) { /* localStorage may be blocked — fall back to defaults */ }
+      } catch (e) { /* storage blocked: stay light */ }
     })();
   </script>
 
-  <!-- Restore theme preference before paint. Default = light. -->
-  <script>
-    (function () {
-      try {
-        if (localStorage.getItem('theme') !== 'dark') {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
-      } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
-    })();
-  </script>
-
+  <link rel="stylesheet" href="/assets/site.css?v=20260908" />
   <style>
-    /* ════════════════════════════════════════════════════════════════
-       VARIABLES (mirror /pii-shield)
-       ════════════════════════════════════════════════════════════════ */
-    :root {
-      --ink: 255 255 255;
-      --bg: #0A0A0A;
-      --bg-elev: #101114;
-      --bg-elev-2: #15171B;
-      --bg-deep: #07070A;
-      --fg: #EDEDED;
-      --fg-dim: #A0A0A6;
-      --fg-dimmer: #6E6E76;
-      --fg-faint: #3F3F46;
-      --hair: rgb(var(--ink) / 0.07);
-      --hair-2: rgb(var(--ink) / 0.12);
-      --hair-strong: rgb(var(--ink) / 0.22);
-      --accent: #00E27A;
-      --remote: #9CA3FF;
-      --warn: #FFB020;
-      --nav-bg-scrolled: rgba(10, 10, 10, 0.72);
-      --font-sans: "Inter", system-ui, sans-serif;
-      --font-mono: "JetBrains Mono", ui-monospace, monospace;
-      --max: 1200px;
-      --gutter: clamp(20px, 4vw, 56px);
-      --ease-expo: cubic-bezier(0.22, 0.61, 0.36, 1);
-      --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
-      color-scheme: dark;
-    }
-    [data-theme="light"] {
-      --ink: 0 0 0;
-      --bg: #FAFAF7;
-      --bg-elev: #FFFFFF;
-      --bg-elev-2: #F4F1EB;
-      --bg-deep: #ECE9E2;
-      --fg: #18181B;
-      --fg-dim: #4C4C56;
-      --fg-dimmer: #7A7A86;
-      --fg-faint: #B8B8C0;
-      --accent: #008C4D;
-      --remote: #4F5BCC;
-      --warn: #B36900;
-      --nav-bg-scrolled: rgba(250, 250, 247, 0.78);
-      color-scheme: light;
-    }
+    /* Docs-only components: coverage rows, tool lists, command accordions,
+       parity table, FAQ. Everything else comes from site.css. */
+    p.prose { font-size: 17px; line-height: 1.65; color: var(--fg); max-width: var(--measure); }
+    p.prose.dim { color: var(--fg-dim); font-size: 15px; }
+    p.prose + .code, .prose + .code, .table + .code, .code + .table, .table + p.prose, .code + p.prose, .code + .prose, .table + .prose, p.prose + p.prose { margin-top: 14px; }
+    .code + .subhead, .callout + .subhead, .table + .subhead, .tags + .subhead, .prose + .subhead, .tools + .subhead { margin-top: 36px; }
+    .callout code { background: rgb(var(--ink) / 0.05); padding: 1px 5px; border-radius: 4px; }
+    .callout + .subhead { margin-top: 36px; }
 
-    /* Audience visibility (lawyers visiting docs see slightly trimmed view) */
-    [data-show-when="developer"] { display: none !important; }
-    html[data-audience="developer"] [data-show-when="developer"] { display: revert !important; }
-    html[data-audience="developer"] [data-show-when="lawyer"] { display: none !important; }
+    /* Coverage */
+    .coverage { border-top: 1px solid var(--hair); }
+    .coverage__row { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 12px 20px; padding: 14px 0; border-bottom: 1px solid var(--hair); }
+    .coverage__label { font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-dimmer); padding-top: 3px; }
+    .coverage__list { display: flex; flex-wrap: wrap; gap: 6px 8px; }
+    .cov { display: inline-flex; align-items: baseline; gap: 6px; padding: 2px 8px; border: 1px solid var(--hair); border-radius: 4px; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--fg-dim); }
+    .cov__code { color: var(--fg); font-weight: 500; }
+    .cov__n { color: var(--accent); }
+    .cov__detail { color: var(--fg-dimmer); }
+    .cov__detail::before { content: "·"; color: var(--fg-faint); margin-right: 6px; }
+    @media (max-width: 600px) { .coverage__row { grid-template-columns: 1fr; gap: 8px; } }
 
-    /* Surface visibility (only inside a [data-surface]-scoped section) */
-    [data-show-when-surface="mcp"], [data-show-when-surface="cli"] { display: none !important; }
-    html[data-surface="mcp"] [data-show-when-surface="mcp"],
-    html[data-surface="cli"] [data-show-when-surface="cli"] { display: revert !important; }
+    /* Tools */
+    .tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 16px; }
+    .tool-group { border: 1px solid var(--hair); border-radius: var(--radius); padding: 14px 16px; }
+    .tool-group__title { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-dimmer); margin-bottom: 8px; }
+    .tool-group__count { color: var(--accent); }
+    .tool { display: block; padding: 8px 0; border-top: 1px solid var(--hair); }
+    .tool__name { font-family: var(--font-mono); font-size: 13px; color: var(--fg); }
+    a.tool:hover .tool__name { color: var(--accent); }
+    .tool__hint { margin-left: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; }
+    .tool__desc { display: block; font-size: 13px; line-height: 1.5; color: var(--fg-dim); margin-top: 2px; }
+    @media (max-width: 720px) { .tools { grid-template-columns: 1fr; } }
 
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-      [data-reveal] { opacity: 1 !important; transform: none !important; }
-    }
+    /* Command accordions and FAQ */
+    details { border-top: 1px solid var(--hair); }
+    details:last-of-type { border-bottom: 1px solid var(--hair); }
+    summary { list-style: none; cursor: pointer; padding: 12px 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 13px; color: var(--fg); }
+    summary::-webkit-details-marker { display: none; }
+    summary::before { content: "+"; color: var(--fg-dimmer); width: 12px; flex: none; }
+    details[open] > summary::before { content: "–"; }
+    summary:hover { color: var(--accent); }
+    .cmd-detail__name { font-weight: 500; }
+    .cmd-detail__sig { color: var(--fg-dimmer); font-size: var(--fs-xs); overflow-wrap: anywhere; }
+    .cmd-detail__body, .faq__body { padding: 4px 0 20px 22px; }
+    .cmd-detail__body p, .faq__body p { font-size: 15px; line-height: 1.6; color: var(--fg-dim); max-width: var(--measure); }
+    .cmd-detail__body p + p, .faq__body p + p { margin-top: 8px; }
+    .cmd-detail__body p strong { color: var(--fg); }
+    .cmd-detail__lbl { font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-dimmer); margin: 16px 0 8px; }
+    .cmd-detail__body .table { font-size: 14px; }
+    .cmd-detail__body .code { margin-top: 0; }
+    .cmd-detail__seealso { margin-top: 14px; font-family: var(--font-mono); font-size: var(--fs-xs) !important; color: var(--fg-dimmer) !important; }
+    .cmd-detail__seealso a { color: var(--fg-dim); }
+    .cmd-detail__seealso a:hover { color: var(--accent); }
+    .cmd-detail__body ol, .cmd-detail__body ul { padding-left: 0 !important; font-size: 15px !important; margin-top: 0; }
+    .cmd-detail__body ol li, .cmd-detail__body ul li { color: var(--fg-dim); font-size: 15px; }
+    .faq summary { font-family: var(--font-sans); font-size: 15px; }
+    .faq summary code { font-size: 13px; }
 
-    @view-transition { navigation: auto; }
-
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: var(--font-sans);
-      font-size: 16px;
-      line-height: 1.55;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-    a { color: inherit; text-decoration: none; }
-    button { font: inherit; background: none; border: 0; color: inherit; cursor: pointer; padding: 0; }
-    h1, h2, h3, h4, p, ul { margin: 0; padding: 0; }
-    ul { list-style: none; }
-    ::selection { background: color-mix(in oklab, var(--accent) 35%, transparent); color: var(--fg); }
-    :focus-visible { outline: 1.5px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
-
-    html { scrollbar-width: thin; scrollbar-color: var(--hair-2) transparent; }
-    ::-webkit-scrollbar { width: 10px; height: 10px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--hair-2); border-radius: 2px; border: 3px solid var(--bg); }
-    ::-webkit-scrollbar-thumb:hover { background: var(--fg-faint); }
-
-    body::before {
-      content: "";
-      position: fixed; inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(to right, rgb(var(--ink) / 0.025) 1px, transparent 1px),
-        linear-gradient(to bottom, rgb(var(--ink) / 0.025) 1px, transparent 1px);
-      background-size: 64px 64px;
-      mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 80%);
-      z-index: 0;
-    }
-    body::after {
-      content: "";
-      position: fixed; bottom: 0; right: 0;
-      width: 600px; height: 600px;
-      background: radial-gradient(400px at 100% 100%, color-mix(in oklab, var(--accent) 5%, transparent), transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    main { position: relative; z-index: 1; }
-
-    /* ═════════════ SUBNAV ═════════════ */
-    .subnav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      padding: 14px var(--gutter);
-      background: var(--nav-bg-scrolled);
-      backdrop-filter: saturate(140%) blur(14px);
-      -webkit-backdrop-filter: saturate(140%) blur(14px);
-      border-bottom: 1px solid var(--hair);
-    }
-    .subnav__inner {
-      max-width: var(--max);
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-    }
-    .subnav__back {
-      display: inline-flex; align-items: center; gap: 8px;
-      color: var(--fg-dim);
-      padding: 6px 10px;
-      border-radius: 6px;
-      transition: color 150ms ease, background 150ms ease;
-    }
-    .subnav__back:hover { color: var(--fg); background: rgb(var(--ink) / 0.04); }
-    .subnav__crumb {
-      color: var(--fg-dimmer);
-      flex: 1; min-width: 0;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .subnav__crumb .accent { color: var(--accent); }
-    .subnav__crumb-sep { color: var(--fg-faint); padding: 0 6px; }
-    .subnav__gh {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 12px;
-      border: 1px solid var(--hair-2);
-      border-radius: 6px;
-      color: var(--fg);
-      transition: border-color 150ms ease, color 150ms ease;
-    }
-    .subnav__gh:hover { border-color: var(--accent); color: var(--accent); }
-    @media (max-width: 640px) { .subnav__crumb { display: none; } }
-
-    .theme-toggle {
-      display: grid; place-items: center;
-      width: 32px; height: 32px;
-      border: 1px solid var(--hair-2);
-      border-radius: 6px;
-      color: var(--fg-dim);
-      cursor: pointer;
-      transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
-      flex: none;
-    }
-    .theme-toggle:hover, .theme-toggle:focus-visible { border-color: var(--accent); color: var(--accent); }
-    .theme-toggle__icon { grid-area: 1 / 1; display: block; transition: opacity 200ms ease, transform 200ms ease; }
-    .theme-toggle__icon--sun { opacity: 1; transform: rotate(0); }
-    .theme-toggle__icon--moon { opacity: 0; transform: rotate(-90deg); }
-    [data-theme="light"] .theme-toggle__icon--sun { opacity: 0; transform: rotate(90deg); }
-    [data-theme="light"] .theme-toggle__icon--moon { opacity: 1; transform: rotate(0); }
-
-    /* ═════════════ SUBHERO (slim docs version) ═════════════ */
-    .docshero {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: clamp(40px, 7vh, 80px) var(--gutter) clamp(28px, 4vh, 44px);
-      position: relative;
-    }
-    .docshero__top {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; flex-wrap: wrap;
-      margin-bottom: 24px;
-    }
-    .docshero__pin {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 5px 10px;
-      border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
-      border-radius: 100px;
-      font-family: var(--font-mono); font-size: 11px;
-      color: var(--accent);
-      text-transform: lowercase; letter-spacing: 0.04em;
-      background: color-mix(in oklab, var(--accent) 6%, transparent);
-    }
-    .docshero__pin-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
-    .docshero__title {
-      font-family: var(--font-mono);
-      font-weight: 600;
-      font-size: clamp(40px, 7vw, 84px);
-      line-height: 0.96;
-      letter-spacing: -0.045em;
-      color: var(--fg);
-      margin-bottom: 16px;
-    }
-    .docshero__lede {
-      font-size: clamp(17px, 1.6vw, 19px);
-      line-height: 1.55;
-      color: var(--fg-dim);
-      max-width: 65ch;
-      margin-bottom: 24px;
-      text-wrap: pretty;
-    }
-    .docshero__meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
-    .pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 12px;
-      border: 1px solid var(--hair);
-      border-radius: 100px;
-      font-family: var(--font-mono); font-size: 12px;
-      color: var(--fg-dim);
-      background: rgb(var(--ink) / 0.02);
-    }
-    .pill--live { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
-    .pill--live .pill__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
-
-    /* ═════════════ SURFACE TOGGLE (new — clones audience-toggle) ═════════════ */
-    .surface-toggle {
-      display: inline-flex; align-items: center; gap: 0;
-      padding: 3px;
-      background: rgb(var(--ink) / 0.03);
-      border: 1px solid var(--hair);
-      border-radius: 100px;
-      font-family: var(--font-mono);
-      position: relative;
-    }
-    .surface-toggle__hint {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--fg-dimmer);
-      margin: 0 12px 0 14px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .surface-toggle__opt {
-      padding: 8px 16px;
-      font-size: 12px;
-      color: var(--fg-dim);
-      border-radius: 100px;
-      position: relative; z-index: 1;
-      transition: color 200ms ease, background 200ms ease;
-      letter-spacing: -0.005em;
-      white-space: nowrap;
-      min-height: 32px;
-    }
-    .surface-toggle__opt:hover { color: var(--fg); }
-    .surface-toggle__opt:focus-visible { outline-offset: 2px; }
-    .surface-toggle__opt.is-active {
-      color: var(--accent);
-      background: color-mix(in oklab, var(--accent) 12%, transparent);
-    }
-    @media (max-width: 560px) {
-      .surface-toggle__hint { display: none; }
-      .surface-toggle__opt { padding: 7px 12px; font-size: 11.5px; }
-    }
-
-    /* ═════════════ SECTIONS ═════════════ */
-    .section {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: clamp(48px, 7vh, 80px) var(--gutter);
-      position: relative;
-    }
-    .section-label {
-      display: inline-flex; align-items: baseline; gap: 8px;
-      font-family: var(--font-mono); font-size: 12px;
-      color: var(--fg-dim);
-      margin-bottom: 24px;
-      padding: 6px 12px 6px 10px;
-      border: 1px solid var(--hair); border-radius: 6px;
-      background: rgb(var(--ink) / 0.02);
-    }
-    .section-label__sigil { color: var(--accent); }
-    .section-label__num { color: var(--fg); }
-    .section-label__slash { color: var(--fg-faint); }
-    .section-label__title { color: var(--fg-dim); }
-    .section__h {
-      font-family: var(--font-mono);
-      font-weight: 500;
-      font-size: clamp(26px, 3.6vw, 36px);
-      letter-spacing: -0.045em;
-      line-height: 1.1;
-      margin-bottom: 16px;
-      text-wrap: balance;
-      max-width: 32ch;
-    }
-    .section__lede {
-      font-size: 17px;
-      line-height: 1.55;
-      color: var(--fg-dim);
-      max-width: 62ch;
-      margin-bottom: 36px;
-      text-wrap: pretty;
-    }
-    .section__lede code { font-family: var(--font-mono); font-size: 13.5px; color: var(--fg); }
-    .accent { color: var(--accent); }
-
-    .divider {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 0 var(--gutter);
-      display: flex; align-items: center; gap: 14px;
-      color: var(--fg-faint);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .divider::before, .divider::after { content: ""; flex: 1; border-top: 1px dashed var(--hair); }
-    .divider__num { color: var(--fg-dimmer); }
-    .divider__txt { color: var(--fg-dim); }
-
-    /* ═════════════ TABLES (env vars, flag tables, parity, etc.) ═════════════ */
-    .doctable {
-      width: 100%;
-      border: 1px solid var(--hair);
-      border-radius: 8px;
-      background: rgb(var(--ink) / 0.015);
-      border-collapse: separate;
-      border-spacing: 0;
-      overflow: hidden;
-      font-size: 13.5px;
-    }
-    .doctable th, .doctable td {
-      padding: 12px 16px;
-      text-align: left;
-      vertical-align: top;
-      border-bottom: 1px solid var(--hair);
-    }
-    .doctable tbody tr:last-child th, .doctable tbody tr:last-child td { border-bottom: 0; }
-    .doctable th {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--fg-dimmer);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 500;
-      background: rgb(var(--ink) / 0.02);
-      border-bottom: 1px solid var(--hair-2);
-    }
-    .doctable td {
-      color: var(--fg-dim);
-      line-height: 1.55;
-    }
-    .doctable td:first-child {
-      font-family: var(--font-mono);
-      color: var(--fg);
-      font-size: 12.5px;
-      white-space: nowrap;
-    }
-    .doctable td code, .doctable th code {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--accent);
-      padding: 1px 5px;
-      border-radius: 3px;
-      background: color-mix(in oklab, var(--accent) 10%, transparent);
-    }
-    @media (max-width: 640px) {
-      .doctable { font-size: 12.5px; }
-      .doctable th, .doctable td { padding: 10px 12px; }
-    }
-
-    /* ═════════════ CODE BLOCKS ═════════════ */
-    .code {
-      display: block;
-      padding: 16px 20px;
-      border: 1px solid var(--hair);
-      border-radius: 6px;
-      background: var(--bg-deep);
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-      color: var(--fg);
-      overflow-x: auto;
-      white-space: pre;
-      margin: 0 0 12px;
-      line-height: 1.65;
-      tab-size: 2;
-    }
-    .code .comment { color: var(--fg-dim); }
-    .code .accent { color: var(--accent); }
-    .code .remote { color: var(--remote); }
-    @media (max-width: 480px) { .code { font-size: 11.5px; padding: 12px 14px; } }
-
-    /* ═════════════ FIRST-RUN CALLOUT ═════════════ */
-    .first-run {
-      margin-top: 20px;
-      padding: 18px 22px;
-      border: 1px dashed color-mix(in oklab, var(--accent) 35%, transparent);
-      border-radius: 10px;
-      background: color-mix(in oklab, var(--accent) 4%, transparent);
-      display: grid;
-      grid-template-columns: 36px 1fr;
-      gap: 16px;
-      align-items: start;
-    }
-    .first-run__icon {
-      width: 32px; height: 32px;
-      display: grid; place-items: center;
-      border-radius: 6px;
-      background: color-mix(in oklab, var(--accent) 14%, transparent);
-      color: var(--accent);
-      border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
-      font-family: var(--font-mono); font-size: 16px; font-weight: 600;
-    }
-    .first-run__title {
-      font-family: var(--font-mono); font-size: 14px;
-      color: var(--accent);
-      margin-bottom: 8px;
-      letter-spacing: -0.01em;
-    }
-    .first-run__body { font-size: 14px; line-height: 1.6; color: var(--fg-dim); }
-    .first-run__body strong { color: var(--fg); font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
-    .first-run__body em { color: var(--fg); font-style: normal; font-family: var(--font-mono); font-size: 13px; }
-    .first-run__body code {
-      font-family: var(--font-mono); font-size: 12.5px;
-      color: var(--accent);
-      padding: 1px 5px; border-radius: 3px;
-      background: color-mix(in oklab, var(--accent) 10%, transparent);
-    }
-
-    /* ═════════════ GOTCHA ═════════════ */
-    .gotcha {
-      margin-top: 16px;
-      padding: 20px 24px;
-      border: 1px dashed color-mix(in oklab, var(--warn) 50%, transparent);
-      border-radius: 10px;
-      background: color-mix(in oklab, var(--warn) 5%, transparent);
-      display: grid;
-      grid-template-columns: 36px 1fr;
-      gap: 16px;
-      align-items: start;
-    }
-    .gotcha__icon {
-      width: 32px; height: 32px;
-      display: grid; place-items: center;
-      border-radius: 6px;
-      background: color-mix(in oklab, var(--warn) 18%, transparent);
-      color: var(--warn);
-      font-family: var(--font-mono); font-size: 16px; font-weight: 600;
-      border: 1px solid color-mix(in oklab, var(--warn) 35%, transparent);
-    }
-    .gotcha__title { font-family: var(--font-mono); font-size: 14px; color: var(--warn); margin-bottom: 8px; }
-    .gotcha__body { font-size: 14px; line-height: 1.6; color: var(--fg-dim); }
-    .gotcha__body strong { color: var(--fg); font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
-    .gotcha__body code { font-family: var(--font-mono); font-size: 12.5px; color: var(--warn); padding: 1px 5px; border-radius: 3px; background: color-mix(in oklab, var(--warn) 12%, transparent); }
-
-    /* ═════════════ TAGS / PILLS ═════════════ */
-    .tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 12px;
-      border: 1px solid var(--hair);
-      border-radius: 6px;
-      font-family: var(--font-mono); font-size: 12px;
-      color: var(--fg-dim);
-      background: rgb(var(--ink) / 0.02);
-    }
-    .stack-row { display: flex; flex-wrap: wrap; gap: 8px; }
-    .stack-row__label {
-      font-family: var(--font-mono); font-size: 11px;
-      color: var(--fg-dimmer);
-      text-transform: uppercase; letter-spacing: 0.08em;
-      margin-top: 24px; margin-bottom: 12px;
-    }
-
-    /* ═════════════ COVERAGE (country chips, ported from landing) ═════════════ */
-    .coverage {
-      border: 1px solid var(--hair);
-      border-radius: 8px;
-      background: rgb(var(--ink) / 0.015);
-      overflow: hidden;
-    }
-    .coverage__row {
-      display: grid;
-      grid-template-columns: 100px 1fr;
-      gap: 20px;
-      align-items: start;
-      padding: 16px 20px;
-    }
-    .coverage__row + .coverage__row { border-top: 1px solid var(--hair); }
-    .coverage__label {
-      font-family: var(--font-mono); font-size: 11px;
-      color: var(--fg-dimmer);
-      text-transform: uppercase; letter-spacing: 0.08em;
-      padding-top: 6px; line-height: 1;
-    }
-    .coverage__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; }
-    .cov {
-      position: relative;
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 8px 5px 6px;
-      border: 1px solid var(--hair);
-      border-radius: 4px;
-      background: rgb(var(--ink) / 0.015);
-      font-family: var(--font-mono); font-size: 12px;
-      color: var(--fg-dim);
-      cursor: default;
-      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
-    }
-    .cov:hover, .cov:focus-visible { border-color: var(--hair-2); background: rgb(var(--ink) / 0.04); color: var(--fg); z-index: 2; }
-    .cov__code {
-      font-size: 11px; color: var(--accent);
-      letter-spacing: 0.08em;
-      padding: 1px 5px; border-radius: 3px;
-      background: color-mix(in oklab, var(--accent) 8%, transparent);
-      border: 1px solid color-mix(in oklab, var(--accent) 25%, transparent);
-      line-height: 1.4;
-      font-variant-numeric: tabular-nums;
-    }
-    .cov__n { font-size: 10.5px; color: var(--fg-faint); font-variant-numeric: tabular-nums; }
-    .cov__detail {
-      position: absolute;
-      top: calc(100% + 4px); left: 0; z-index: 3;
-      padding: 6px 10px;
-      border: 1px solid var(--hair-2);
-      border-radius: 4px;
-      background: var(--bg);
-      font-size: 11.5px; color: var(--fg);
-      white-space: nowrap;
-      opacity: 0; transform: translateY(-2px);
-      pointer-events: none;
-      transition: opacity 140ms ease, transform 160ms var(--ease-out-cubic);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-    }
-    .cov:hover .cov__detail, .cov:focus-visible .cov__detail { opacity: 1; transform: translateY(0); }
-    .cov.is-edge-right .cov__detail { left: auto; right: 0; }
-    .cov--generic { padding: 5px 8px; color: var(--fg-dim); }
-    @media (max-width: 600px) {
-      .coverage__row { grid-template-columns: 1fr; gap: 8px; padding: 12px 12px 14px; }
-      .coverage__label { padding-top: 0; }
-      .coverage__list { gap: 6px; }
-      .cov { flex-wrap: wrap; padding: 6px 10px; }
-      .cov__detail {
-        position: static;
-        opacity: 1; transform: none; pointer-events: auto;
-        padding: 0; border: 0; background: transparent; box-shadow: none;
-        white-space: normal;
-        flex-basis: 100%;
-        color: var(--fg-dim);
-        margin-top: 2px; font-size: 11px;
-      }
-    }
-
-    /* ═════════════ COMMAND/TOOL GRID ═════════════ */
-    .tools {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 36px;
-    }
-    @media (max-width: 960px) { .tools { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 600px) { .tools { grid-template-columns: 1fr; } }
-    .tool-group__title {
-      font-family: var(--font-mono); font-size: 11px;
-      color: var(--fg-dimmer);
-      text-transform: uppercase; letter-spacing: 0.08em;
-      margin-bottom: 14px; padding-bottom: 8px;
-      border-bottom: 1px solid var(--hair);
-      display: flex; align-items: baseline; justify-content: space-between;
-    }
-    .tool-group__count { color: var(--fg-faint); font-size: 10.5px; }
-    .tool-list { display: flex; flex-direction: column; gap: 4px; }
-    .tool {
-      font-family: var(--font-mono); font-size: 13px;
-      color: var(--fg);
-      cursor: help;
-      padding: 5px 8px;
-      border-radius: 4px;
-      transition: background 160ms ease, color 160ms ease;
-      display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
-    }
-    .tool:hover { background: rgb(var(--ink) / 0.04); color: var(--accent); }
-    .tool__name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .tool__hint { font-size: 10px; color: var(--fg-faint); opacity: 0; transition: opacity 160ms ease; }
-    .tool:hover .tool__hint { opacity: 1; }
-
-    /* ═════════════ COMMAND ACCORDIONS (<details>) ═════════════ */
-    .cmd-detail {
-      border: 1px solid var(--hair);
-      border-radius: 8px;
-      background: rgb(var(--ink) / 0.015);
-      margin-bottom: 8px;
-      overflow: hidden;
-    }
-    .cmd-detail[open] { border-color: var(--hair-2); background: rgb(var(--ink) / 0.025); }
-    .cmd-detail > summary {
-      list-style: none;
-      cursor: pointer;
-      padding: 14px 18px;
-      display: flex; align-items: baseline; gap: 14px;
-      font-family: var(--font-mono);
-      font-size: 13.5px;
-      color: var(--fg);
-      transition: background 160ms ease;
-    }
-    .cmd-detail > summary::-webkit-details-marker { display: none; }
-    .cmd-detail > summary::before {
-      content: "›";
-      color: var(--fg-faint);
-      font-size: 14px;
-      transition: transform 160ms var(--ease-out-cubic);
-      flex: none;
-    }
-    .cmd-detail[open] > summary::before { transform: rotate(90deg); color: var(--accent); }
-    .cmd-detail > summary:hover { background: rgb(var(--ink) / 0.04); }
-    .cmd-detail__name { color: var(--accent); flex: none; }
-    .cmd-detail__sig { color: var(--fg-dim); font-size: 12px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-    .cmd-detail__body {
-      padding: 6px 18px 20px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--fg-dim);
-      border-top: 1px solid var(--hair);
-    }
-    .cmd-detail__body p { margin: 8px 0 14px; max-width: 70ch; }
-    .cmd-detail__body p:first-child { margin-top: 12px; }
-    .cmd-detail__body code {
-      font-family: var(--font-mono); font-size: 12.5px;
-      color: var(--accent);
-      padding: 1px 5px; border-radius: 3px;
-      background: color-mix(in oklab, var(--accent) 10%, transparent);
-    }
-    .cmd-detail__body .doctable { margin-top: 4px; margin-bottom: 14px; }
-    .cmd-detail__lbl {
-      font-family: var(--font-mono); font-size: 10.5px;
-      color: var(--fg-dimmer);
-      text-transform: uppercase; letter-spacing: 0.08em;
-      margin: 12px 0 8px;
-    }
-    .cmd-detail__seealso {
-      margin-top: 12px;
-      font-size: 13px;
-      color: var(--fg-dim);
-    }
-    .cmd-detail__seealso a { color: var(--accent); border-bottom: 1px dashed currentColor; }
-
-    /* ═════════════ ROUND-TRIP / PARITY TABLE ═════════════ */
-    .parity {
-      margin-top: 28px;
-      border: 1px solid var(--hair);
-      border-radius: 8px;
-      overflow: hidden;
-      background: rgb(var(--ink) / 0.015);
-    }
-    .parity__row {
-      display: grid;
-      grid-template-columns: 1fr 36px 1fr;
-      gap: 0;
-      align-items: center;
-      padding: 12px 18px;
-      border-bottom: 1px solid var(--hair);
-      font-family: var(--font-mono);
-      font-size: 12.5px;
-    }
-    .parity__row:last-child { border-bottom: 0; }
-    .parity__row--head {
-      font-size: 10.5px;
-      color: var(--fg-dimmer);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      background: rgb(var(--ink) / 0.025);
-      border-bottom: 1px solid var(--hair-2);
-    }
+    /* Parity */
+    .parity { border-top: 1px solid var(--hair); }
+    .parity__row { display: grid; grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr); gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--hair); font-family: var(--font-mono); font-size: 13px; align-items: baseline; }
+    .parity__row--head { font-size: var(--fs-xs); letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-dimmer); }
     .parity__mcp { color: var(--remote); }
     .parity__cli { color: var(--accent); }
     .parity__arrow { color: var(--fg-faint); text-align: center; }
-    @media (max-width: 600px) {
-      .parity__row { grid-template-columns: 1fr; gap: 4px; padding: 10px 14px; }
-      .parity__arrow { text-align: left; transform: rotate(90deg); width: 12px; }
-    }
 
-    /* ═════════════ FAQ (<details>) ═════════════ */
-    .faq { display: flex; flex-direction: column; gap: 6px; }
-    .faq > details {
-      border: 1px solid var(--hair);
-      border-radius: 8px;
-      background: rgb(var(--ink) / 0.015);
-      overflow: hidden;
-    }
-    .faq > details[open] { border-color: var(--hair-2); }
-    .faq > details > summary {
-      list-style: none;
-      padding: 14px 18px;
-      cursor: pointer;
-      font-size: 14.5px;
-      color: var(--fg);
-      display: flex; align-items: baseline; gap: 12px;
-      transition: background 160ms ease;
-    }
-    .faq > details > summary::-webkit-details-marker { display: none; }
-    .faq > details > summary::before {
-      content: "+";
-      color: var(--fg-faint);
-      font-family: var(--font-mono); font-size: 14px;
-      transition: transform 160ms var(--ease-out-cubic);
-      flex: none;
-    }
-    .faq > details[open] > summary::before { transform: rotate(45deg); color: var(--accent); }
-    .faq > details > summary:hover { background: rgb(var(--ink) / 0.04); }
-    .faq__body {
-      padding: 0 18px 18px 38px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--fg-dim);
-    }
-    .faq__body p { margin: 0 0 10px; max-width: 70ch; }
-    .faq__body p:last-child { margin-bottom: 0; }
-    .faq__body code {
-      font-family: var(--font-mono); font-size: 12.5px;
-      color: var(--accent);
-      padding: 1px 5px; border-radius: 3px;
-      background: color-mix(in oklab, var(--accent) 10%, transparent);
-    }
+    a.accent:hover { text-decoration: underline; }
 
-    /* ═════════════ TOC SCROLLSPY ═════════════ */
-    .toc {
-      position: fixed;
-      top: 50%;
-      right: 28px;
-      transform: translateY(-50%);
-      z-index: 30;
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      padding: 8px 0 8px 14px;
-      border-left: 1px solid var(--hair);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      pointer-events: auto;
-      max-height: 80vh;
-      overflow-y: auto;
-      scrollbar-width: none;
-    }
-    .toc::-webkit-scrollbar { display: none; }
-    @media (max-width: 1280px) { .toc { display: none; } }
-    .toc__item {
-      padding: 5px 8px;
-      color: var(--fg-dim);
-      transition: color 200ms ease;
-      position: relative;
-      white-space: nowrap;
-      letter-spacing: -0.005em;
-    }
-    .toc__item:hover { color: var(--fg); }
-    .toc__item:focus-visible { color: var(--fg); outline-offset: 2px; }
-    .toc__item.is-active { color: var(--accent); }
-    .toc__item.is-active::before {
-      content: '';
-      position: absolute;
-      left: -15px; top: 5px; bottom: 5px;
-      width: 2px;
-      background: var(--accent);
-      box-shadow: 0 0 8px color-mix(in oklab, var(--accent) 60%, transparent);
-    }
-    .toc__num { color: var(--fg-faint); margin-right: 6px; }
-    .toc__item.is-active .toc__num { color: color-mix(in oklab, var(--accent) 70%, var(--fg-faint)); }
-
-    /* ═════════════ FOOTER ═════════════ */
-    .footer {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 40px var(--gutter) 56px;
-      border-top: 1px solid var(--hair);
-      display: flex;
-      justify-content: space-between;
-      gap: 24px; flex-wrap: wrap;
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      color: var(--fg-dimmer);
-    }
-    .footer__col { display: flex; flex-direction: column; gap: 6px; }
-    .footer__col--right { text-align: right; align-items: flex-end; }
-    .footer__copy { color: var(--fg-dim); }
-    .footer a { color: var(--fg-dim); border-bottom: 1px dashed var(--fg-faint); }
-    .footer a:hover { color: var(--accent); border-color: var(--accent); }
-    @media (max-width: 560px) {
-      .footer { flex-direction: column; }
-      .footer__col--right { text-align: left; align-items: flex-start; }
-    }
-
-    /* ═════════════ ANIMATION ═════════════ */
-    [data-reveal="fade"] {
-      opacity: 0;
-      transform: translateY(14px);
-      transition: opacity 520ms var(--ease-expo), transform 520ms var(--ease-expo);
-    }
-    [data-reveal="fade"].reveal--in { opacity: 1; transform: none; }
-    [data-reveal="settle"] {
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 360ms ease-out, transform 420ms var(--ease-out-cubic);
-    }
-    [data-reveal="settle"].reveal--in { opacity: 1; transform: none; }
-
-    /* Inline content helpers */
-    .prose p { font-size: 16px; line-height: 1.65; color: var(--fg); margin-bottom: 16px; max-width: 70ch; }
-    .prose p:last-child { margin-bottom: 0; }
-    .prose code { font-family: var(--font-mono); font-size: 13px; color: var(--accent); padding: 1px 5px; border-radius: 3px; background: color-mix(in oklab, var(--accent) 10%, transparent); }
-    .prose strong { color: var(--fg); font-weight: 500; }
-    .prose a { color: var(--accent); border-bottom: 1px dashed currentColor; }
-    .prose ul.bullets { padding-left: 22px; list-style: disc; color: var(--fg-dim); margin-bottom: 16px; }
-    .prose ul.bullets li { margin-bottom: 6px; line-height: 1.55; }
-    .prose ul.bullets code { font-size: 12.5px; }
-
-    /* Subsection heading */
-    .subhead {
-      font-family: var(--font-mono);
-      font-size: 17px;
-      color: var(--fg);
-      margin: 28px 0 12px;
-      letter-spacing: -0.005em;
-      font-weight: 500;
-    }
-    .subhead:first-child { margin-top: 0; }
-
-    /* Tree (data dir layout) */
-    .tree {
-      display: block;
-      padding: 16px 20px;
-      border: 1px solid var(--hair);
-      border-radius: 6px;
-      background: var(--bg-deep);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--fg-dim);
-      line-height: 1.7;
-      white-space: pre;
-      overflow-x: auto;
-      margin: 0 0 12px;
-    }
-    .tree .accent { color: var(--accent); }
-    .tree .comment { color: var(--fg-faint); }
+    /* Lists that carry .prose on the list element itself */
+    ul.prose, ol.prose { max-width: var(--measure); margin-top: 0; }
+    ul.prose > li, ol.prose > li { position: relative; font-size: 16px; line-height: 1.6; color: var(--fg-dim); }
+    ul.prose > li { padding-left: 18px; }
+    ul.prose > li::before { content: "3"; position: absolute; left: 0; color: var(--fg-dimmer); }
+    ol.prose { counter-reset: n; }
+    ol.prose > li { padding-left: 26px; counter-increment: n; }
+    ol.prose > li::before { content: counter(n, decimal-leading-zero); position: absolute; left: 0; top: 0.3em; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--fg-dimmer); }
+    ul.prose > li + li, ol.prose > li + li { margin-top: 8px; }
+    ul.prose > li strong { color: var(--fg); font-weight: 500; }
+    .cmd-detail__body ul.prose > li, .cmd-detail__body ol.prose > li { font-size: 15px; }
   </style>
 </head>
 <body>
-  <!-- ═══════════════════════════════════════════════════════════════
-       TABLE OF CONTENTS / SCROLLSPY
-       ═══════════════════════════════════════════════════════════════ -->
   <aside class="toc" aria-label="Table of contents">
-    <a href="#install" class="toc__item" data-toc="install"><span class="toc__num">01</span>Quick install</a>
-    <a href="#config" class="toc__item" data-toc="config"><span class="toc__num">02</span>Configuration</a>
-    <a href="#coverage" class="toc__item" data-toc="coverage"><span class="toc__num">03</span>Detection coverage</a>
-    <a href="#commands" class="toc__item" data-toc="commands"><span class="toc__num">04</span>Command reference</a>
-    <a href="#workflows" class="toc__item" data-toc="workflows"><span class="toc__num">05</span>Workflows</a>
-    <a href="#audit" class="toc__item" data-toc="audit"><span class="toc__num">06</span>Audit &amp; compliance</a>
-    <a href="#hitl" class="toc__item" data-toc="hitl"><span class="toc__num">07</span>HITL review</a>
-    <a href="#handoff" class="toc__item" data-toc="handoff"><span class="toc__num">08</span>Cross-machine handoff</a>
-    <a href="#scripting" class="toc__item" data-toc="scripting"><span class="toc__num">09</span>Python / scripting</a>
-    <a href="#entities" class="toc__item" data-toc="entities"><span class="toc__num">10</span>Entity types</a>
-    <a href="#stack" class="toc__item" data-toc="stack"><span class="toc__num">11</span>Stack &amp; versioning</a>
-    <a href="#limits" class="toc__item" data-toc="limits"><span class="toc__num">12</span>Limits &amp; caveats</a>
-    <a href="#troubleshooting" class="toc__item" data-toc="troubleshooting"><span class="toc__num">13</span>Troubleshooting</a>
+    <a href="#install" class="toc__item" data-spy="install"><span class="toc__num">01</span>Quick install</a>
+    <a href="#config" class="toc__item" data-spy="config"><span class="toc__num">02</span>Configuration</a>
+    <a href="#coverage" class="toc__item" data-spy="coverage"><span class="toc__num">03</span>Detection coverage</a>
+    <a href="#commands" class="toc__item" data-spy="commands"><span class="toc__num">04</span>Command reference</a>
+    <a href="#workflows" class="toc__item" data-spy="workflows"><span class="toc__num">05</span>Workflows</a>
+    <a href="#audit" class="toc__item" data-spy="audit"><span class="toc__num">06</span>Audit &amp; compliance</a>
+    <a href="#hitl" class="toc__item" data-spy="hitl"><span class="toc__num">07</span>HITL review</a>
+    <a href="#handoff" class="toc__item" data-spy="handoff"><span class="toc__num">08</span>Cross-machine handoff</a>
+    <a href="#scripting" class="toc__item" data-spy="scripting"><span class="toc__num">09</span>Python / scripting</a>
+    <a href="#entities" class="toc__item" data-spy="entities"><span class="toc__num">10</span>Entity types</a>
+    <a href="#stack" class="toc__item" data-spy="stack"><span class="toc__num">11</span>Stack &amp; versioning</a>
+    <a href="#limits" class="toc__item" data-spy="limits"><span class="toc__num">12</span>Limits &amp; caveats</a>
+    <a href="#troubleshooting" class="toc__item" data-spy="troubleshooting"><span class="toc__num">13</span>Troubleshooting</a>
   </aside>
 
-  <nav class="subnav">
-    <div class="subnav__inner">
-      <a href="/pii-shield" class="subnav__back">
-        <span aria-hidden="true">←</span>
-        <span>Back to product</span>
-      </a>
-      <div class="subnav__crumb">
-        gmoskalev.com<span class="subnav__crumb-sep">/</span><a href="/pii-shield">pii-shield</a><span class="subnav__crumb-sep">/</span><span class="accent">docs</span>
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="/" class="nav__brand">gmoskalev</a>
+      <div class="nav__crumb"><span class="nav__crumb-sep">/</span><a href="/pii-shield">pii-shield</a><span class="nav__crumb-sep">/</span><span class="accent">docs</span></div>
+      <div class="nav__right">
+        <a href="https://github.com/gregmos/PII-Shield" class="nav__gh" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.79 8.21 11.38.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.09 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.61-.01 2.91-.01 3.3 0 .32.22.7.83.58C20.56 22.29 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/></svg>
+          <span>GitHub</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
       </div>
-      <button class="theme-toggle" type="button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
-        <svg class="theme-toggle__icon theme-toggle__icon--sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="4"/>
-          <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-        </svg>
-        <svg class="theme-toggle__icon theme-toggle__icon--moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-      </button>
-      <a href="https://github.com/gregmos/PII-Shield" class="subnav__gh" target="_blank" rel="noopener">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.79 8.21 11.38.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.09 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.61-.01 2.91-.01 3.3 0 .32.22.7.83.58C20.56 22.29 24 17.79 24 12.5 24 5.87 18.63.5 12 .5z"/></svg>
-        <span>GitHub</span>
-        <span aria-hidden="true">↗</span>
-      </a>
     </div>
   </nav>
 
   <main>
-    <!-- ═════════════════════════════════ DOCS HERO ═════════════════════════════════ -->
-    <header class="docshero">
-      <div class="docshero__top">
-        <span class="docshero__pin">
-          <span class="docshero__pin-dot" aria-hidden="true"></span>
-          documentation
-        </span>
-        <div class="surface-toggle" role="tablist" aria-label="Surface">
-          <span class="surface-toggle__hint">surface</span>
-          <button type="button" class="surface-toggle__opt is-active" data-surface-set="mcp" role="tab" aria-selected="true">MCP plugin</button>
-          <button type="button" class="surface-toggle__opt" data-surface-set="cli" role="tab" aria-selected="false">CLI</button>
-        </div>
+    <header class="subhero">
+      <div class="section-label subhero__kicker">
+        <span class="section-label__sigil">§</span>
+        <span class="section-label__title">Documentation</span>
       </div>
-      <h1 class="docshero__title">PII Shield Docs</h1>
-      <p class="docshero__lede">Full reference for both surfaces. The MCP plugin runs inside Claude Desktop; the CLI runs anywhere Node 22 does. Same engine, same 33 entity types, same on-disk session format. Switch the toggle above and the command reference swaps; everything else applies to both.</p>
-      <div class="docshero__meta">
-        <span class="pill pill--live"><span class="pill__dot" aria-hidden="true"></span>v2.1.0 · Live</span>
-        <span class="pill">MCP server</span>
-        <span class="pill">CLI</span>
-        <span class="pill">Node.js 22+</span>
-        <span class="pill">npm install -g</span>
-        <span class="pill">MIT</span>
+      <h1 class="subhero__title">PII Shield Docs<span class="caret" aria-hidden="true"></span></h1>
+      <p class="subhero__lede">Full reference for both surfaces. The MCP plugin runs inside Claude Desktop; the CLI runs anywhere Node 22 does. Same engine, same 33 entity types, same on-disk session format — the command reference below covers both.</p>
+      <p class="meta subhero__meta">
+        <span class="accent">Live</span>
+        <span>MCP server</span>
+        <span>CLI</span>
+        <span>Node.js 22+</span>
+        <span>npm install -g pii-shield</span>
+        <span>MIT</span>
+      </p>
+      <div class="btn-row">
+        <a href="/pii-shield" class="btn btn--ghost"><span aria-hidden="true">←</span> Product page</a>
+        <a href="https://github.com/gregmos/PII-Shield" class="btn btn--ghost" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
       </div>
     </header>
 
-    <div class="divider"><span class="divider__num">01</span><span class="divider__txt">quick install</span></div>
-
     <!-- ═════════════════════════════════ 01 INSTALL ═════════════════════════════════ -->
-    <section id="install" class="section" data-toc-target>
+    <section id="install" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">01</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Quick install</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Pick a surface, run three lines.</h2>
+      <h2 class="section__h">Pick a surface, run three lines.</h2>
       <p class="section__lede">Both surfaces share <code>~/.pii_shield/</code>: install one or both. Sessions, mappings, audit logs, and the GLiNER model are interchangeable.</p>
 
       <h3 class="subhead">MCP plugin (Claude Desktop)</h3>
-      <code class="code"><span class="comment"># 1. Download pii-shield-v2.1.0-&lt;platform&gt;.mcpb from GitHub releases</span>
-<span class="comment">#    https://github.com/gregmos/PII-Shield/releases</span>
+      <code class="code"><span class="comment"># 1. Download pii-shield-&lt;version&gt;-&lt;platform&gt;.mcpb from the latest release</span>
+<span class="comment">#    https://github.com/gregmos/PII-Shield/releases/latest</span>
 
 <span class="comment"># 2. In Claude Desktop:</span>
 <span class="comment">#    Settings → Extensions → Advanced Settings → Install extension</span>
@@ -1023,18 +229,13 @@ pii-shield --version
 <span class="comment"># 3. Download the GLiNER model (~634 MB, one-off)</span>
 <span class="accent">pii-shield install-model</span></code>
 
-      <div class="first-run">
-        <div class="first-run__icon" aria-hidden="true">↻</div>
-        <div>
-          <div class="first-run__title">First-run engine deps</div>
-          <div class="first-run__body">
-            On first <code>anonymize</code> or <code>scan</code>, the engine installs <code>onnxruntime-node</code>, <code>@xenova/transformers</code>, and <code>gliner</code> at pinned versions into <code>~/.pii_shield/deps/installs/&lt;hash&gt;/</code>. Roughly <strong>300 MB, 1–2 min, deterministic</strong>. Subsequent runs are instant. Everything (model, deps, mappings, audit logs) survives <code>npm uninstall -g pii-shield</code>.
-          </div>
-        </div>
+      <div class="callout">
+        <div class="callout__label">First-run engine deps</div>
+        <p>On first <code>anonymize</code> or <code>scan</code>, the engine installs <code>onnxruntime-node</code>, <code>@xenova/transformers</code>, and <code>gliner</code> at pinned versions into <code>~/.pii_shield/deps/installs/&lt;hash&gt;/</code>. Roughly <strong>300 MB, 1–2 min, deterministic</strong>. Subsequent runs are instant. Everything (model, deps, mappings, audit logs) survives <code>npm uninstall -g pii-shield</code>.</p>
       </div>
 
       <h3 class="subhead">Parity at install time</h3>
-      <table class="doctable">
+      <table class="table">
         <thead><tr><th>Aspect</th><th>MCP plugin</th><th>CLI</th></tr></thead>
         <tbody>
           <tr><td>Node version</td><td>Bundled (macOS) / host (Win/Linux)</td><td>Host (≥22.0.0)</td></tr>
@@ -1047,21 +248,18 @@ pii-shield --version
       </table>
     </section>
 
-    <div class="divider"><span class="divider__num">02</span><span class="divider__txt">configuration</span></div>
-
     <!-- ═════════════════════════════════ 02 CONFIG ═════════════════════════════════ -->
-    <section id="config" class="section" data-toc-target>
+    <section id="config" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">02</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Configuration</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Environment variables, defaults, and where data lives.</h2>
+      <h2 class="section__h">Environment variables, defaults, and where data lives.</h2>
       <p class="section__lede">All settings are environment variables — there is no config file. Set them in your shell, in <code>.env</code>, or per-command (<code>KEY=value pii-shield …</code>). Both MCP and CLI read the same vars from the same places.</p>
 
       <h3 class="subhead">Detection sensitivity</h3>
-      <table class="doctable">
+      <table class="table">
         <thead><tr><th>Variable</th><th>Default</th><th>Range</th><th>Effect</th></tr></thead>
         <tbody>
           <tr><td><code>PII_MIN_SCORE</code></td><td>0.30</td><td>0.0–1.0</td><td>Minimum confidence for pattern recognizers (email, SSN, IBAN, …). Lower = more recall, more false positives.</td></tr>
@@ -1079,7 +277,7 @@ pii-shield --version
 <span class="accent">PII_NER_THRESHOLD</span>=0.55 pii-shield anonymize article.txt</code>
 
       <h3 class="subhead">Behaviour</h3>
-      <table class="doctable">
+      <table class="table">
         <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td><code>PII_SKIP_REVIEW</code></td><td><code>false</code></td><td>Set <code>true</code> to never open the HITL panel — useful for CI / scripting.</td></tr>
@@ -1094,7 +292,7 @@ pii-shield --version
       </table>
 
       <h3 class="subhead">Paths (rare overrides)</h3>
-      <table class="doctable">
+      <table class="table">
         <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
         <tbody>
           <tr><td><code>PII_SHIELD_DATA_DIR</code></td><td><code>~/.pii_shield</code></td><td>Root for all PII Shield state. Override to relocate everything (deps, model, audit, mappings) — useful for shared/networked installs.</td></tr>
@@ -1105,7 +303,7 @@ pii-shield --version
       </table>
 
       <h3 class="subhead">Data directory layout</h3>
-      <code class="tree">~/.pii_shield/                     <span class="comment">← PII_SHIELD_DATA_DIR</span>
+      <code class="code">~/.pii_shield/                     <span class="comment">← PII_SHIELD_DATA_DIR</span>
 ├── models/
 │   └── <span class="accent">gliner-pii-base-v1.0/</span>       <span class="comment">← 634 MB, survives uninstall</span>
 │       ├── model.onnx
@@ -1131,20 +329,17 @@ pii-shield --version
       </div>
     </section>
 
-    <div class="divider"><span class="divider__num">03</span><span class="divider__txt">detection coverage</span></div>
-
     <!-- ═════════════════════════════════ 03 COVERAGE ═════════════════════════════════ -->
-    <section id="coverage" class="section" data-toc-target>
+    <section id="coverage" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">03</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Detection coverage</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">National IDs, tax numbers, passports — and the obvious stuff too.</h2>
-      <p class="section__lede">17 country-specific patterns on top of generic entity detection. The fields a "find all emails" regex would never catch. Hover any chip for the patterns it covers.</p>
+      <h2 class="section__h">National IDs, tax numbers, passports — and the obvious stuff too.</h2>
+      <p class="section__lede">17 country-specific patterns on top of generic entity detection. The fields a "find all emails" regex would never catch.</p>
 
-      <div class="coverage" data-reveal="settle">
+      <div class="coverage">
         <div class="coverage__row">
           <span class="coverage__label">EU + UK patterns</span>
           <ul class="coverage__list" role="list">
@@ -1203,60 +398,57 @@ pii-shield --version
       <p style="margin-top: 14px; font-size: 13.5px; color: var(--fg-dim);">Full enumerated list of 33 types in <a href="#entities" class="accent">§10 Entity types</a>.</p>
     </section>
 
-    <div class="divider"><span class="divider__num">04</span><span class="divider__txt">command reference</span></div>
-
     <!-- ═════════════════════════════════ 04 COMMAND REFERENCE ═════════════════════════════════ -->
-    <section id="commands" class="section" data-toc-target>
+    <section id="commands" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">04</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Command reference</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">One engine. Two surfaces.</h2>
-      <p class="section__lede">Toggle in the page header to swap panes. <strong>MCP</strong> exposes 17 tools to Claude Desktop / Claude Code via stdio. <strong>CLI</strong> exposes 11 commands to your shell. Same engine underneath — every entity, every session format, every audit log line is identical.</p>
+      <h2 class="section__h">One engine. Two surfaces.</h2>
+      <p class="section__lede"><strong>MCP</strong> exposes 17 tools to Claude Desktop / Claude Code via stdio. <strong>CLI</strong> exposes 11 commands to your shell. Same engine underneath — every entity, every session format, every audit log line is identical.</p>
 
       <!-- ─────────── MCP PANE ─────────── -->
-      <div data-show-when-surface="mcp">
-        <h3 class="subhead">17 MCP tools, four groups</h3>
-        <p class="prose"><span style="color:var(--fg-dim)">Hover any tool name for a one-line description. Each tool is a single MCP function callable from Claude Desktop. Inputs validated with Zod; errors return MCP-protocol-shaped <code>{ isError: true, content: [...] }</code> rather than throwing.</span></p>
+      <div>
+        <h3 class="subhead">MCP plugin · 17 tools, four groups</h3>
+        <p class="prose dim">Each tool is a single MCP function callable from Claude Desktop. Inputs validated with Zod; errors return MCP-protocol-shaped <code>{ isError: true, content: [...] }</code> rather than throwing.</p>
 
-        <div class="tools" data-reveal="settle">
+        <div class="tools">
           <div class="tool-group">
             <div class="tool-group__title"><span>Anonymize</span><span class="tool-group__count">4</span></div>
             <div class="tool-list">
-              <div class="tool" title="Read a file from disk and produce an anonymized copy. Returns a path + session id — file content never leaves the machine."><span class="tool__name">anonymize_file</span><span class="tool__hint">core</span></div>
-              <div class="tool" title="Anonymize a string in memory. Useful for chat-pasted snippets or testing."><span class="tool__name">anonymize_text</span></div>
-              <div class="tool" title="Anonymize a .docx while preserving formatting and tracked changes. Embeds session_id in Word custom properties."><span class="tool__name">anonymize_docx</span></div>
-              <div class="tool" title="Continue a chunked anonymization for very large documents. Maintains placeholder consistency across chunks."><span class="tool__name">anonymize_next_chunk</span></div>
+              <div class="tool"><span class="tool__name">anonymize_file</span><span class="tool__hint">core</span><span class="tool__desc">Read a file from disk and produce an anonymized copy. Returns a path + session id — file content never leaves the machine.</span></div>
+              <div class="tool"><span class="tool__name">anonymize_text</span><span class="tool__desc">Anonymize a string in memory. Useful for chat-pasted snippets or testing.</span></div>
+              <div class="tool"><span class="tool__name">anonymize_docx</span><span class="tool__desc">Anonymize a .docx while preserving formatting and tracked changes. Embeds session_id in Word custom properties.</span></div>
+              <div class="tool"><span class="tool__name">anonymize_next_chunk</span><span class="tool__desc">Continue a chunked anonymization for very large documents. Maintains placeholder consistency across chunks.</span></div>
             </div>
           </div>
           <div class="tool-group">
             <div class="tool-group__title"><span>Review</span><span class="tool-group__count">5</span></div>
             <div class="tool-list">
-              <div class="tool" title="Open the human-in-the-loop iframe inside Claude Desktop. Add/remove/edit detected entities."><span class="tool__name">start_review</span></div>
-              <div class="tool" title="Apply user edits from the review iframe — propagate across all entity occurrences in the session."><span class="tool__name">apply_review_overrides</span></div>
-              <div class="tool" title="Return the full anonymized text for the current session."><span class="tool__name">get_full_anonymized_text</span></div>
-              <div class="tool" title="Restore PII placeholders → real values in a string."><span class="tool__name">deanonymize_text</span></div>
-              <div class="tool" title="Restore PII in a docx using its embedded session_id. Works across new chats and sessions."><span class="tool__name">deanonymize_docx</span></div>
+              <div class="tool"><span class="tool__name">start_review</span><span class="tool__desc">Open the human-in-the-loop iframe inside Claude Desktop. Add/remove/edit detected entities.</span></div>
+              <div class="tool"><span class="tool__name">apply_review_overrides</span><span class="tool__desc">Apply user edits from the review iframe — propagate across all entity occurrences in the session.</span></div>
+              <div class="tool"><span class="tool__name">get_full_anonymized_text</span><span class="tool__desc">Return the full anonymized text for the current session.</span></div>
+              <div class="tool"><span class="tool__name">deanonymize_text</span><span class="tool__desc">Restore PII placeholders → real values in a string.</span></div>
+              <div class="tool"><span class="tool__name">deanonymize_docx</span><span class="tool__desc">Restore PII in a docx using its embedded session_id. Works across new chats and sessions.</span></div>
             </div>
           </div>
           <div class="tool-group">
             <div class="tool-group__title"><span>Session</span><span class="tool-group__count">3</span></div>
             <div class="tool-list">
-              <div class="tool" title="Pack mapping + anonymized files into an encrypted .pii-session archive (AES-GCM via scrypt). Pass a passphrase."><span class="tool__name">export_session</span></div>
-              <div class="tool" title="Unlock a .pii-session archive and load its mapping + files. PII never transits unencrypted."><span class="tool__name">import_session</span></div>
-              <div class="tool" title="Inspect the placeholder ↔ value mapping for the current session."><span class="tool__name">get_mapping</span></div>
+              <div class="tool"><span class="tool__name">export_session</span><span class="tool__desc">Pack mapping + anonymized files into an encrypted .pii-session archive (AES-GCM via scrypt). Pass a passphrase.</span></div>
+              <div class="tool"><span class="tool__name">import_session</span><span class="tool__desc">Unlock a .pii-session archive and load its mapping + files. PII never transits unencrypted.</span></div>
+              <div class="tool"><span class="tool__name">get_mapping</span><span class="tool__desc">Inspect the placeholder ↔ value mapping for the current session.</span></div>
             </div>
           </div>
           <div class="tool-group">
             <div class="tool-group__title"><span>Utility</span><span class="tool-group__count">5</span></div>
             <div class="tool-list">
-              <div class="tool" title="Preview-only: detect entities without creating a session."><span class="tool__name">scan_text</span><span class="tool__hint">preview</span></div>
-              <div class="tool" title="List all detected entities in the active session, grouped by type."><span class="tool__name">list_entities</span></div>
-              <div class="tool" title="Resolve a path inside a connected folder — handles relative refs."><span class="tool__name">find_file</span></div>
-              <div class="tool" title="Resolve a relative or absolute path against the connected workspace."><span class="tool__name">resolve_path</span></div>
-              <div class="tool" title="Install the GLiNER model from a local download. Used during setup."><span class="tool__name">install_model_from_download</span></div>
+              <div class="tool"><span class="tool__name">scan_text</span><span class="tool__hint">preview</span><span class="tool__desc">Preview-only: detect entities without creating a session.</span></div>
+              <div class="tool"><span class="tool__name">list_entities</span><span class="tool__desc">List all detected entities in the active session, grouped by type.</span></div>
+              <div class="tool"><span class="tool__name">find_file</span><span class="tool__desc">Resolve a path inside a connected folder — handles relative refs.</span></div>
+              <div class="tool"><span class="tool__name">resolve_path</span><span class="tool__desc">Resolve a relative or absolute path against the connected workspace.</span></div>
+              <div class="tool"><span class="tool__name">install_model_from_download</span><span class="tool__desc">Install the GLiNER model from a local download. Used during setup.</span></div>
             </div>
           </div>
         </div>
@@ -1280,41 +472,41 @@ pii-shield --version
       </div>
 
       <!-- ─────────── CLI PANE ─────────── -->
-      <div data-show-when-surface="cli">
-        <h3 class="subhead">11 CLI commands, four groups</h3>
-        <p class="prose"><span style="color:var(--fg-dim)">All commands share two global flags: <code>-q, --quiet</code> (suppresses progress + summary), <code>--debug</code> (full audit trail + stack traces). Session ids accept <strong>unique prefixes</strong> (git-style): <code>pii-shield review 2026-04</code> works if exactly one session matches.</span></p>
+      <div style="margin-top: 40px;">
+        <h3 class="subhead">CLI · 11 commands, four groups</h3>
+        <p class="prose dim">All commands share two global flags: <code>-q, --quiet</code> (suppresses progress + summary), <code>--debug</code> (full audit trail + stack traces). Session ids accept <strong>unique prefixes</strong> (git-style): <code>pii-shield review 2026-04</code> works if exactly one session matches.</p>
 
-        <div class="tools" data-reveal="settle">
+        <div class="tools">
           <div class="tool-group">
             <div class="tool-group__title"><span>Core</span><span class="tool-group__count">4</span></div>
             <div class="tool-list">
-              <a class="tool" href="#cli-anonymize" title="Anonymize one or more files. Files share session and placeholder pool."><span class="tool__name">anonymize</span><span class="tool__hint">core</span></a>
-              <a class="tool" href="#cli-deanonymize" title="Restore PII from placeholders. Works across machines after import."><span class="tool__name">deanonymize</span></a>
-              <a class="tool" href="#cli-scan" title="Detect PII without writing — preview mode, JSON-friendly."><span class="tool__name">scan</span></a>
-              <a class="tool" href="#cli-verify" title="Re-detect PII on an anonymized file; fail if any leak found. Use as a CI gate."><span class="tool__name">verify</span><span class="tool__hint">gate</span></a>
+              <a class="tool" href="#cli-anonymize"><span class="tool__name">anonymize</span><span class="tool__hint">core</span><span class="tool__desc">Anonymize one or more files. Files share session and placeholder pool.</span></a>
+              <a class="tool" href="#cli-deanonymize"><span class="tool__name">deanonymize</span><span class="tool__desc">Restore PII from placeholders. Works across machines after import.</span></a>
+              <a class="tool" href="#cli-scan"><span class="tool__name">scan</span><span class="tool__desc">Detect PII without writing — preview mode, JSON-friendly.</span></a>
+              <a class="tool" href="#cli-verify"><span class="tool__name">verify</span><span class="tool__hint">gate</span><span class="tool__desc">Re-detect PII on an anonymized file; fail if any leak found. Use as a CI gate.</span></a>
             </div>
           </div>
           <div class="tool-group">
             <div class="tool-group__title"><span>Sessions</span><span class="tool-group__count">5</span></div>
             <div class="tool-list">
-              <a class="tool" href="#cli-sessions-list" title="Table of local sessions, newest first."><span class="tool__name">sessions list</span></a>
-              <a class="tool" href="#cli-sessions-show" title="Detail view: documents, review status, source SHA-256."><span class="tool__name">sessions show</span></a>
-              <a class="tool" href="#cli-sessions-find" title="Find which session(s) include a given source file."><span class="tool__name">sessions find</span></a>
-              <a class="tool" href="#cli-sessions-export" title="Encrypted archive (AES-256-GCM) for cross-machine handoff."><span class="tool__name">sessions export</span></a>
-              <a class="tool" href="#cli-sessions-import" title="Decrypt and persist a session archive."><span class="tool__name">sessions import</span></a>
+              <a class="tool" href="#cli-sessions-list"><span class="tool__name">sessions list</span><span class="tool__desc">Table of local sessions, newest first.</span></a>
+              <a class="tool" href="#cli-sessions-show"><span class="tool__name">sessions show</span><span class="tool__desc">Detail view: documents, review status, source SHA-256.</span></a>
+              <a class="tool" href="#cli-sessions-find"><span class="tool__name">sessions find</span><span class="tool__desc">Find which session(s) include a given source file.</span></a>
+              <a class="tool" href="#cli-sessions-export"><span class="tool__name">sessions export</span><span class="tool__desc">Encrypted archive (AES-256-GCM) for cross-machine handoff.</span></a>
+              <a class="tool" href="#cli-sessions-import"><span class="tool__name">sessions import</span><span class="tool__desc">Decrypt and persist a session archive.</span></a>
             </div>
           </div>
           <div class="tool-group">
             <div class="tool-group__title"><span>Review</span><span class="tool-group__count">1</span></div>
             <div class="tool-list">
-              <a class="tool" href="#cli-review" title="Open the HITL review UI in your default browser for an existing session."><span class="tool__name">review</span></a>
+              <a class="tool" href="#cli-review"><span class="tool__name">review</span><span class="tool__desc">Open the HITL review UI in your default browser for an existing session.</span></a>
             </div>
           </div>
           <div class="tool-group">
             <div class="tool-group__title"><span>Diagnostics</span><span class="tool-group__count">2</span></div>
             <div class="tool-list">
-              <a class="tool" href="#cli-doctor" title="Health check — Node version, write permissions, model presence, deps cache."><span class="tool__name">doctor</span></a>
-              <a class="tool" href="#cli-install-model" title="Download and install the GLiNER ONNX model (~634 MB)."><span class="tool__name">install-model</span></a>
+              <a class="tool" href="#cli-doctor"><span class="tool__name">doctor</span><span class="tool__desc">Health check — Node version, write permissions, model presence, deps cache.</span></a>
+              <a class="tool" href="#cli-install-model"><span class="tool__name">install-model</span><span class="tool__desc">Download and install the GLiNER ONNX model (~634 MB).</span></a>
             </div>
           </div>
         </div>
@@ -1327,7 +519,7 @@ pii-shield --version
           <div class="cmd-detail__body">
             <p>Anonymize one or more files. <strong>All files in one invocation share one session and one mapping pool</strong> — identical entities across files get the same placeholder. Supported inputs: <code>.pdf</code>, <code>.docx</code>, <code>.txt</code>, <code>.md</code>, <code>.csv</code>, <code>.log</code>, <code>.html</code>.</p>
             <div class="cmd-detail__lbl">Options</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Flag</th><th>Default</th><th>Description</th></tr></thead>
               <tbody>
                 <tr><td><code>-o, --out &lt;dir&gt;</code></td><td><code>&lt;input-dir&gt;/pii_shield_&lt;sid&gt;/</code></td><td>Single output directory for all files in this run.</td></tr>
@@ -1345,7 +537,7 @@ pii-shield anonymize matter/*.pdf matter/*.docx --out anonymized/
 pii-shield anonymize new.pdf --session 2026-04-29
 pii-shield anonymize NDA.docx --json --yes</code>
             <div class="cmd-detail__lbl">Output formats</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Input</th><th>Output</th></tr></thead>
               <tbody>
                 <tr><td><code>.docx</code></td><td><code>&lt;name&gt;_anonymized.docx</code> (formatting preserved) <strong>and</strong> <code>&lt;name&gt;_anonymized.txt</code> (extracted text)</td></tr>
@@ -1364,7 +556,7 @@ pii-shield anonymize NDA.docx --json --yes</code>
           <div class="cmd-detail__body">
             <p>Restore real PII from placeholders. Works on any file containing placeholders that match a known session — even files an LLM authored externally, as long as the placeholders survived intact.</p>
             <div class="cmd-detail__lbl">Options</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Flag</th><th>Default</th><th>Description</th></tr></thead>
               <tbody>
                 <tr><td><code>-s, --session &lt;id&gt;</code></td><td>embedded → latest</td><td>Session id or unique prefix. Falls through .docx metadata, then latest session on machine.</td></tr>
@@ -1372,7 +564,7 @@ pii-shield anonymize NDA.docx --json --yes</code>
               </tbody>
             </table>
             <div class="cmd-detail__lbl">Session resolution priority</div>
-            <ol class="prose" style="font-size: 14px; color: var(--fg-dim); padding-left: 22px;">
+            <ol class="prose">
               <li>Explicit <code>--session &lt;id&gt;</code> wins.</li>
               <li>For <code>.docx</code> only: read <code>pii_shield.session_id</code> from <code>docProps/custom.xml</code> (auto-embedded by <code>anonymize</code>).</li>
               <li>Latest session on this machine.</li>
@@ -1390,7 +582,7 @@ pii-shield deanonymize summary.txt --session 2026-04 --out final.txt</code>
           <div class="cmd-detail__body">
             <p>Detect PII without writing anything. Useful for previewing what would be anonymized, or for piping JSON into custom workflows.</p>
             <div class="cmd-detail__lbl">Options</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Flag</th><th>Default</th><th>Description</th></tr></thead>
               <tbody>
                 <tr><td><code>--json</code></td><td>—</td><td>Emit machine-readable JSON to stdout.</td></tr>
@@ -1422,7 +614,7 @@ pii-shield scan chart.pdf --json &gt; entities.json</code>
           <div class="cmd-detail__body">
             <p>Re-detect PII on an anonymized file and <strong>fail if any non-placeholder entity is found</strong>. Use as a final compliance gate before sending output to an external LLM.</p>
             <div class="cmd-detail__lbl">Options</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Flag</th><th>Default</th><th>Description</th></tr></thead>
               <tbody>
                 <tr><td><code>-s, --session &lt;id&gt;</code></td><td><strong>required</strong></td><td>Session id or unique prefix.</td></tr>
@@ -1432,7 +624,7 @@ pii-shield scan chart.pdf --json &gt; entities.json</code>
               </tbody>
             </table>
             <div class="cmd-detail__lbl">How the check works</div>
-            <ol class="prose" style="font-size: 14px; color: var(--fg-dim); padding-left: 22px;">
+            <ol class="prose">
               <li>Re-runs the engine over the anonymized text.</li>
               <li>For each detected entity, checks if its text is a placeholder from the session's mapping (<code>&lt;PERSON_1&gt;</code>, etc.). Placeholders are skipped.</li>
               <li>Anything else → flagged as a possible leak (offset + 60-char context printed).</li>
@@ -1451,7 +643,7 @@ pii-shield verify summary.docx --session 2026-04 --json</code>
           <div class="cmd-detail__body">
             <p>Open the HITL review UI in your default browser for an existing session. Useful when you ran <code>anonymize --no-review</code> initially and want to review later, or after <code>sessions import</code> from another machine. The CLI prints a localhost URL with a 32-hex bearer token; only your machine + browser can reach it.</p>
             <div class="cmd-detail__lbl">Options</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Flag</th><th>Default</th><th>Description</th></tr></thead>
               <tbody>
                 <tr><td><code>-y, --yes</code></td><td>—</td><td>Auto-confirm any prompts.</td></tr>
@@ -1471,7 +663,7 @@ pii-shield verify summary.docx --session 2026-04 --json</code>
           <div class="cmd-detail__body">
             <p>Health check — verifies Node version, write permissions, model presence, deps cache, and NER status. Use as a CI gate before running anonymization in unattended pipelines.</p>
             <div class="cmd-detail__lbl">Options</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Flag</th><th>Default</th><th>Description</th></tr></thead>
               <tbody>
                 <tr><td><code>--json</code></td><td>—</td><td>Emit JSON to stdout.</td></tr>
@@ -1489,7 +681,7 @@ pii-shield doctor --json</code>
           <div class="cmd-detail__body">
             <p>Download and install the GLiNER ONNX model (~634 MB) into <code>~/.pii_shield/models/</code>. If a valid <code>gliner-pii-base-v1.0/model.onnx</code> already exists (&gt;100 MB), the command exits 0 without action unless <code>--force</code> is passed.</p>
             <div class="cmd-detail__lbl">Options</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Flag</th><th>Default</th><th>Description</th></tr></thead>
               <tbody>
                 <tr><td><code>--force</code></td><td>—</td><td>Reinstall over a present model.</td></tr>
@@ -1508,7 +700,7 @@ pii-shield install-model --force   <span class="comment"># reinstall over a pres
           <div class="cmd-detail__body">
             <p>Table of local sessions, newest first.</p>
             <div class="cmd-detail__lbl">Columns</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
               <tbody>
                 <tr><td><code>session_id</code></td><td>Format <code>YYYY-MM-DD_HHMMSS_xxxx</code></td></tr>
@@ -1553,7 +745,7 @@ pii-shield sessions find /tmp/missing.txt --json
           <div class="cmd-detail__body">
             <p>Export an encrypted archive (<code>.pii-session</code>) for hand-off to a colleague. AES-256-GCM with scrypt key derivation (N=16384, r=8, p=1). Wrong passphrase fails loudly — never silent corruption.</p>
             <div class="cmd-detail__lbl">Options</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Flag</th><th>Default</th><th>Description</th></tr></thead>
               <tbody>
                 <tr><td><code>-o, --out &lt;path&gt;</code></td><td><strong>required</strong></td><td>Output file path.</td></tr>
@@ -1561,7 +753,7 @@ pii-shield sessions find /tmp/missing.txt --json
               </tbody>
             </table>
             <div class="cmd-detail__lbl">Archive contents</div>
-            <ul class="bullets" style="color: var(--fg-dim); font-size: 13.5px; padding-left: 22px;">
+            <ul class="prose bullets">
               <li><code>manifest.json</code> — version + integrity hash</li>
               <li><code>mapping.json</code> — placeholder → real-PII mapping + per-doc metadata</li>
               <li><code>review.json</code> — HITL review state (if any)</li>
@@ -1579,7 +771,7 @@ pii-shield sessions find /tmp/missing.txt --json
           <div class="cmd-detail__body">
             <p>Decrypt and persist a session archive locally.</p>
             <div class="cmd-detail__lbl">Options</div>
-            <table class="doctable">
+            <table class="table">
               <thead><tr><th>Flag</th><th>Default</th><th>Description</th></tr></thead>
               <tbody>
                 <tr><td><code>-p, --passphrase &lt;p&gt;</code></td><td>(prompts)</td><td>Passphrase. Prompts (masked) if omitted.</td></tr>
@@ -1612,17 +804,14 @@ pii-shield sessions import a.pii-session --overwrite</code>
       </div>
     </section>
 
-    <div class="divider"><span class="divider__num">05</span><span class="divider__txt">workflows</span></div>
-
     <!-- ═════════════════════════════════ 05 WORKFLOWS ═════════════════════════════════ -->
-    <section id="workflows" class="section" data-toc-target>
+    <section id="workflows" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">05</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Workflows</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Five flows the engine is built for.</h2>
+      <h2 class="section__h">Five flows the engine is built for.</h2>
       <p class="section__lede">Each works on either surface — sessions exported from one open in the other, with the same mapping format on disk. Pick the one that matches your tooling.</p>
 
       <h3 class="subhead">1. Anonymize → external LLM → deanonymize</h3>
@@ -1638,12 +827,9 @@ pii-shield sessions import a.pii-session --overwrite</code>
 <span class="comment"># 3. Restore PII in the LLM output.</span>
 <span class="accent">pii-shield deanonymize</span> summary.docx --session 2026-04-29_120000_ab12
 <span class="comment"># → summary_restored.docx with real names back</span></code>
-      <div class="first-run">
-        <div class="first-run__icon" aria-hidden="true">›</div>
-        <div>
-          <div class="first-run__title">Prompt template that survives token round-trips</div>
-          <div class="first-run__body"><code>You are reviewing an anonymized contract. Tokens of the form &lt;PERSON_1&gt;, &lt;ORG_3&gt;, &lt;EMAIL_ADDRESS_2&gt; are anonymous placeholders. Keep them VERBATIM in your output — do not rephrase, translate, hyphenate, or split them. Treat them as opaque proper nouns.</code></div>
-        </div>
+      <div class="callout">
+        <div class="callout__label">Prompt template that survives token round-trips</div>
+        <p><code>You are reviewing an anonymized contract. Tokens of the form &lt;PERSON_1&gt;, &lt;ORG_3&gt;, &lt;EMAIL_ADDRESS_2&gt; are anonymous placeholders. Keep them VERBATIM in your output — do not rephrase, translate, hyphenate, or split them. Treat them as opaque proper nouns.</code></p>
       </div>
 
       <h3 class="subhead">2. Multi-file matter (one session, many docs)</h3>
@@ -1689,17 +875,14 @@ OUT=$(jq -r '.results[0].output_path' result.json)
 <span class="accent">pii-shield review</span> 2026-04-29_120000_ab12</code>
     </section>
 
-    <div class="divider"><span class="divider__num">06</span><span class="divider__txt">audit &amp; compliance</span></div>
-
     <!-- ═════════════════════════════════ 06 AUDIT ═════════════════════════════════ -->
-    <section id="audit" class="section" data-toc-target>
+    <section id="audit" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">06</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Audit &amp; compliance</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Three logs, all on disk. No telemetry.</h2>
+      <h2 class="section__h">Three logs, all on disk. No telemetry.</h2>
       <p class="section__lede">Everything PII Shield does is recorded locally. There is no telemetry endpoint to disable. If your DPO asks "what did the tool do with that file at 14:02 UTC," the answer is on your filesystem.</p>
 
       <h3 class="subhead">What leaves your machine</h3>
@@ -1714,7 +897,7 @@ OUT=$(jq -r '.results[0].output_path' result.json)
       <p class="prose">PII is <strong>truncated at 200 chars</strong> in the log. The full PII is only in <code>mappings/&lt;session&gt;.json</code> (mode <code>0o700</code>). To prove no PII left the machine, read the audit log: every external operation is recorded. There are no hidden side channels.</p>
 
       <h3 class="subhead">Trust boundary</h3>
-      <table class="doctable">
+      <table class="table">
         <thead><tr><th>Component</th><th>Trust level</th></tr></thead>
         <tbody>
           <tr><td>Source documents</td><td>Trusted</td></tr>
@@ -1735,17 +918,14 @@ rm ~/.pii_shield/audit/*.log</code>
       <p class="prose">Session archives use <strong>AES-256-GCM</strong> with a key derived via <strong>scrypt</strong> from the passphrase (parameters: N=16384, r=8, p=1). Archive format is versioned (<code>PII1</code> magic, version byte 0x01) so future PII Shield versions stay backward-compatible. Wrong passphrase = loud decryption failure (no silent corruption).</p>
     </section>
 
-    <div class="divider"><span class="divider__num">07</span><span class="divider__txt">hitl review</span></div>
-
     <!-- ═════════════════════════════════ 07 HITL ═════════════════════════════════ -->
-    <section id="hitl" class="section" data-toc-target>
+    <section id="hitl" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">07</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">HITL review</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Add what was missed. Remove false positives.</h2>
+      <h2 class="section__h">Add what was missed. Remove false positives.</h2>
       <p class="section__lede">A pre-flight panel that surfaces every detected entity before placeholders ship to any LLM. MCP renders it inside Claude Desktop as an iframe; CLI renders it in your default browser on a localhost port.</p>
 
       <h3 class="subhead">What you can do in the panel</h3>
@@ -1756,7 +936,7 @@ rm ~/.pii_shield/audit/*.log</code>
       </ul>
 
       <h3 class="subhead">MCP vs CLI rendering</h3>
-      <table class="doctable">
+      <table class="table">
         <thead><tr><th>Aspect</th><th>MCP</th><th>CLI</th></tr></thead>
         <tbody>
           <tr><td>Where it renders</td><td>Inside Claude Desktop (MCP Apps iframe)</td><td>Default browser, localhost</td></tr>
@@ -1771,7 +951,7 @@ rm ~/.pii_shield/audit/*.log</code>
       <p class="prose">When the session has ≥2 documents, the panel shows <strong>tabs at the top</strong> — one per document. Each doc keeps independent removed / added state. Approve once per tab; when all tabs are approved, the success overlay appears and the CLI continues. <strong>Adding</strong> an entity in one tab propagates word-boundary matches across all other tabs (case-insensitive). <strong>Removing</strong> is per-tab.</p>
 
       <h3 class="subhead">Keyboard shortcuts</h3>
-      <table class="doctable">
+      <table class="table">
         <thead><tr><th>Key</th><th>Action</th></tr></thead>
         <tbody>
           <tr><td><code>Tab</code> / <code>Shift+Tab</code></td><td>Next / previous entity</td></tr>
@@ -1791,17 +971,14 @@ rm ~/.pii_shield/audit/*.log</code>
       </ul>
     </section>
 
-    <div class="divider"><span class="divider__num">08</span><span class="divider__txt">cross-machine handoff</span></div>
-
     <!-- ═════════════════════════════════ 08 HANDOFF ═════════════════════════════════ -->
-    <section id="handoff" class="section" data-toc-target>
+    <section id="handoff" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">08</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Cross-machine handoff</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Move a session safely between machines.</h2>
+      <h2 class="section__h">Move a session safely between machines.</h2>
       <p class="section__lede">A colleague needs to deanonymize the LLM output, but the anonymization happened on your machine. The <code>.pii-session</code> archive packs the mapping + review state, encrypted with a passphrase. PII never transits in plain form. Both surfaces produce and consume the same archive format.</p>
 
       <h3 class="subhead">Step-by-step</h3>
@@ -1841,21 +1018,18 @@ rm ~/.pii_shield/audit/*.log</code>
       <p class="prose">Crypto: AES-256-GCM, key derived via scrypt (N=16384, r=8, p=1). Wrong passphrase fails loudly with <code>wrong passphrase or corrupted archive</code> — no silent corruption.</p>
     </section>
 
-    <div class="divider"><span class="divider__num">09</span><span class="divider__txt">python / scripting</span></div>
-
     <!-- ═════════════════════════════════ 09 PYTHON ═════════════════════════════════ -->
-    <section id="scripting" class="section" data-toc-target>
+    <section id="scripting" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">09</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Python / scripting integration</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Every command speaks JSON.</h2>
+      <h2 class="section__h">Every command speaks JSON.</h2>
       <p class="section__lede">There is no separate Python SDK — the CLI <strong>is</strong> the integration surface. Every read-side command supports <code>--json</code>; exit codes are stable; subprocess spawn is the integration pattern. For high-throughput pipelines, the same backend exposes MCP via stdio.</p>
 
       <h3 class="subhead">JSON outputs by command</h3>
-      <table class="doctable">
+      <table class="table">
         <thead><tr><th>Command</th><th>--json available</th><th>Top-level keys</th></tr></thead>
         <tbody>
           <tr><td><code>anonymize</code></td><td>✓</td><td><code>session_id</code>, <code>entity_count</code>, <code>pool_size</code>, <code>ner_ready</code>, <code>results[]</code></td></tr>
@@ -1949,54 +1123,48 @@ result = shield.anonymize(file)</code>
       </ul>
     </section>
 
-    <div class="divider"><span class="divider__num">10</span><span class="divider__txt">entity types</span></div>
-
     <!-- ═════════════════════════════════ 10 ENTITIES ═════════════════════════════════ -->
-    <section id="entities" class="section" data-toc-target>
+    <section id="entities" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">10</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Detected entity types</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">33 types, grouped by source.</h2>
+      <h2 class="section__h">33 types, grouped by source.</h2>
       <p class="section__lede">Authoritative list lives in <code>nodejs-v2/src/engine/entity-types.ts</code> (<code>SUPPORTED_ENTITIES</code>). NER detections come from GLiNER zero-shot; the rest are pattern recognizers.</p>
 
       <h3 class="subhead">NER-based (4)</h3>
-      <div class="stack-row"><span class="tag">PERSON</span><span class="tag">ORGANIZATION</span><span class="tag">LOCATION</span><span class="tag">NRP</span></div>
+      <div class="tags"><span class="tag">PERSON</span><span class="tag">ORGANIZATION</span><span class="tag">LOCATION</span><span class="tag">NRP</span></div>
 
       <h3 class="subhead">Generic patterns (9)</h3>
-      <div class="stack-row"><span class="tag">EMAIL_ADDRESS</span><span class="tag">PHONE_NUMBER</span><span class="tag">URL</span><span class="tag">IP_ADDRESS</span><span class="tag">ID_DOC</span><span class="tag">CREDIT_CARD</span><span class="tag">IBAN_CODE</span><span class="tag">CRYPTO</span><span class="tag">MEDICAL_LICENSE</span></div>
+      <div class="tags"><span class="tag">EMAIL_ADDRESS</span><span class="tag">PHONE_NUMBER</span><span class="tag">URL</span><span class="tag">IP_ADDRESS</span><span class="tag">ID_DOC</span><span class="tag">CREDIT_CARD</span><span class="tag">IBAN_CODE</span><span class="tag">CRYPTO</span><span class="tag">MEDICAL_LICENSE</span></div>
 
       <h3 class="subhead">United States (3)</h3>
-      <div class="stack-row"><span class="tag">US_SSN</span><span class="tag">US_PASSPORT</span><span class="tag">US_DRIVER_LICENSE</span></div>
+      <div class="tags"><span class="tag">US_SSN</span><span class="tag">US_PASSPORT</span><span class="tag">US_DRIVER_LICENSE</span></div>
 
       <h3 class="subhead">United Kingdom (5)</h3>
-      <div class="stack-row"><span class="tag">UK_NHS</span><span class="tag">UK_NIN</span><span class="tag">UK_PASSPORT</span><span class="tag">UK_CRN</span><span class="tag">UK_DRIVING_LICENCE</span></div>
+      <div class="tags"><span class="tag">UK_NHS</span><span class="tag">UK_NIN</span><span class="tag">UK_PASSPORT</span><span class="tag">UK_CRN</span><span class="tag">UK_DRIVING_LICENCE</span></div>
 
       <h3 class="subhead">EU-wide (2)</h3>
-      <div class="stack-row"><span class="tag">EU_VAT</span><span class="tag">EU_PASSPORT</span></div>
+      <div class="tags"><span class="tag">EU_VAT</span><span class="tag">EU_PASSPORT</span></div>
 
       <h3 class="subhead">Country-specific (10)</h3>
-      <div class="stack-row"><span class="tag">DE_TAX_ID</span><span class="tag">DE_SOCIAL_SECURITY</span><span class="tag">FR_NIR</span><span class="tag">FR_CNI</span><span class="tag">IT_FISCAL_CODE</span><span class="tag">IT_VAT</span><span class="tag">ES_DNI</span><span class="tag">ES_NIE</span><span class="tag">CY_TIC</span><span class="tag">CY_ID_CARD</span></div>
+      <div class="tags"><span class="tag">DE_TAX_ID</span><span class="tag">DE_SOCIAL_SECURITY</span><span class="tag">FR_NIR</span><span class="tag">FR_CNI</span><span class="tag">IT_FISCAL_CODE</span><span class="tag">IT_VAT</span><span class="tag">ES_DNI</span><span class="tag">ES_NIE</span><span class="tag">CY_TIC</span><span class="tag">CY_ID_CARD</span></div>
 
       <p class="prose" style="margin-top: 24px;">List at runtime in JSON: <code>pii-shield scan small.txt --json | jq '.entities[].type' | sort -u</code> (assuming the sample file has at least one of each type you want to confirm).</p>
     </section>
 
-    <div class="divider"><span class="divider__num">11</span><span class="divider__txt">stack &amp; versioning</span></div>
-
     <!-- ═════════════════════════════════ 11 STACK ═════════════════════════════════ -->
-    <section id="stack" class="section" data-toc-target>
+    <section id="stack" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">11</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Stack &amp; versioning</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">What's underneath.</h2>
+      <h2 class="section__h">What's underneath.</h2>
 
-      <div class="stack-row__label">Built with</div>
-      <div class="stack-row">
+      <h3 class="subhead">Built with</h3>
+      <div class="tags">
         <span class="tag">Node.js 22+</span>
         <span class="tag">MCP (Model Context Protocol)</span>
         <span class="tag">commander.js (CLI)</span>
@@ -2012,8 +1180,8 @@ result = shield.anonymize(file)</code>
         <span class="tag">MIT</span>
       </div>
 
-      <div class="stack-row__label">Tested on</div>
-      <div class="stack-row">
+      <h3 class="subhead">Tested on</h3>
+      <div class="tags">
         <span class="tag">Ubuntu</span>
         <span class="tag">Windows</span>
         <span class="tag">macOS</span>
@@ -2023,24 +1191,21 @@ result = shield.anonymize(file)</code>
         <span class="tag">MCP protocol smoke</span>
       </div>
 
-      <div class="stack-row__label">Versioning</div>
+      <h3 class="subhead">Versioning</h3>
       <div class="prose">
-        <p>Current release: <strong>v2.1.0</strong> (production). v1 was Python + Presidio + spaCy and remains downloadable in <code>gregmos/PII-Shield</code> for legacy installs. v2.1.0 is a complete Node.js rewrite — same detection coverage, no Python.</p>
+        <p>Current release: see the <a href="https://github.com/gregmos/PII-Shield/releases/latest" target="_blank" rel="noopener">latest tag on GitHub</a>. v1 was Python + Presidio + spaCy and remains downloadable from older tags for legacy installs. v2 is a complete Node.js rewrite — same detection coverage, no Python.</p>
         <p>The CLI ships from the same monorepo as the MCP server (<code>nodejs-v2/cli/</code>). Both surfaces share the engine in <code>src/engine/</code>, so version numbers stay aligned.</p>
       </div>
     </section>
 
-    <div class="divider"><span class="divider__num">12</span><span class="divider__txt">limits &amp; caveats</span></div>
-
     <!-- ═════════════════════════════════ 12 LIMITS ═════════════════════════════════ -->
-    <section id="limits" class="section" data-toc-target>
+    <section id="limits" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">12</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Limits &amp; caveats</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Things to know up front.</h2>
+      <h2 class="section__h">Things to know up front.</h2>
 
       <ul class="prose bullets">
         <li><strong>HITL via browser only (CLI)</strong> — there's no terminal review UI. SSH / headless setups must <code>--no-review</code> and rely on default thresholds, then verify with <code>verify</code>.</li>
@@ -2054,7 +1219,7 @@ result = shield.anonymize(file)</code>
       </ul>
 
       <h3 class="subhead">Performance envelope</h3>
-      <table class="doctable">
+      <table class="table">
         <thead><tr><th>Batch</th><th>Cold start</th><th>Warm</th></tr></thead>
         <tbody>
           <tr><td>1 short doc (5 KB text)</td><td>2–3 min (deps + model on first ever run)</td><td>1–2 s</td></tr>
@@ -2066,17 +1231,14 @@ result = shield.anonymize(file)</code>
       <p class="prose">Disable HITL (<code>--no-review</code>) for unattended batches. Tune <code>PII_NER_THRESHOLD=0.4</code> for a 20–30% speedup if you can tolerate slightly lower recall.</p>
     </section>
 
-    <div class="divider"><span class="divider__num">13</span><span class="divider__txt">troubleshooting</span></div>
-
     <!-- ═════════════════════════════════ 13 TROUBLESHOOTING ═════════════════════════════════ -->
-    <section id="troubleshooting" class="section" data-toc-target>
+    <section id="troubleshooting" class="section">
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">13</span>
-        <span class="section-label__slash">/</span>
         <span class="section-label__title">Troubleshooting</span>
       </div>
-      <h2 class="section__h" data-reveal="settle">Common errors. Click for the fix.</h2>
+      <h2 class="section__h">Common errors and the fix for each.</h2>
       <p class="section__lede">For deeper diagnostics, set <code>PII_DEBUG=true</code> on any command and tail <code>~/.pii_shield/audit/server.log</code> live.</p>
 
       <div class="faq">
@@ -2177,134 +1339,22 @@ tail -f ~/.pii_shield/audit/ner_init.log   <span class="comment"># NER bootstrap
   </main>
 
   <footer class="footer">
-    <div class="footer__col">
-      <div class="footer__copy">© <span id="year">2026</span> Grigorii Moskalev</div>
-      <div><a href="/">← Back to home</a></div>
-      <div><a href="/pii-shield">← Back to product page</a></div>
-    </div>
-    <div class="footer__col footer__col--right">
-      <div><a href="https://github.com/gregmos/PII-Shield" target="_blank" rel="noopener">GitHub ↗</a></div>
-      <div><a href="https://github.com/gregmos/PII-Shield/releases" target="_blank" rel="noopener">Releases ↗</a></div>
-      <div><a href="https://github.com/gregmos/PII-Shield/issues" target="_blank" rel="noopener">Issues ↗</a></div>
-    </div>
+    <div>© <span id="year">2026</span> Grigorii Moskalev</div>
+    <div><a href="/pii-shield">Product page</a> &nbsp;·&nbsp; <a href="https://github.com/gregmos/PII-Shield/issues" target="_blank" rel="noopener">Issues ↗</a> &nbsp;·&nbsp; <a href="/">gmoskalev.com</a></div>
   </footer>
 
+  <script src="/assets/site.js?v=20260908"></script>
   <script>
+    // Open the matching <details> when the URL points at a command anchor.
     (function () {
-      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var html = document.documentElement;
-
-      // ─── 1. Theme toggle ───────────────────────────────────────────
-      var themeBtn = document.getElementById('themeToggle');
-      if (themeBtn) {
-        themeBtn.addEventListener('click', function () {
-          var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-          if (next === 'light') html.setAttribute('data-theme', 'light');
-          else html.removeAttribute('data-theme');
-          try { localStorage.setItem('theme', next); } catch (e) {}
-        });
+      function openHash() {
+        var h = window.location.hash;
+        if (!h) return;
+        var el = document.querySelector(h);
+        if (el && el.tagName === 'DETAILS') { el.open = true; el.scrollIntoView({ block: 'start' }); }
       }
-
-      // ─── 2. Surface toggle (MCP / CLI) ─────────────────────────────
-      var surfaceBtns = document.querySelectorAll('.surface-toggle__opt');
-      function syncSurfaceUI(surface) {
-        surfaceBtns.forEach(function (b) {
-          var isActive = b.getAttribute('data-surface-set') === surface;
-          b.classList.toggle('is-active', isActive);
-          b.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        });
-      }
-      syncSurfaceUI(html.getAttribute('data-surface') || 'mcp');
-      surfaceBtns.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var surface = btn.getAttribute('data-surface-set');
-          html.setAttribute('data-surface', surface);
-          try { localStorage.setItem('pii-shield-surface', surface); } catch (e) {}
-          syncSurfaceUI(surface);
-        });
-      });
-
-      // ─── 3. Coverage chip popover edge-clip guard ─────────────────
-      var coverageChips = document.querySelectorAll('.cov:not(.cov--generic)');
-      if (coverageChips.length) {
-        var edgeRaf = 0;
-        function updateEdgeFlags() {
-          edgeRaf = 0;
-          var vw = window.innerWidth;
-          if (vw <= 600) {
-            coverageChips.forEach(function (c) { c.classList.remove('is-edge-right'); });
-            return;
-          }
-          coverageChips.forEach(function (chip) {
-            var detail = chip.querySelector('.cov__detail');
-            if (!detail) return;
-            chip.classList.remove('is-edge-right');
-            var chipRect = chip.getBoundingClientRect();
-            var popWidth = detail.offsetWidth;
-            if (chipRect.left + popWidth + 8 > vw) chip.classList.add('is-edge-right');
-          });
-        }
-        function scheduleEdgeUpdate() {
-          if (edgeRaf) return;
-          edgeRaf = requestAnimationFrame(updateEdgeFlags);
-        }
-        if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleEdgeUpdate);
-        else scheduleEdgeUpdate();
-        window.addEventListener('resize', scheduleEdgeUpdate, { passive: true });
-      }
-
-      // ─── 4. Reveal observer ────────────────────────────────────────
-      var revealEls = document.querySelectorAll('[data-reveal]');
-      if (!prefersReduced) {
-        var revealIo = new IntersectionObserver(function (entries) {
-          entries.forEach(function (e) {
-            if (!e.isIntersecting) return;
-            e.target.classList.add('reveal--in');
-            revealIo.unobserve(e.target);
-          });
-        }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
-        revealEls.forEach(function (el) { revealIo.observe(el); });
-      } else {
-        revealEls.forEach(function (el) { el.classList.add('reveal--in'); });
-      }
-
-      // ─── 5. TOC scrollspy ──────────────────────────────────────────
-      var tocItems = document.querySelectorAll('.toc__item');
-      var spyTargets = document.querySelectorAll('[data-toc-target]');
-      if (tocItems.length && spyTargets.length) {
-        var spyIo = new IntersectionObserver(function (entries) {
-          entries.forEach(function (e) {
-            if (e.isIntersecting) {
-              var id = e.target.id;
-              tocItems.forEach(function (t) {
-                var isActive = t.getAttribute('data-toc') === id;
-                t.classList.toggle('is-active', isActive);
-                if (isActive) t.setAttribute('aria-current', 'location');
-                else t.removeAttribute('aria-current');
-              });
-            }
-          });
-        }, { rootMargin: '-30% 0px -60% 0px' });
-        spyTargets.forEach(function (s) { spyIo.observe(s); });
-      }
-
-      // ─── 6. Open accordion if URL has a matching #anchor ───────────
-      function openHashAccordion() {
-        var hash = window.location.hash;
-        if (!hash) return;
-        var el = document.querySelector(hash);
-        if (el && el.tagName === 'DETAILS') {
-          el.open = true;
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }
-      window.addEventListener('hashchange', openHashAccordion);
-      // Run after layout settles so scrollIntoView lands accurately.
-      setTimeout(openHashAccordion, 50);
-
-      // ─── 7. Year ───────────────────────────────────────────────────
-      var yearEl = document.getElementById('year');
-      if (yearEl) yearEl.textContent = new Date().getFullYear();
+      window.addEventListener('hashchange', openHash);
+      setTimeout(openHash, 50);
     })();
   </script>
 </body>
