@@ -33,7 +33,7 @@ I've also shipped legal-tech projects as a product owner, taking ideas from zero
 ## PII Shield
 
 - **Tagline:** Anonymize documents before Claude sees them. Restore real data after analysis.
-- **Status:** Live, v2.0.2
+- **Status:** Live. Current version and builds: https://github.com/gregmos/PII-Shield/releases/latest
 - **Repo:** https://github.com/gregmos/PII-Shield
 - **License:** MIT
 - **Stack:** Node.js, MCP, GLiNER, ONNX, DOCX
@@ -43,7 +43,7 @@ MCP server for Claude Desktop. Reads documents locally, swaps every name, ID, an
 ## memoforge
 
 - **Tagline:** From one legal question to a finished .docx memo.
-- **Status:** Live, v1.1.1
+- **Status:** Live. Current version and builds: https://github.com/gregmos/memoforge/releases/latest
 - **Repo:** https://github.com/gregmos/memoforge
 - **License:** MIT
 - **Stack:** Cowork plugin, 15 agents, IRAC, MCP citations, python-docx
@@ -53,11 +53,11 @@ Cowork plugin that mirrors a small legal team. A triage analyst clarifies missin
 ## Plain
 
 - **Tagline:** Double-click a .md file and you are reading.
-- **Status:** New, v0.2.1 (released 6 September 2026)
+- **Status:** New. Current version and builds: https://github.com/gregmos/plain/releases/latest
 - **Page:** https://gmoskalev.com/plain
 - **Repo:** https://github.com/gregmos/plain
 - **License:** MIT
-- **Downloads:** Windows 11 zip (single plain.exe, 7.5 MB, code-signed) — https://github.com/gregmos/plain/releases/download/v0.2.1/Plain-0.2.1-win-x64.zip; macOS 13+ universal dmg (14.7 MB, Developer ID signed and notarised) — https://github.com/gregmos/plain/releases/download/v0.2.1/Plain_0.2.1_universal.dmg
+- **Downloads:** Windows zip (single plain.exe, code-signed) and macOS 13+ universal dmg (Developer ID signed and notarised) from the latest GitHub release — https://github.com/gregmos/plain/releases/latest
 - **Stack:** Tauri 2, Rust, React 19, TypeScript, CodeMirror 6, unified (remark/rehype), Shiki, KaTeX, Mermaid
 
 A lightweight Markdown reader and editor for Windows 11 and macOS. Three views of one document: `read` renders it, `edit` shows the source with syntax highlighting, `rich` shows the source with the markup hidden (Typora-style); `split` puts edit and read side by side. Switch with `Ctrl+/` or the mode bar; caret and scroll position survive the switch.
@@ -86,6 +86,34 @@ Skill that scans the App Store and the open web for knockoffs and cracked APKs o
 # Writing
 
 Notes on legal-AI work — originally posted on LinkedIn. Live index: https://gmoskalev.com/writing
+
+## Plain: a free Markdown reader and editor, because $15 was too expensive (7 Sep 2026)
+
+I have a $200 Claude subscription. Obviously, a $15 .md reading/editing app was too expensive to buy. Almost everything I get out of LLMs these days is markdown; I wanted a comfortable way to read and edit it. I could have bought Typora. Instead, I built Plain, a free, open-source Markdown reader and editor for Windows and macOS, and honestly I like it better than the $15 option. Inside: three views of the same file (reading, syntax-highlighted source, rich editing with the Markdown syntax hidden) plus a Word-style formatting toolbar and split view; tables, checklists, footnotes, callouts, KaTeX formulas, Mermaid diagrams, and images pasted from the clipboard; any folder becomes the library with a file tree, quick file search, full-text search, tags and backlinks; careful saving (anything you haven't edited stays untouched byte for byte, atomic saves, crash recovery drafts, 30-day version history, a warning if another app changes the file); fully local with no server, account or database; dark/light mode and export to HTML and PDF. MIT-licensed; source and installers (exe and dmg) on GitHub. (Source: https://www.linkedin.com/posts/grigorii-moskalev_i-have-a-200-claude-subscription-obviously-activity-7502624765489094656-ZIAD)
+
+## Legal engineer: a salesman, a builder, or both? (3 Sep 2026)
+
+Harvey's Legal Engineer program describes someone who has practiced law, knows LLM basics, thinks in workflows, explains things in plain terms and sees the pain points of a legal department: a connector between the solution and the customer. Fair enough; the biggest problem of legal AI is not hallucinations, it is adoption. In-house legal engineer job posts shift the focus to knowing the tools on the market and matching tool to process. Neither asks a legal engineer to build, although "engineer" is right there in the title. My take: a legal engineer is basically a product manager for legal work. He builds hypotheses, tests them, puts together an MVP, breaks it, rebuilds it, looks at the data, designs the workflow and the user experience. Building is not a prerequisite, it is the fastest way to test a hypothesis in 2 days instead of a month. First of all someone with product and commercial thinking (KPIs, pains, how to close them), good with data, able to measure the actual effect. Salesman or builder? Both are just tools. The job is to find the right problem and prove you fixed it. (Source: https://www.linkedin.com/posts/grigorii-moskalev_legal-engineer-is-a-salesman-a-builder-or-activity-7501214065789337600-Hmc5)
+
+## PII Shield now runs as a CLI (17 Jun 2026)
+
+Anonymize any document locally before it reaches an LLM, then restore the real data on your machine. 35 entity types across 17 jurisdictions, on-device, open source. Build it into your workflow; open a PR or an issue and say what it misses. Install: npm install -g pii-shield. (Source: https://www.linkedin.com/posts/grigorii-moskalev_pii-shield-now-runs-as-a-cli-anonymize-activity-7472925841824350209-kriG)
+
+## Shared matter context: the next battleground in legal tech? (12 Jun 2026)
+
+Most legal AI tools are built for one of two situations: a lawyer working alone, or a team inside one company. But a big chunk of legal work happens between two organizations, in-house and outside counsel, and that work still runs on email and attachments. In-house knows why the question came up and how much risk the business can actually live with; the firm knows how the market usually handles it. So each side's AI only sees its own half of the picture. Harvey and Legora are moving in this direction, but privilege, confidentiality, conflicts and hourly billing look much harder to solve than the tech itself. Will shared matter context become the next battleground in legal tech, or does the trust problem kill the idea? (Source: https://www.linkedin.com/posts/grigorii-moskalev_most-legal-ai-tools-are-built-for-one-of-activity-7471147635932815360-UWR0)
+
+## Mourning the junior lawyer misses the actual problem (9 Jun 2026)
+
+Part of my feed is mourning the junior lawyer, killed off by AI: no entry-level work, no way to learn, no path to senior. Firms have always trained juniors the way guilds trained apprentices: watch a senior, copy them, slowly pick it up over years. AI now does a lot of that entry-level work, but that work was never the point; it was how juniors absorbed judgment and a feel for how the firm thinks. Meanwhile a firm produces dozens of documents, hundreds of calls and constant research every day, and almost none of that expertise is saved or reused. It was never fixed because writing down how you think doesn't bring in fees. That's what changed: AI can do the costly part for almost nothing (summarize the call, pull the reasoning out of a thread, turn a finished matter into something a junior can study), and it all has to come together into one layer of what the firm knows today, with training that corrects itself as new work comes in. That's the new apprenticeship: what took years could take months. Not all of it transfers (when to push a client, how to read a room), but juniors clear the teachable part far faster. Instead of one more post mourning the junior lawyer, do something with the data already sitting inside your own firm. (Source: https://www.linkedin.com/posts/grigorii-moskalev_part-of-my-feed-is-mourning-the-junior-lawyer-activity-7470007107212455939-5CbE)
+
+## memoforge: free, cited, verifiable memoranda in your Claude Cowork (2 Jun 2026)
+
+Ask a general-purpose LLM for a legal memo and the output is fluent but generic; you can't verify it fast enough to trust it, and on a contested question it quietly picks a side. memoforge is an open-source plugin for Claude Cowork and Claude Code that turns one legal question into a finished, footnoted .docx memorandum. It runs a multi-agent pipeline set up like a small legal team: a triage analyst flags missing facts and asks for them; three researchers pull statutes, case law and regulator guidance in parallel; a sufficiency gate sends the team back until the research holds up; a currency check confirms the law is still good; a writer drafts in IRAC; five reviewers stress-test logic, clarity, citations, style and counter-arguments; a mediator consolidates; the writer revises up to three times; then a final polish. Sources come from two dedicated legal MCP servers: Legal Data Hunter (100+ jurisdictions, ingested from official registries like Légifrance and EUR-Lex) and CourtListener (US case law). Output: a formatted memo.docx with footnoted citations, a full source pack with every statute and case quoted verbatim and current-as-of dates, an honest verdict (approved or flagged for manual review), and a complete audit trail. It can learn your house style from your past memos. The trade: a full run takes 70–90 minutes and about 20–30% of a 5-hour window on the $200 Max plan. MIT-licensed and free. (Source: https://www.linkedin.com/posts/grigorii-moskalev_free-professional-cited-verifiable-memoranda-activity-7467470336482074624-zZGs)
+
+## Sometimes I forget I live in a bubble (20 May 2026)
+
+In my feed lawyers are forking MikeOSS, shipping projects in LegalQuants, writing skills and MCP servers; it feels like the whole profession has already moved. Then I step outside. A lawyer who actively uses AI told me about her team: out of 30, only 3–4 do anything meaningful with it; the rest paste a question into a generic chat once in a while. Four out of thirty, in 2026. Not building, just making AI a real part of the workflow. Fear of mistakes is the obvious explanation, but lawyers already rely on drafts from juniors, clauses from precedent banks and old templates, and review all of it anyway; AI output is not uniquely risky by default. So what is the real blocker: the billable hour punishing you for finishing in 3 hours instead of 12, no time to learn, or using AI still feeling like admitting you didn't do the work? Skills, incentives, trust, or culture? (Source: https://www.linkedin.com/posts/grigorii-moskalev_sometimes-i-forget-i-live-in-a-bubble-in-activity-7462750467803115520-Y0MP)
 
 ## Subagents vs Agent Teams in Claude (13 May 2026)
 
@@ -186,11 +214,11 @@ PII Shield runs the redaction step before the model sees anything. It's an MCP s
 
 ### v1 → v2 · the rewrite (developer view)
 
-v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2.0.2 is a complete Node.js rewrite over `onnxruntime-node` + `@xenova/transformers`: same detection coverage, no Python.
+v1 was Python + Presidio + spaCy — every install fought Claude Desktop's bundled runtime. v2 is a complete Node.js rewrite over `onnxruntime-node` + `@xenova/transformers`: same detection coverage, no Python.
 
 Plugin: 700 KB on Windows/Linux (host Node), or 83 MB on macOS (bundled Node 24.15.0). The 634 MB `gliner-pii-base-v1.0` model installs on-demand via an in-chat panel — never bundled in the artefact. CI runs the matrix on Ubuntu/Windows/macOS × Node 18/20.
 
-Both v1.0.0 and v2.0.2 release tags live in `gregmos/PII-Shield` — the v1 Python build remains downloadable for legacy installs.
+Current builds are always on https://github.com/gregmos/PII-Shield/releases/latest; the v1 Python build remains downloadable from older tags for legacy installs.
 
 ## Skill modes (six task-shaped workflows)
 
@@ -230,7 +258,7 @@ person · org · location · email · phone · IBAN · credit card · crypto wal
 
 Four steps. No terminal.
 
-1. **Download the artefacts** — pick the `.mcpb` for your OS plus the contract-analyze skill. Direct links to the v2.0.2 release: https://github.com/gregmos/PII-Shield/releases/tag/v2.0.2
+1. **Download the artefacts** — pick the `.mcpb` for your OS plus the contract-analyze skill. All three are attached to the latest release: https://github.com/gregmos/PII-Shield/releases/latest
 2. **Install in Claude Desktop** — Settings → Extensions → Advanced Settings → Install extension. On first call, PII Shield runs `npm ci --ignore-scripts` to install pinned runtime deps (`onnxruntime-node`, `@xenova/transformers`, `gliner`) into `~/.pii_shield/deps/` — 2-3 minutes once per machine, instant thereafter.
 3. **Connect a folder** with your documents — Claude Desktop → Settings → Connected folders. (Don't drag-attach files into the chat — the raw document hits the API before PII Shield can intercept.)
 4. **Use it from a chat** — pick the `pii-contract-analyze` skill, tell Claude what you need.
