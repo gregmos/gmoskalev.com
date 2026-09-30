@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>memoforge — From one legal question to a finished .docx memo.</title>
-  <meta name="description" content="memoforge is a Cowork plugin that turns a research-grade legal question into a footnoted .docx memorandum. A 15-agent pipeline runs intake, parallel statutory + case-law + doctrinal research, currency check, IRAC drafting, five-reviewer peer review, mediation, up to three revision rounds, and client-readiness polish — then ships memo.docx with the full source pack and reviewer audit trail." />
+  <meta name="description" content="memoforge is a plugin for Claude Code and Cowork that turns a research-grade legal question into a cited .docx memorandum. Intake, parallel research across ten legal MCP servers, a currency check, IRAC drafting, four reviewers, up to two revision rounds and a client-readiness polish, driven by a tested Python pipeline. Every memo ships with a frozen source pack and verifiable quotes; a three-page decision brief is one command away." />
 
   <link rel="canonical" href="https://gmoskalev.com/legal-memo-writer" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="memoforge — From one legal question to a finished .docx memo." />
-  <meta property="og:description" content="Cowork plugin that turns a research-grade legal question into a footnoted .docx memo. Multi-agent pipeline runs intake, parallel research, IRAC drafting, five-reviewer peer review, currency check, and polish — and ships the full source pack with every memo." />
+  <meta property="og:description" content="Plugin for Claude Code and Cowork that turns a legal question into a cited .docx memo: parallel research across ten legal MCP servers, IRAC drafting, four reviewers, a frozen source pack with verifiable quotes, and a decision brief on request." />
   <meta property="og:url" content="https://gmoskalev.com/legal-memo-writer" />
   <meta property="og:site_name" content="gmoskalev.com" />
 
@@ -26,7 +26,8 @@
         "url": "https://gmoskalev.com/legal-memo-writer",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Windows, macOS, Linux",
-        "description": "memoforge is a Cowork plugin that turns a research-grade legal question into a structured, footnoted .docx memorandum. A multi-agent pipeline mirrors a small legal team: a triage analyst clarifies missing facts, three researchers pull statutes, case law and regulator guidance in parallel, a currency check confirms the law is still good, a writer drafts IRAC, five reviewers stress-test the draft, a mediator consolidates findings, and the writer revises up to three rounds before client-readiness polish and .docx export.",
+        "description": "memoforge is a plugin for Claude Code and Cowork that turns a research-grade legal question into a structured, cited .docx memorandum. It runs the pipeline a small legal team would run: an analyst clarifies the missing facts, researchers pull statutes, case law and regulator guidance in parallel, a currency check confirms the law is still good, a writer drafts IRAC, four reviewers stress-test the draft against fixed checklists, a mediator consolidates the findings, and the writer revises before a client-readiness polish and export. Since v2 the pipeline lives in a tested Python package (the mf CLI); the model follows a three-command protocol.",
+        "softwareVersion": "2.0.0",
         "codeRepository": "https://github.com/gregmos/memoforge",
         "license": "https://opensource.org/licenses/MIT",
         "programmingLanguage": ["Python"],
@@ -34,16 +35,17 @@
         "author": { "@id": "https://gmoskalev.com/#person" },
         "creator": { "@id": "https://gmoskalev.com/#person" },
         "featureList": [
-          "Multi-agent pipeline: 15 specialists plus orchestrator",
-          "Parallel statutory, case-law and doctrinal research via Legal Data Hunter and CourtListener MCP servers",
-          "IRAC drafting with full citations and named contrary authority",
-          "Five-reviewer peer review: logic, citations, style, clarity, counter-arguments",
-          "Currency check on every cited statute and judgment",
-          "Brief mode (2–3 pages, 3 reviewers, 1 revision) and Full mode (5–8 pages, 5 reviewers, up to 3 revision rounds, polish)",
-          "Four mandatory user checkpoints — intake, mode pick, plan approval, source review",
-          "Honest verdict: approved, forced_exit_on_v3, or manual_review_required",
+          "Pipeline in code: phases, budgets, source freezing and citation provenance in a Python CLI with ~3,600 offline tests",
+          "Parallel research across ten bundled legal MCP servers: EU, UK, US, France, Switzerland, Russia and 230+ jurisdictions via Legal Data Hunter",
+          "Frozen source pack: raw copy, SHA-256 and currency date for every source",
+          "Verifiable quotations extracted from the saved source text by exact match",
+          "IRAC drafting with inline linked citations or real Word footnotes",
+          "Four reviewers on binary checklists: logic, form, citations, counterarguments",
+          "Up to two revision rounds and one client-readiness polish",
+          "Memos in English, German, French, Spanish or Russian",
+          "Decision brief: a three-page summary for a non-lawyer, checked against the memo for fidelity",
+          "Honest verdict: approved, forced exit with remaining issues, manual review required, or fallback summary",
           "Style Studio — turn example memos into a saved house-style profile",
-          "Formatted .docx export plus full research and review audit trail",
           "Runs locally — no shared backend, no telemetry"
         ]
       },
@@ -91,7 +93,7 @@
   </script>
 
   <style>
-    /* Page-specific components: pipeline, phases, modes, agents, bundle, checkpoints, examples. */
+    /* Page-specific components: pipeline, phases, memo/brief cards, agents, bundle, checkpoints, examples. */
 
     /* Lead-in phrases in prose ("Hallucinated citations.") */
     .prose > p > em:first-child { font-style: normal; font-weight: 600; color: var(--fg); }
@@ -173,7 +175,7 @@
     /* Output bundle: file tree */
     .bundle { border: 1px solid var(--hair); border-radius: var(--radius); background: var(--bg-elev); padding: 6px 20px 10px; }
     .bundle__root { display: block; font-family: var(--font-mono); font-size: 13px; color: var(--fg-dimmer); padding: 10px 0; border-bottom: 1px solid var(--hair); }
-    .bundle__row { display: grid; grid-template-columns: 160px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--hair); }
+    .bundle__row { display: grid; grid-template-columns: 210px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--hair); }
     .bundle__row:last-child { border-bottom: 0; }
     .bundle__name { font-family: var(--font-mono); font-size: 13px; color: var(--fg); padding-left: 16px; }
     .bundle__name--accent { color: var(--accent); }
@@ -181,6 +183,10 @@
     .bundle__name--warn { color: var(--warn); }
     .bundle__desc { font-size: var(--fs-sm); line-height: 1.5; color: var(--fg-dim); }
     @media (max-width: 560px) { .bundle__row { grid-template-columns: 1fr; gap: 2px; } .bundle__name { padding-left: 0; } }
+
+    /* Install steps: stacked command chips */
+    .step .code-chip { display: flex; width: fit-content; max-width: 100%; overflow-wrap: anywhere; }
+    .step .code-chip + .code-chip { margin-top: 6px; }
 
     /* Checkpoints */
     .checkpoints { margin-top: 40px; }
@@ -207,7 +213,7 @@
   <aside class="toc" aria-label="Table of contents">
     <a href="#pipeline" class="toc__item" data-spy="pipeline"><span class="toc__num">01</span>How it flows</a>
     <a href="#why" class="toc__item" data-spy="why"><span class="toc__num">02</span>Why this exists</a>
-    <a href="#modes" class="toc__item" data-spy="modes"><span class="toc__num">03</span>Two modes</a>
+    <a href="#modes" class="toc__item" data-spy="modes"><span class="toc__num">03</span>Memo and brief</a>
     <a href="#agents" class="toc__item" data-spy="agents"><span class="toc__num">04</span>The specialists</a>
     <a href="#output" class="toc__item" data-spy="output"><span class="toc__num">05</span>What you get</a>
     <a href="#style" class="toc__item" data-spy="style"><span class="toc__num">06</span>Style Studio</a>
@@ -246,12 +252,12 @@
       </div>
       <h1 class="subhero__title">memoforge<span class="caret" aria-hidden="true"></span></h1>
       <p class="subhero__tagline">From one legal question to a finished <code>.docx</code> memo.</p>
-      <p class="subhero__lede">Cowork plugin that mirrors a small legal team: <strong>fifteen specialists</strong> run intake, parallel research, IRAC drafting, five-reviewer peer review, and up to three revision rounds. You ask. The plugin works. You read.</p>
+      <p class="subhero__lede">Plugin for Claude Code and Cowork that runs the pipeline of a small legal team: intake, parallel research across <strong>ten legal databases</strong>, IRAC drafting, four reviewers and up to two revision rounds. Since v2 the pipeline lives in tested code, not in the model's memory. You ask. The plugin works. You read.</p>
       <p class="meta subhero__meta">
-        <span><span class="warn">New</span></span>
-        <span>Cowork plugin</span>
-        <span>Legal Data Hunter + CourtListener</span>
-        <span>Style Studio</span>
+        <span><span class="warn">v2.0.0</span></span>
+        <span>Claude Code + Cowork</span>
+        <span>10 legal MCP servers</span>
+        <span>EN · DE · FR · ES · RU</span>
         <span>MIT</span>
       </p>
       <div class="btn-row">
@@ -267,7 +273,7 @@
         <span class="section-label__title">How it flows</span>
       </div>
       <h2 class="section__h">From a research-grade question to a court-citable memo.</h2>
-      <p class="section__lede">A four-stage flow runs underneath: intake gathers facts and scope; three researchers go out in parallel; the writer drafts IRAC; five reviewers stress-test the draft, a mediator consolidates findings, the writer revises up to three rounds, and a client-readiness polish ships <code>memo.docx</code>. Nine phases, four mandatory human checkpoints.</p>
+      <p class="section__lede">A four-stage flow runs underneath: intake gathers facts and scope; researchers go out in parallel, one per layer of authority; code freezes the source pack; the writer drafts IRAC; four reviewers stress-test the draft, a mediator consolidates their findings, the writer revises up to two rounds, and a client-readiness polish ships the <code>.docx</code>. Ten steps, two checkpoints that always fire and one that fires only on exceptions.</p>
 
       <div class="pipeline">
         <div class="stage">
@@ -305,57 +311,61 @@
       </div>
 
       <div class="callout">
-        <div class="callout__label">Four mandatory user checkpoints</div>
-        <p>Intake answers, mode pick, plan approval, source review: you stay in control of scope. Everything between pauses runs autonomously.</p>
+        <div class="callout__label">Where it stops to ask you</div>
+        <p>Intake answers and plan approval, every time. Source review only when something needs you: a critical source left unresolved, conflicting authority, an exhausted database quota. Clean research goes straight to drafting. Everything between pauses runs on its own.</p>
       </div>
 
       <div class="phases">
         <div class="phases__col">
-          <div class="phases__head"><span>Intake</span><span class="phases__count">2 phases</span></div>
+          <div class="phases__head"><span>Intake</span><span class="phases__count">2 steps</span></div>
           <div class="phases__item">
             <span class="phases__num">01</span>
-            <div><span class="phases__name">Triage</span><span class="phases__desc">Identifies missing facts; gathers safe assumptions.</span></div>
+            <div><span class="phases__name">Triage</span><span class="phases__desc">Checks which databases answer, flags missing facts, proposes safe defaults. <span class="accent">You answer.</span></span></div>
           </div>
           <div class="phases__item">
             <span class="phases__num">02</span>
-            <div><span class="phases__name">Planning</span><span class="phases__desc">Selects template, scopes research. <span class="accent">You approve.</span></span></div>
+            <div><span class="phases__name">Planning</span><span class="phases__desc">Jurisdictions, issues, source types, your style profile. <span class="accent">You approve.</span></span></div>
           </div>
         </div>
         <div class="phases__col">
-          <div class="phases__head"><span class="remote">Research</span><span class="phases__count">2 phases</span></div>
+          <div class="phases__head"><span class="remote">Research</span><span class="phases__count">3 steps</span></div>
           <div class="phases__item">
             <span class="phases__num">03</span>
-            <div><span class="phases__name">Parallel research</span><span class="phases__desc">Statutes, case law, regulatory guidance — concurrent, MCP-routed.</span></div>
+            <div><span class="phases__name">Parallel research</span><span class="phases__desc">Statutes and case law, doctrine when the plan calls for it. Every source text saved and certified.</span></div>
           </div>
           <div class="phases__item">
             <span class="phases__num">04</span>
-            <div><span class="phases__name">Source pack</span><span class="phases__desc">Sufficiency + currency verified; evidence table assembled. <span class="accent">You review.</span></span></div>
+            <div><span class="phases__name">Sufficiency &amp; currency</span><span class="phases__desc">Gaps go back to research; stale or repealed law is flagged.</span></div>
           </div>
-        </div>
-        <div class="phases__col">
-          <div class="phases__head"><span>Draft</span><span class="phases__count">1 phase</span></div>
           <div class="phases__item">
             <span class="phases__num">05</span>
-            <div><span class="phases__name">Drafting</span><span class="phases__desc">IRAC structure per issue; full citations; no hedging.</span></div>
+            <div><span class="phases__name">Source pack</span><span class="phases__desc">Frozen by code: nothing new gets in. <span class="accent">You review only on exceptions.</span></span></div>
           </div>
         </div>
         <div class="phases__col">
-          <div class="phases__head"><span>Review &amp; ship</span><span class="phases__count">4 phases</span></div>
+          <div class="phases__head"><span>Draft</span><span class="phases__count">1 step</span></div>
           <div class="phases__item">
             <span class="phases__num">06</span>
-            <div><span class="phases__name">Peer review</span><span class="phases__desc">Up to 5 specialists stress-test the draft.</span></div>
+            <div><span class="phases__name">Drafting</span><span class="phases__desc">IRAC per issue, a risk line per subsection, quotes extracted from the pack.</span></div>
           </div>
+        </div>
+        <div class="phases__col">
+          <div class="phases__head"><span>Review &amp; ship</span><span class="phases__count">4 steps</span></div>
           <div class="phases__item">
             <span class="phases__num">07</span>
-            <div><span class="phases__name">Mediate &amp; revise</span><span class="phases__desc">Reviewer JSONs consolidated; writer revises — up to 3 rounds in Full.</span></div>
+            <div><span class="phases__name">Peer review</span><span class="phases__desc">Four reviewers, fixed binary checklists, in parallel.</span></div>
           </div>
           <div class="phases__item">
             <span class="phases__num">08</span>
-            <div><span class="phases__name">Polish</span><span class="phases__desc">Client-readiness final check.</span></div>
+            <div><span class="phases__name">Mediate &amp; revise</span><span class="phases__desc">One instruction list per round; the writer revises, up to 2 rounds.</span></div>
           </div>
           <div class="phases__item">
             <span class="phases__num">09</span>
-            <div><span class="phases__name">Export</span><span class="phases__desc">Formatted <code>.docx</code> plus full audit trail.</span></div>
+            <div><span class="phases__name">Polish</span><span class="phases__desc">One client-readiness pass.</span></div>
+          </div>
+          <div class="phases__item">
+            <span class="phases__num">10</span>
+            <div><span class="phases__name">Export</span><span class="phases__desc">Formatted <code>.docx</code>, summary, source pack and audit trail.</span></div>
           </div>
         </div>
       </div>
@@ -364,7 +374,7 @@
         <video class="demo-video__el" src="/videos/memoforge-promo.mp4" controls muted playsinline preload="metadata" controlslist="nodownload" aria-label="memoforge walkthrough: from a legal question to a finished .docx memo">
           Your browser doesn't support HTML5 video. <a href="/videos/memoforge-promo.mp4">Download the walkthrough</a>.
         </video>
-        <figcaption class="demo-video__cap">Walkthrough · 1:03</figcaption>
+        <figcaption class="demo-video__cap">Walkthrough · 1:03 · recorded on v1.1.1; v2 is the same shape with fewer, better-checked steps</figcaption>
       </figure>
     </section>
 
@@ -379,12 +389,14 @@
         <p><em>Hallucinated citations.</em> One model writing one draft will invent statutes and misquote cases. The model that wrote the citation has no incentive to verify it, so nothing catches the error before it reaches your inbox.</p>
         <p><em>No contrary authority.</em> The same model that drafted the analysis will not stress-test it. You get a confident one-sided read — and no idea where opposing counsel would attack first.</p>
         <p><em>No currency check.</em> A 2022 judgment that was overruled in 2024 will still show up as authority. A regulation cross-referencing a repealed act will still get cited. Nothing flags it.</p>
+        <p><em>Lost bookkeeping.</em> A long run outlives the model's context. When the conversation gets summarised, the step that froze the sources or counted the revisions is the first thing to go, and the memo still comes out looking finished.</p>
       </div>
       <div class="callout">
         <div class="callout__label">The fix</div>
         <p>memoforge runs specialists that <strong>disagree with each other</strong> before the memo ever reaches you.</p>
-        <p>A statutory researcher pulls primary acts. A citation auditor checks that every claim traces to a source. A currency checker verifies cited judgments still represent current law. A counter-argument reviewer drafts the opposing read. A mediator consolidates the disagreements into one revision list, and a client-readiness reviewer makes the final call.</p>
-        <p>The output isn't generic disclaimers — it's a memo with <strong>named contrary authority</strong>, concrete risk scores, and recommendations a partner can actually sign off on.</p>
+        <p>Researchers pull primary acts and case law. A citation auditor checks that every claim traces to a source. A currency checker verifies the law is still current. A counterargument reviewer reads the draft the way a regulator or opposing counsel would. A mediator consolidates the disagreements into one revision list, and a client-readiness reviewer makes the final call.</p>
+        <p>And since v2 the pipeline is <strong>code, not a prompt</strong>. Phases, budgets, source freezing, citation provenance and every write to the run's state belong to a Python package (the <code>mf</code> CLI) with about 3,600 offline tests behind it. The model follows one three-command protocol, <code>next → act → report</code>, and holds nothing that summarisation can erase.</p>
+        <p>The output isn't generic disclaimers. It's a memo with <strong>named contrary authority</strong>, a risk line per point, quotations you can check against the source, and recommendations a partner can actually sign off on.</p>
       </div>
     </section>
 
@@ -392,34 +404,32 @@
       <div class="section-label">
         <span class="section-label__sigil">§</span>
         <span class="section-label__num">03</span>
-        <span class="section-label__title">Two modes</span>
+        <span class="section-label__title">Memo and brief</span>
       </div>
-      <h2 class="section__h">Brief or Full — pick the depth at the second checkpoint.</h2>
-      <p class="section__lede">Both modes run the same orchestrator and the same gates. Brief stays narrow: statutory research only, three reviewers, one revision, no final polish. Full goes wide: statutes + case law + doctrine, all five reviewers, up to three revisions, and a client-readiness pass at the end.</p>
+      <h2 class="section__h">One full memo for lawyers. A three-page brief for the person who decides.</h2>
+      <p class="section__lede">There is no mode to pick any more: every run is Full, and the v1 Brief mode is gone. When the memo is done, <code>/memoforge:brief</code> condenses it for a decision maker who is not a lawyer, and checks that the short version still says what the memo says.</p>
 
       <div class="grid grid--2">
         <div class="card">
-          <div class="decision__head"><span>Brief</span><span class="decision__head-tag">quick check</span></div>
+          <div class="decision__head"><span>/memoforge:memo</span><span class="decision__head-tag">for lawyers</span></div>
           <dl class="decision__specs">
-            <dt>Length</dt><dd>2–3 pages</dd>
-            <dt>Research</dt><dd>statutory only</dd>
-            <dt>Reviewers</dt><dd>3 of 5</dd>
-            <dt>Revisions</dt><dd>1 round</dd>
-            <dt>Polish</dt><dd>no</dd>
+            <dt>Research</dt><dd>statutes + case law; doctrine when the plan calls for it</dd>
+            <dt>Reviewers</dt><dd>logic, form, citations, counterarguments</dd>
+            <dt>Revisions</dt><dd>up to 2 rounds</dd>
+            <dt>Polish</dt><dd>one client-readiness pass</dd>
+            <dt>Languages</dt><dd>EN, DE, FR, ES, RU</dd>
           </dl>
-          <p class="decision__when">Use for a <strong>low-stakes question</strong> — a deal term that just landed, a vendor's privacy claim, a fast read for an internal Slack thread.</p>
+          <p class="decision__when">The research-grade memorandum: IRAC per issue, a risk line per point, a frozen source pack and an honest verdict. Multi-part questions are fine; each part becomes its own analysed issue.</p>
         </div>
         <div class="card">
-          <div class="decision__head"><span>Full</span><span class="decision__head-tag">client-facing</span></div>
+          <div class="decision__head"><span>/memoforge:brief</span><span class="decision__head-tag">for the decision maker</span></div>
           <dl class="decision__specs">
-            <dt>Length</dt><dd>5–8 pages</dd>
-            <dt>Research</dt><dd>statutes + case law + doctrine</dd>
-            <dt>Reviewers</dt><dd>all 5</dd>
-            <dt>Revisions</dt><dd>up to 3 rounds</dd>
-            <dt>Polish</dt><dd>client-readiness pass</dd>
-            <dt>Runtime</dt><dd>~60–90 min wall-clock</dd>
+            <dt>Length</dt><dd>about 3 pages</dd>
+            <dt>Built from</dt><dd>the finished memo only, no new research</dd>
+            <dt>Keeps</dt><dd>high risks, amounts and sanctions, what you asked, actions due within 14 days</dd>
+            <dt>Checks</dt><dd>fidelity against the memo, readability for a non-lawyer, up to 2 rounds</dd>
           </dl>
-          <p class="decision__when">Use when the memo is <strong>going outside the legal team</strong> — pre-launch sign-off, regulatory response, board paper, contested or novel issue where a counter-argument review matters.</p>
+          <p class="decision__when">A bottom line, one block per kept conclusion with its risk and the rule it rests on, what to do, what the answer depends on, and one line for every point left out. <strong>Nothing added, no condition dropped, no risk level moved.</strong> The memo itself is never touched.</p>
         </div>
       </div>
     </section>
@@ -430,8 +440,8 @@
         <span class="section-label__num">04</span>
         <span class="section-label__title">The specialists</span>
       </div>
-      <h2 class="section__h">Fifteen specialists, one orchestrator.</h2>
-      <p class="section__lede">Each agent does one thing — and challenges the next one's output. A statutory researcher doesn't review style. A clarity reviewer doesn't check citations. Disagreement is the design, not a bug.</p>
+      <h2 class="section__h">Eleven specialists for the memo, two for the brief. Code keeps the books.</h2>
+      <p class="section__lede">Each agent does one thing and challenges the next one's output. A researcher doesn't review form. A logic reviewer sees the draft and nothing else. Disagreement is the design, not a bug. Every agent that judges substance runs on Opus; only the writer's model is yours to choose.</p>
 
       <div class="agents">
         <div class="agents__group">
@@ -440,31 +450,29 @@
             <div class="agents__hint">runs once · gates planning</div>
           </div>
           <div class="agents__grid">
-            <div class="agent"><div class="agent__slug">fact-assumption-analyst</div><div class="agent__role">Identifies missing facts, surfaces hidden variables, drafts safe defaults you can override.</div></div>
+            <div class="agent"><div class="agent__slug">fact-assumption-analyst</div><div class="agent__role">Finds the missing facts and legal variables that would change the answer, proposes a safe default for each, and runs a short preliminary pass for sources.</div></div>
           </div>
         </div>
 
         <div class="agents__group">
           <div class="agents__head">
-            <div><span class="agents__phase">Research</span><span class="agents__count">3 agents · parallel</span></div>
-            <div class="agents__hint">routes to <span class="accent">Legal Data Hunter</span> · <span class="accent">CourtListener</span> MCPs first</div>
+            <div><span class="agents__phase">Research</span><span class="agents__count">1 agent · one dispatch per layer, in parallel</span></div>
+            <div class="agents__hint">routes across <span class="accent">ten legal MCP servers</span></div>
           </div>
           <div class="agents__grid">
-            <div class="agent"><div class="agent__slug">statutory-researcher</div><div class="agent__role">Primary acts: statutes, regulations, directives, secondary legislation across jurisdictions.</div></div>
-            <div class="agent"><div class="agent__slug">case-law-researcher</div><div class="agent__role">Judgments and opinions. US case law via CourtListener; multi-jurisdictional via Legal Data Hunter.</div></div>
-            <div class="agent"><div class="agent__slug">doctrinal-researcher</div><div class="agent__role">Soft law, regulatory guidance, peer-reviewed commentary. Activated only when the plan calls for it.</div></div>
+            <div class="agent"><div class="agent__slug">legal-researcher</div><div class="agent__role">Researches one layer of authority per dispatch: statutes, case law, or doctrine when the plan calls for it. Follows the routing order for its layer and jurisdictions and returns findings grouped by issue.</div></div>
           </div>
         </div>
 
         <div class="agents__group">
           <div class="agents__head">
-            <div><span class="agents__phase">Quality gates</span><span class="agents__count">3 agents</span></div>
+            <div><span class="agents__phase">Quality gates</span><span class="agents__count">2 agents + code</span></div>
             <div class="agents__hint">block drafting if any gate fails</div>
           </div>
           <div class="agents__grid">
-            <div class="agent"><div class="agent__slug">research-sufficiency-reviewer</div><div class="agent__role">Confirms each issue has enough primary sources and named contrary authority before the writer starts.</div></div>
-            <div class="agent"><div class="agent__slug">currency-checker</div><div class="agent__role">Verifies cited acts and judgments still represent current law. Blocks on stale or overruled sources.</div></div>
-            <div class="agent"><div class="agent__slug">source-pack-builder</div><div class="agent__role">Builds the evidence table the writer and the citation auditor share. Single source of truth.</div></div>
+            <div class="agent"><div class="agent__slug">research-sufficiency-reviewer</div><div class="agent__role">Decides whether the research supports a client-ready memo, and sends the gaps back to a researcher or to you.</div></div>
+            <div class="agent"><div class="agent__slug">currency-checker</div><div class="agent__role">Checks every registered source for repeal, amendment, the standing of judgments and the age of guidance. Blocking ones are listed apart.</div></div>
+            <div class="agent"><div class="agent__slug">mf sources save</div><div class="agent__role">Not an agent. Code fetches, certifies and registers each source text: raw copy, SHA-256, currency date. Once the pack is frozen, nothing new gets in.</div></div>
           </div>
         </div>
 
@@ -474,21 +482,20 @@
             <div class="agents__hint">IRAC per issue · cites only the source pack</div>
           </div>
           <div class="agents__grid">
-            <div class="agent"><div class="agent__slug">memo-writer</div><div class="agent__role">Writes the memo. IRAC structure per issue, full citations, concrete recommendations — not generic disclaimers.</div></div>
+            <div class="agent"><div class="agent__slug">memo-writer</div><div class="agent__role">Writes every version: the first draft, the lint fix, each revision and the final polish. Citation tokens, extracted quotations and a risk line per subsection. Runs on Opus, Fable or Sonnet, your choice.</div></div>
           </div>
         </div>
 
         <div class="agents__group">
           <div class="agents__head">
-            <div><span class="agents__phase">Peer review</span><span class="agents__count">5 agents</span></div>
-            <div class="agents__hint"><span class="accent">3 of 5</span> in Brief · all 5 in Full</div>
+            <div><span class="agents__phase">Peer review</span><span class="agents__count">4 agents · parallel</span></div>
+            <div class="agents__hint">fixed binary checklists</div>
           </div>
           <div class="agents__grid">
-            <div class="agent"><div class="agent__slug">logic-reviewer</div><div class="agent__role">Premise-to-conclusion soundness across issues. Catches contradictions between sections.</div></div>
-            <div class="agent"><div class="agent__slug">citation-auditor</div><div class="agent__role">Every claim must trace to a source in the pack. Flags paraphrase drift and overreach.</div></div>
-            <div class="agent"><div class="agent__slug">style-reviewer</div><div class="agent__role">Tone, AI-tells, em-dash overuse, vague attributions. House-style enforcement.</div></div>
-            <div class="agent"><div class="agent__slug">clarity-reviewer</div><div class="agent__role">Sentence length, jargon-without-explanation, accessibility for a non-lawyer business reader.</div></div>
-            <div class="agent"><div class="agent__slug">counterargument-reviewer</div><div class="agent__role">Contrary authority, overconfident conclusions, how an opposing lawyer or regulator would attack the analysis.</div></div>
+            <div class="agent"><div class="agent__slug">logic-reviewer</div><div class="agent__role">Conclusion first, the rule explained, the rule applied to the facts, subsections consistent with each other. Sees the draft and nothing else.</div></div>
+            <div class="agent"><div class="agent__slug">form-reviewer</div><div class="agent__role">Structure of each subsection, headings, readability for a business reader, house-style discipline. Tags every issue as clarity or style.</div></div>
+            <div class="agent"><div class="agent__slug">citation-auditor</div><div class="agent__role">Source drift, a source used against its role in the pack, and claims of law that stand on no source at all.</div></div>
+            <div class="agent"><div class="agent__slug">counterargument-reviewer</div><div class="agent__role">Reads the draft the way a regulator or opposing counsel would: contrary authority, overconfident conclusions, hidden assumptions, understated exposure.</div></div>
           </div>
         </div>
 
@@ -498,13 +505,24 @@
             <div class="agents__hint">consolidate · ship</div>
           </div>
           <div class="agents__grid">
-            <div class="agent"><div class="agent__slug">revision-mediator</div><div class="agent__role">Consolidates parallel reviewer JSONs into one actionable revision list. Resolves conflicts by house priority.</div></div>
-            <div class="agent"><div class="agent__slug">client-readiness-reviewer</div><div class="agent__role">Final external-client check. Tone, assumptions, disclaimers, confidentiality, recommendation quality.</div></div>
+            <div class="agent"><div class="agent__slug">revision-mediator</div><div class="agent__role">Turns the reviewers' issues into one instruction list for the writer, one instruction per section. Anything dropped is recorded and explained.</div></div>
+            <div class="agent"><div class="agent__slug">client-readiness-reviewer</div><div class="agent__role">Final delivery review: could this go to a client or a senior stakeholder as it stands? Returns what one polish pass must fix.</div></div>
+          </div>
+        </div>
+
+        <div class="agents__group">
+          <div class="agents__head">
+            <div><span class="agents__phase">Decision brief</span><span class="agents__count">2 agents</span></div>
+            <div class="agents__hint">/memoforge:brief · after the memo</div>
+          </div>
+          <div class="agents__grid">
+            <div class="agent"><div class="agent__slug">brief-writer</div><div class="agent__role">Writes the three-page brief from the delivered memo for a reader who is not a lawyer. Adds nothing the memo does not say.</div></div>
+            <div class="agent"><div class="agent__slug">brief-fidelity-reviewer</div><div class="agent__role">Checks the brief against the memo: no new claim, no dropped condition, no shifted certainty, no open point presented as settled.</div></div>
           </div>
         </div>
 
         <div class="agents__orchestrator">
-          <strong>Plus one orchestrator</strong> — your Cowork session itself. It picks the right specialist per phase, runs the parallel calls, gates on quality, and routes the human checkpoints. <span class="accent">You answer; it dispatches.</span>
+          <strong>Plus the orchestrator</strong>: your Claude Code or Cowork session. In v2 it holds no pipeline knowledge. It asks the <code>mf</code> CLI for the next step, does that one step, dispatches the specialists, and reports back; phases, budgets and state live in code. <span class="accent">You answer; it dispatches.</span>
         </div>
       </div>
     </section>
@@ -516,38 +534,35 @@
         <span class="section-label__title">What you get</span>
       </div>
       <h2 class="section__h">Not just a memo — the whole audit trail.</h2>
-      <p class="section__lede">Every memo ships with the source pack it was built on, every draft revision, a per-reviewer record of what was flagged and how it was resolved, and an honest verdict. If a partner asks <em>"where did this citation come from?"</em>, the answer is one folder away.</p>
+      <p class="section__lede">Every memo ships with the source pack it was built on, the reviewers' findings, the run's diagnostics and an honest verdict. The work dir keeps every draft version and every lint report besides. If a partner asks <em>"where did this citation come from?"</em>, the answer is one folder away.</p>
 
       <div class="bundle">
-        <span class="bundle__root">~/Documents/memoforge/&lt;task_id&gt;/</span>
+        <span class="bundle__root">memoforge/&lt;slug&gt;/</span>
         <div class="bundle__row">
-          <span class="bundle__name bundle__name--accent">memo.docx</span>
-          <span class="bundle__desc">Formatted final memo — Arial 12pt, 1″ margins, numbered sections, IRAC per issue, footnoted citations.</span>
+          <span class="bundle__name bundle__name--accent">memo-&lt;slug&gt;.docx</span>
+          <span class="bundle__desc">The memorandum: Arial 12pt, 1″ margins, numbered sections, IRAC per issue, in English, German, French, Spanish or Russian. Short inline citations linked to the source with a Sources annex, or real Word footnotes if you prefer.</span>
         </div>
         <div class="bundle__row">
-          <span class="bundle__name">drafts/v*.md</span>
-          <span class="bundle__desc">Every revision the writer produced, in order.</span>
+          <span class="bundle__name">summary.md</span>
+          <span class="bundle__desc">The run summary: the verdict, any blocking issues and reviewer findings left open, the database calls made.</span>
         </div>
         <div class="bundle__row">
-          <span class="bundle__name bundle__name--remote">research/</span>
-          <span class="bundle__desc">Every statute, case and regulator doc the analysis relies on, with verbatim quotes and current-as-of dates.</span>
+          <span class="bundle__name bundle__name--remote">sources/</span>
+          <span class="bundle__desc">The frozen source pack: every statute, case and regulator document the analysis relies on, each with its raw text, a SHA-256 and a currency date.</span>
         </div>
         <div class="bundle__row">
-          <span class="bundle__name bundle__name--warn">reviews/</span>
-          <span class="bundle__desc">Per-reviewer JSON findings; mediator's consolidated revision list; writer's changelog response.</span>
+          <span class="bundle__name bundle__name--warn">_run/</span>
+          <span class="bundle__desc">The diagnostics: <code>state.json</code>, the <code>events.jsonl</code> journal, the plan, the intake facts, the sufficiency verdict and the reviews.</span>
         </div>
         <div class="bundle__row">
-          <span class="bundle__name">state.json</span>
-          <span class="bundle__desc">Full pipeline state — phases, decisions, mode, checkpoints, verdict.</span>
-        </div>
-        <div class="bundle__row">
-          <span class="bundle__name">events.jsonl</span>
-          <span class="bundle__desc">Append-only audit log: phase transitions, agent calls, fallbacks.</span>
+          <span class="bundle__name">memo-&lt;slug&gt;.brief.docx</span>
+          <span class="bundle__desc">After <code>/memoforge:brief</code>: the three-page decision brief, saved beside the memo.</span>
         </div>
       </div>
 
       <div class="callout">
-        <p><strong>Every claim in <code>memo.docx</code> is grounded in something inside <code>research/</code>.</strong> The citation auditor enforces it — if a sentence in the draft doesn't trace to a source in the pack, it gets flagged in <code>reviews/</code> and revised before export. And the verdict is honest: <code>approved</code>, <code>forced_exit_on_v3</code> (revision budget reached with unresolved issues), or <code>manual_review_required</code>. No false confidence.</p>
+        <p><strong>Every quotation in the memo was extracted from the saved source text by exact match, not recalled by a model.</strong> A quote that cannot be matched is refused, and the refusal is recorded. The citation auditor checks the rest: a claim of law that traces to nothing in the pack gets flagged and revised before export.</p>
+        <p>And the verdict is honest: <code>approved_on_v&lt;N&gt;</code>, <code>forced_exit_on_v&lt;N&gt;_with_remaining_issues</code> (revision budget spent with blockers left), <code>manual_review_required_on_v&lt;N&gt;</code>, or <code>fallback_summary_delivered</code> when a dependency failed. A run never ends empty-handed: without <code>python-docx</code> you still get a markdown memo with a banner explaining why. No false confidence.</p>
       </div>
     </section>
 
@@ -558,22 +573,22 @@
         <span class="section-label__title">Style Studio</span>
       </div>
       <h2 class="section__h">Make every memo sound like your firm wrote it.</h2>
-      <p class="section__lede">By default the writer follows a built-in house style — concise, no em-dashes, OSCOLA-flavoured citations. Style Studio turns a folder of your own example memos (or a written style guide) into a saved profile that all reviewers defer to. Substantive checks — citation accuracy, IRAC structure, contrary authority — stay uniform.</p>
+      <p class="section__lede">By default the writer follows a built-in house style: concise, no em-dashes, OSCOLA citations. Style Studio turns a folder of your own example memos (or a written style guide) into a saved profile that sets the prose style and the template. Form review defers to your rules; substantive checks (citations, IRAC structure, contrary authority) stay uniform.</p>
 
       <div class="steps">
         <div class="step">
           <div class="step__n">01</div>
           <div>
             <div class="step__title">Extract your style</div>
-            <div class="step__desc">Point Style Studio at a folder of past memos. It produces a plain-markdown profile under <code>~/.claude/plugin-data/memoforge/profiles/&lt;name&gt;/</code>. Open and tweak by hand any time.</div>
-            <span class="code-chip"><span class="code-chip__prompt">›</span>/memoforge:style new my-firm --examples ~/memos/2025-q4/ --mode full</span>
+            <div class="step__desc">Point Style Studio at a folder of past memos, or give it your written rules. It saves a plain-markdown profile in the plugin's data directory. Open and tweak it by hand any time.</div>
+            <span class="code-chip"><span class="code-chip__prompt">›</span>/memoforge:style new my-firm --examples ~/memos/2025-q4/</span>
           </div>
         </div>
         <div class="step">
           <div class="step__n">02</div>
           <div>
-            <div class="step__title">Activate it</div>
-            <div class="step__desc">Switch profile per task, per matter, or globally. When a profile is active the writer, style reviewer, and clarity reviewer all read from your rules — em-dash policy, citation order, footnote style, voice, headings — instead of the defaults.</div>
+            <div class="step__title">Use it</div>
+            <div class="step__desc">When profiles exist, the plan checkpoint offers them as a choice; <code>use</code> makes one the default. A profile sets the voice, headings and template, never the scope of the research. The writer and the form reviewer read your rules instead of the defaults.</div>
             <span class="code-chip"><span class="code-chip__prompt">›</span>/memoforge:style use my-firm</span>
           </div>
         </div>
@@ -590,45 +605,68 @@
         <span class="section-label__num">07</span>
         <span class="section-label__title">Quick start</span>
       </div>
-      <h2 class="section__h">Install in Cowork. Connect two databases. Ask.</h2>
-      <p class="section__lede">memoforge bundles two MCP servers: <strong>Legal Data Hunter</strong> for multi-jurisdictional law and <strong>CourtListener</strong> for US case law. Connect them once from the plugin panel — the first call may trigger an OAuth sign-in. If you skip this step, the pipeline still runs against official portals via WebFetch, and the final memo carries a banner asking you to verify each citation by hand.</p>
+      <h2 class="section__h">Install. Connect the databases. Ask.</h2>
+      <p class="section__lede">memoforge runs in Claude Code and in Cowork. It registers ten legal MCP servers; click <strong>Connect</strong> on each in the plugin panel (the first call may open a sign-in). Skipping this is supported: research falls back to official portals via WebFetch, and the memo carries a banner asking you to verify each citation by hand.</p>
 
       <div class="steps">
         <div class="step">
           <div class="step__n">01</div>
           <div>
             <div class="step__title">Install the plugin</div>
-            <div class="step__desc">Open Cowork → <strong>Settings → Plugins</strong>. Drag the <code>memoforge-&lt;version&gt;.zip</code> from the <a href="https://github.com/gregmos/memoforge/releases/latest" target="_blank" rel="noopener">latest release</a>. The plugin auto-registers its two bundled MCP servers via <code>.mcp.json</code>.</div>
+            <div class="step__desc"><strong>Claude Code:</strong> add the marketplace, then install. <strong>Cowork:</strong> open <strong>Settings → Plugins</strong> and drag in <code>memoforge-&lt;version&gt;.zip</code> from the <a href="https://github.com/gregmos/memoforge/releases/latest" target="_blank" rel="noopener">latest release</a>.</div>
+            <span class="code-chip"><span class="code-chip__prompt">›</span>/plugin marketplace add gregmos/memoforge</span>
+            <span class="code-chip"><span class="code-chip__prompt">›</span>/plugin install memoforge</span>
           </div>
         </div>
         <div class="step">
           <div class="step__n">02</div>
           <div>
+            <div class="step__title">Install three Python packages</div>
+            <div class="step__desc"><code>jsonschema</code>, <code>python-docx</code> and <code>mistune</code>, into the plugin's own data directory where they never touch your project. The plugin answers without them, and a run without them still delivers a markdown memo.</div>
+            <span class="code-chip"><span class="code-chip__prompt">›</span>&lt;plugin&gt;/scripts/mf deps install</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step__n">03</div>
+          <div>
             <div class="step__title">Ask a question</div>
-            <div class="step__desc">Open a new Cowork chat and run <code>/memoforge:memo</code> with your legal question. memoforge handles multi-part questions in a single memo — each part becomes its own analysed issue with separate citations.</div>
+            <div class="step__desc">Run <code>/memoforge:memo</code> with your legal question. Multi-part questions are fine: each part becomes its own analysed issue with its own citations. Say "memo in German" to switch the language. <code>/memoforge:status</code> shows where a task stands; <code>/memoforge:continue</code> resumes one.</div>
             <span class="code-chip"><span class="code-chip__prompt">›</span>/memoforge:memo "&lt;your legal question&gt;"</span>
           </div>
         </div>
       </div>
 
       <div class="checkpoints">
-        <div class="subhead">Four mandatory checkpoints</div>
-        <p class="section__lede" style="margin-bottom: 20px;">The orchestrator pauses four times for your input. Everything between pauses runs autonomously with a live dashboard in the sidebar.</p>
+        <div class="subhead">The bundled databases</div>
+        <p class="section__lede" style="margin-bottom: 20px;">Together they cover the EU, the UK, the US, France, Switzerland and Russia, and Legal Data Hunter reaches 230+ jurisdictions. Seven of the ten are free and need no key.</p>
+        <div class="bundle">
+          <div class="bundle__row"><span class="bundle__name bundle__name--remote">legal-data-hunter</span><span class="bundle__desc">Statutes, case law and regulator guidance across 230+ jurisdictions.</span></div>
+          <div class="bundle__row"><span class="bundle__name bundle__name--remote">courtlistener</span><span class="bundle__desc">US case law, and the check that a US citation exists at all.</span></div>
+          <div class="bundle__row"><span class="bundle__name bundle__name--remote">federal-regulations</span><span class="bundle__desc">US: the Code of Federal Regulations and the Federal Register.</span></div>
+          <div class="bundle__row"><span class="bundle__name bundle__name--remote">legalviz</span><span class="bundle__desc">EU legislation: CELEX lookup, article-level text, the CJEU judgments on a provision, amendments.</span></div>
+          <div class="bundle__row"><span class="bundle__name bundle__name--remote">uk-legal</span><span class="bundle__desc">UK: legislation.gov.uk with in-force data, Find Case Law down to the paragraph, OSCOLA resolver.</span></div>
+          <div class="bundle__row"><span class="bundle__name bundle__name--remote">lex</span><span class="bundle__desc">UK, by i.AI: explanatory notes and amendment history.</span></div>
+          <div class="bundle__row"><span class="bundle__name bundle__name--remote">justicelibre</span><span class="bundle__desc">France: code articles, Cour de cassation, Conseil d'État, Conseil constitutionnel, CNIL, without a PISTE account.</span></div>
+          <div class="bundle__row"><span class="bundle__name bundle__name--remote">opencaselaw</span><span class="bundle__desc">Switzerland: federal law by SR number, a million decisions back to 1875, commentary.</span></div>
+          <div class="bundle__row"><span class="bundle__name bundle__name--remote">casus</span><span class="bundle__desc">Russia: positions of the Constitutional, Supreme and former Supreme Arbitration Courts. Paid account.</span></div>
+          <div class="bundle__row"><span class="bundle__name bundle__name--remote">fas-search</span><span class="bundle__desc">Russia: 8,000 FAS decisions under the Law on Advertising.</span></div>
+        </div>
+      </div>
+
+      <div class="checkpoints">
+        <div class="subhead">Where it stops to ask you</div>
+        <p class="section__lede" style="margin-bottom: 20px;">Two checkpoints every run, a third only on exceptions. In between, a live dashboard page follows the run step by step, and every subagent tile is labelled with how far along it is.</p>
         <dl class="checkpoints__list">
           <dt>Intake</dt>
-          <dd class="checkpoints__phase">Up to 10 questions about facts the triage analyst flagged as missing. Type <code>proceed</code> to accept conservative defaults.</dd>
-          <dd class="checkpoints__reply">answer: &lt;facts&gt;</dd>
-
-          <dt>Mode</dt>
-          <dd class="checkpoints__phase">Pick Brief or Full. Once per task.</dd>
-          <dd class="checkpoints__reply">mode: brief</dd>
+          <dd class="checkpoints__phase">Up to 10 questions about facts the analyst could not infer. Answer by letter, or type <code>proceed</code> to accept the stated defaults.</dd>
+          <dd class="checkpoints__reply">1A 2C 3: &lt;facts&gt;</dd>
 
           <dt>Plan</dt>
-          <dd class="checkpoints__phase">Approve, edit, or cancel the proposed research plan — jurisdictions, issues, source types.</dd>
+          <dd class="checkpoints__phase">One card with the research plan (jurisdictions, issues, source types) and your style profile, if you have one. Approve, edit or cancel.</dd>
           <dd class="checkpoints__reply">approve</dd>
 
           <dt>Source review</dt>
-          <dd class="checkpoints__phase">After research and source-pack assembly, inspect what was found before drafting begins.</dd>
+          <dd class="checkpoints__phase">Only when research hit an exception: a critical source unresolved, conflicting authority, an exhausted quota. Clean research goes straight to drafting.</dd>
           <dd class="checkpoints__reply">continue</dd>
         </dl>
       </div>
@@ -651,18 +689,20 @@
         <span class="section-label__title">Honest about limits</span>
       </div>
       <h2 class="section__h">What memoforge won't do — and where your data goes.</h2>
-      <p class="section__lede">memoforge is built around domains it handles well: EU data protection (GDPR, AI Act, NIS2, DSA), US privacy (CCPA, HIPAA, sectoral), UK consumer law, cross-border compliance. The pipeline classifies the query and picks researchers accordingly — it does not assume a specific jurisdiction. The honest caveats are below.</p>
+      <p class="section__lede">memoforge assumes no jurisdiction: the plan step classifies the query and routes research accordingly. Its strong ground is EU data protection (GDPR, AI Act, NIS2, DSA), US privacy and sectoral regulation, UK consumer law and cross-border compliance. The honest caveats are below.</p>
 
       <div class="prose">
-        <p><em>Not a substitute for a lawyer.</em> The memo is a research-grade draft. A qualified lawyer must review before any client use, especially for regulated advice. The verdict at the end of the run (<code>approved</code>, <code>forced_exit_on_v3</code>, <code>manual_review_required</code>) is a signal, not a sign-off.</p>
-        <p><em>English on the output.</em> You can ask in other languages but the memo is written in English.</p>
-        <p><em>No client interview.</em> The intake step asks about facts you already know; it does not ask follow-up questions about the underlying business.</p>
-        <p><em>Currency is best-effort.</em> The currency check verifies cross-references and the status of cited judgments against the connected databases. For litigation-sensitive citations, verify each judgment is still good law before relying on the memo.</p>
+        <p><em>Not a substitute for a lawyer.</em> The memo is a research-grade draft. A qualified lawyer must review it before any client use, especially for regulated advice. The verdict at the end of the run is a signal, not a sign-off.</p>
+        <p><em>Five memo languages.</em> English, German, French, Spanish and Russian; English by default whatever language you ask in. The reviewers' findings, CLI errors and run diagnostics stay in English.</p>
+        <p><em>Provenance is bounded.</em> A quote is proven to come from the raw file the researcher saved. That the file came from the cited URL is confirmed only where the URL is still live and its hash matches, and each source records which of the two it is.</p>
+        <p><em>Currency is best-effort.</em> The currency check runs against the connected databases. For litigation-sensitive citations, verify each judgment is still good law before relying on the memo.</p>
+        <p><em>No cancelling mid-step.</em> A cancel is honoured at the checkpoints and at the next step boundary.</p>
+        <p><em>Cowork caveats.</em> Chat output is buffered until the turn ends, and your permission rules do not apply there; the plugin's own gate approves only allowlisted hosts and calls to its own CLI.</p>
       </div>
       <div class="callout">
         <div class="callout__label">Privacy &amp; data</div>
-        <p>Everything memoforge writes lives <strong>on your machine</strong>, inside the output folder you chose. Default is <code>~/Documents/memoforge/</code>; override via <code>$CLAUDE_PLUGIN_OPTION_OUTPUT_FOLDER</code> or <code>$MEMOFORGE_OUTPUT_FOLDER</code>. No shared backend, no server, no telemetry.</p>
-        <p>MCP calls reach Legal Data Hunter, CourtListener, and any official portals you allow via WebFetch using <strong>your credentials</strong>, authenticated in Cowork. The plugin never proxies or stores those credentials itself. The audit trail (<code>events.jsonl</code>, draft versions, reviewer outputs) stays in the task folder until you delete it.</p>
+        <p>Everything memoforge writes lives <strong>on your machine</strong>: in the <code>output_folder</code> you set, else <code>$MEMOFORGE_OUTPUT_FOLDER</code>, else a <code>memoforge/</code> folder in your session's folder, else <code>~/Documents/memoforge/</code>. No shared backend, no server, no telemetry.</p>
+        <p>MCP calls go to the providers you authenticated, with <strong>your credentials</strong>; web research is aimed at the official portals on the plugin's allowlist. The plugin never proxies or stores those credentials. The audit trail (<code>state.json</code>, <code>events.jsonl</code>, every draft version, every review) stays in the task folder until you delete it.</p>
       </div>
     </section>
   </main>
